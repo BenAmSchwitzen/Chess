@@ -54,6 +54,7 @@ public class Checker {
 			     */	
 			  public boolean isMoveValid(Piece piece,int y,int x) { // in checker
 					
+				  if(piece==null)return false;
 				  
 					return  (piece.canMove(y, x) || bauerAdditionalMovement(piece, y, x) || enPassant(piece, y, x))
 							

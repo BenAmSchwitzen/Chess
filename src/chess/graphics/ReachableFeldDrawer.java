@@ -5,12 +5,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import chess.board.Board;
+import chess.piece.Piece;
 
 
 
 public class ReachableFeldDrawer {
 
 	public Board board;
+	
+	public Piece movingPieceOverThisPiece = null;
 	
 	public ReachableFeldDrawer(Board board) {
 		
@@ -58,28 +61,64 @@ public class ReachableFeldDrawer {
 	}
 	
 	
+	public void makePiecesInvisible(Graphics2D g2) {
+		
+		
+			
+		for(Piece piece : board.pieces) {
+			
+			if(board.selectedPiece!=null&&board.selectedPiece!=piece && board.selectedPiece.drawY == piece.drawY && board.selectedPiece.drawX == piece.drawX) {
+				
+				piece.drawPiece = false;
+				
+			}else {
+				
+				piece.drawPiece = true;
+				
+			}
+		}
+		
+		
+		
+	  
+}
+	
+	
 	public void drawCurrentMovingSquare(Graphics2D g2) {
 		
-		if(board.selectedPiece!=null) {
+		if(board.selectedPiece==null)return;
+		
+		if((board.selectedPiece.drawY!= board.selectedPiece.y || board.selectedPiece.drawX != board.selectedPiece.x))
 			
-			if((board.selectedPiece.drawY!= board.selectedPiece.y || board.selectedPiece.drawX != board.selectedPiece.x)) {
+		{
 			
+			
+			if(board.getPiece(board.selectedPiece.drawY, board.selectedPiece.drawX)!=null && board.getPiece(board.selectedPiece.drawY, board.selectedPiece.drawX).color !=board.selectedPiece.color
+					   && board.checker.isMoveValid(board.selectedPiece, board.selectedPiece.drawY, board.selectedPiece.drawX)) {
 				
-				if(board.getPiece(board.selectedPiece.drawY, board.selectedPiece.drawX)!=null && board.getPiece(board.selectedPiece.drawY, board.selectedPiece.drawX).color !=board.selectedPiece.color
-				   && board.checker.isMoveValid(board.selectedPiece, board.selectedPiece.drawY, board.selectedPiece.drawX)
-						) {
-					
-					g2.setColor(Color.RED);
-					
-				}
+				  g2.setColor(Color.RED);
 				
-			
+			}
 				
-			g2.fillRect(board.selectedPiece.drawX*board.feldSize,board.selectedPiece.drawY*board.feldSize,board.feldSize, board.feldSize);
+		 
 			
-			
-		}
-		}
-	}
+		g2.fillRect(board.selectedPiece.drawX*board.feldSize,board.selectedPiece.drawY*board.feldSize,board.feldSize, board.feldSize);
 
-}
+		
+		
+		
+		
+		}
+		
+		
+	}
+			
+		
+		
+		}
+			
+	
+		
+	
+
+

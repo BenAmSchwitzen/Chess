@@ -99,7 +99,7 @@ public class Board {
 	public void drawPieces(Graphics2D g2) {
 		
 		
-		pieces.forEach(m -> g2.drawImage(m.image, m.drawX*this.feldSize,m.drawY*feldSize+5, this.feldSize,this.feldSize-10, null));
+		pieces.stream().filter(m-> m.drawPiece).forEach(m -> g2.drawImage(m.image, m.drawX*this.feldSize,m.drawY*feldSize+5, this.feldSize,this.feldSize-10, null));
 		
 	}
 	
@@ -107,6 +107,7 @@ public class Board {
 		
 		this.reachableFeldDrawer.draw(g2);
 		this.reachableFeldDrawer.drawCurrentMovingSquare(g2);
+		this.reachableFeldDrawer.makePiecesInvisible(g2);
 		
 	}
 	

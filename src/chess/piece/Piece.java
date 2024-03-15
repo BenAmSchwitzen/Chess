@@ -35,6 +35,8 @@ public abstract class Piece {
 	private String blackImage;
 	public BufferedImage image;
 	
+	public boolean drawPiece = true;
+	
 	//___________________________________________________
 	
 	public Piece(char color,int y,int x) {

@@ -78,7 +78,7 @@ public class Match {
 	public void update(Mouse mouse) {
 		
 		this.progress.updateTimer();
-		
+	
 		
 		if(this.progress.getTurn() == 'w' && this.isMatchRunning) {
 			
