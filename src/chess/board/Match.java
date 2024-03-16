@@ -25,7 +25,6 @@ public class Match {
 	
 	public Board board;
 	public GameProgress progress;
-	
 	public PreviousPlayManager previousPlayManager;
 	
 	public MatchUI matchUI;
@@ -72,6 +71,9 @@ public class Match {
 	public void drawPieces(Graphics2D g2) { // Zeichnet alle Pieces
 		
 		board.drawPieces(g2);
+		
+		board.drawMovingPiece(g2);
+		
 		
 	}
 	
@@ -273,6 +275,9 @@ public class Match {
 		
 		board.selectedPiece.drawX = (mouse.mouseX/board.feldSize);
 		board.selectedPiece.drawY = (mouse.mouseY/board.feldSize);
+		
+	
+		
 		
 	}
 	
