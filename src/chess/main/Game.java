@@ -4,6 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Transparency;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
@@ -55,6 +60,13 @@ public class Game extends JPanel implements Runnable {
 		  this.addMouseMotionListener(mouse);
 		
 		  
+		  GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		    GraphicsDevice device = env.getDefaultScreenDevice();
+		    GraphicsConfiguration config = device.getDefaultConfiguration();
+		    BufferedImage buffy = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
+		    
+		  
+		  
 		  gameThread = new Thread(this);
 		  gameThread.start();
 		  
@@ -71,11 +83,14 @@ public class Game extends JPanel implements Runnable {
 	@Override
 	protected void paintComponent(Graphics g) {
 		
-		
+		 
 		
 		Graphics2D g2 = (Graphics2D)g;
 		
 		super.paintComponent(g);
+		
+		
+		
 		
 		if(this.gameState == GameState.INMATCH) {
 		
@@ -100,7 +115,7 @@ public class Game extends JPanel implements Runnable {
 			this.match.previousPlayManager.drawPreviousPlayPieces(g2);
 			this.match.previousPlayManager.drawPlayButtons(g2);
 			
-			
+			board.drawCheckMateFelder(g2);
 			
 			this.match.matchUI.drawAfterMatchUIButtons(game);
 			
@@ -126,6 +141,9 @@ public class Game extends JPanel implements Runnable {
 			this.match.previousPlayManager.drawPlayButtons(g2);
 			
 			this.match.drawMatchRelatedUI(g2);
+			
+			board.drawCheckMateFelder(g2);
+			
 	}
 		
 		

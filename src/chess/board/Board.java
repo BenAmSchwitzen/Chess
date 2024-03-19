@@ -114,10 +114,16 @@ public class Board {
 		this.reachableFeldDrawer.drawCurrentMovingSquare(g2);
 		this.reachableFeldDrawer.makePiecesInvisible(g2);
 		
-		this.reachableFeldDrawer.drawCheckMateFelder(g2);
+		
 	}
 	
 
+	public void drawCheckMateFelder(Graphics2D g2) {
+		
+		this.reachableFeldDrawer.drawCheckMateFelder(g2);
+		
+	}
+	
 
 	  public Piece getPiece(int y,int x) {
 		  

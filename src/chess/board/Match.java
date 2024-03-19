@@ -243,9 +243,11 @@ public class Match {
 					
 					this.previousPlayManager.currentPlay = this.previousPlayManager.plays.get(this.previousPlayManager.plays.size()-1);
 
+					SoundManager.setSound(0);
+					
 					isMatchRunning = false;
 					
-					SoundManager.setSound(0);
+					Game.getInstance().gameState = GameState.onWinningScreen;
 					
 				}
 				
@@ -287,45 +289,45 @@ public class Match {
         	
         	board.pieces.clear();
         	
-        	//board.pieces.add(new Bauer('w', 6, 0));
-        	//board.pieces.add(new Bauer('w', 6, 1));
-        	//board.pieces.add(new Bauer('w', 6, 2));
-        	//board.pieces.add(new Bauer('w', 6, 3));
-        	//board.pieces.add(new Bauer('w', 6, 4));
-        	//board.pieces.add(new Bauer('w', 6, 5));
-        	//board.pieces.add(new Bauer('w', 6, 6));
-        	//board.pieces.add(new Bauer('w', 6, 7));
+        	board.pieces.add(new Bauer('w', 6, 0));
+        	board.pieces.add(new Bauer('w', 6, 1));
+        	board.pieces.add(new Bauer('w', 6, 2));
+        	board.pieces.add(new Bauer('w', 6, 3));
+        	board.pieces.add(new Bauer('w', 6, 4));
+        	board.pieces.add(new Bauer('w', 6, 5));
+        	board.pieces.add(new Bauer('w', 6, 6));
+        	board.pieces.add(new Bauer('w', 6, 7));
         	
-        	//board.pieces.add(new Bauer('b', 1, 0));
-        	//board.pieces.add(new Bauer('b', 1, 1));
-        	//board.pieces.add(new Bauer('b', 1, 2));
-        	//board.pieces.add(new Bauer('b', 1, 3));
-        	//board.pieces.add(new Bauer('b', 1, 4));
-        	//board.pieces.add(new Bauer('b', 1, 5));
-        	//board.pieces.add(new Bauer('b', 1, 6));
-        	//board.pieces.add(new Bauer('b', 1, 7));
+        	board.pieces.add(new Bauer('b', 1, 0));
+        	board.pieces.add(new Bauer('b', 1, 1));
+        	board.pieces.add(new Bauer('b', 1, 2));
+        	board.pieces.add(new Bauer('b', 1, 3));
+        	board.pieces.add(new Bauer('b', 1, 4));
+        	board.pieces.add(new Bauer('b', 1, 5));
+        	board.pieces.add(new Bauer('b', 1, 6));
+        	board.pieces.add(new Bauer('b', 1, 7));
         	
         	board.pieces.add(new Dame('w', 7, 3));
-        	//board.pieces.add(new Dame('b', 0, 3));
+        	board.pieces.add(new Dame('b', 0, 3));
         	
         	board.pieces.add(new König('w', 7, 4));
         	board.pieces.add(new König('b', 0, 4));
         	
-        	//board.pieces.add(new Turm('w', 7, 0));
+        	board.pieces.add(new Turm('w', 7, 0));
         	board.pieces.add(new Turm('w', 7, 7));
-        	//board.pieces.add(new Turm('b', 0, 0));
-        	//board.pieces.add(new Turm('b', 0, 7));
+        	board.pieces.add(new Turm('b', 0, 0));
+        	board.pieces.add(new Turm('b', 0, 7));
         	
         	
-        	//board.pieces.add(new Springer('w', 7, 1));
-        	//board.pieces.add(new Springer('w', 7, 6));
-        	//board.pieces.add(new Springer('b', 0, 1));
-        	//board.pieces.add(new Springer('b', 0, 6));
+        	board.pieces.add(new Springer('w', 7, 1));
+        	board.pieces.add(new Springer('w', 7, 6));
+        	board.pieces.add(new Springer('b', 0, 1));
+        	board.pieces.add(new Springer('b', 0, 6));
         	
-        	//board.pieces.add(new Läufer('w', 7, 5));
-            //board.pieces.add(new Läufer('w', 7, 2));
-            //board.pieces.add(new Läufer('b', 0, 5));
-        	//board.pieces.add(new Läufer('b', 0, 2));
+        	board.pieces.add(new Läufer('w', 7, 5));
+            board.pieces.add(new Läufer('w', 7, 2));
+            board.pieces.add(new Läufer('b', 0, 5));
+        	board.pieces.add(new Läufer('b', 0, 2));
         	
         	
         	

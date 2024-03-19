@@ -329,7 +329,7 @@ public class Checker {
 							}
 							
 						}
-						
+						if(board.getPiece(y, x).x == piece.drawX &&  board.getPiece(y, x).y == piece.drawY)
 						this.rochadePiece = board.getPiece(y, x);
 						
 						return true;

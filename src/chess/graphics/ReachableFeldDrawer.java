@@ -120,13 +120,16 @@ public class ReachableFeldDrawer {
 			
 			Piece attackingPiece = board.checker.getAttackingPiece(board.checker.getKing(Game.getInstance().match.progress.getTurn()));
 
+
+			
 			Piece king = board.checker.getKing(Game.getInstance().match.progress.getTurn());
 			
 			if(attackingPiece!=null && Game.getInstance().match.previousPlayManager.currentPlay == Game.getInstance().match.previousPlayManager.plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
 				
+				g2.setColor(Color.RED);
 				
 				if(attackingPiece.drawY>king.drawY && attackingPiece.drawX == king.x) {
-				
+					
 				for(int i = attackingPiece.drawY-1;i>king.y;i--) {
 					
 					
