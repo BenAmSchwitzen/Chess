@@ -60,10 +60,7 @@ public class Game extends JPanel implements Runnable {
 		  this.addMouseMotionListener(mouse);
 		
 		  
-		  GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		    GraphicsDevice device = env.getDefaultScreenDevice();
-		    GraphicsConfiguration config = device.getDefaultConfiguration();
-		    BufferedImage buffy = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
+		
 		    
 		  
 		  
