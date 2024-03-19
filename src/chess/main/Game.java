@@ -101,6 +101,7 @@ public class Game extends JPanel implements Runnable {
 			this.match.previousPlayManager.drawPlayButtons(g2);
 			
 			
+			
 			this.match.matchUI.drawAfterMatchUIButtons(game);
 			
 		}else if(this.gameState == GameState.INMENU) {
@@ -138,7 +139,7 @@ public class Game extends JPanel implements Runnable {
 	 
 		match.update(mouse);
 		
-		
+	
 		
 	}
 

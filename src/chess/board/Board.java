@@ -98,7 +98,7 @@ public class Board {
 	public void drawMovingPiece(Graphics2D g2) {
 		
 		if(selectedPiece!=null)
-		g2.drawImage(selectedPiece.image, Game.getInstance().mouse.mouseX-feldSize/2, Game.getInstance().mouse.mouseY-feldSize/2, 100, 100-10, null);
+		g2.drawImage(selectedPiece.image, Game.getInstance().mouse.mouseX-feldSize/2, Game.getInstance().mouse.mouseY-feldSize/2, 100+10, 100-10+10, null);
 	}
 
 	public void drawPieces(Graphics2D g2) {
@@ -114,6 +114,7 @@ public class Board {
 		this.reachableFeldDrawer.drawCurrentMovingSquare(g2);
 		this.reachableFeldDrawer.makePiecesInvisible(g2);
 		
+		this.reachableFeldDrawer.drawCheckMateFelder(g2);
 	}
 	
 

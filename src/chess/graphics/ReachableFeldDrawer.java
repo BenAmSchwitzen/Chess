@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import chess.board.Board;
+import chess.main.Game;
 import chess.piece.Piece;
 
 
@@ -104,7 +105,7 @@ public class ReachableFeldDrawer {
 			
 		g2.fillRect(board.selectedPiece.drawX*board.feldSize,board.selectedPiece.drawY*board.feldSize,board.feldSize, board.feldSize);
 
-		
+
 		
 		
 		
@@ -113,9 +114,133 @@ public class ReachableFeldDrawer {
 		
 	}
 			
+	public void drawCheckMateFelder(Graphics2D g2) {
 		
+		if(!Game.getInstance().match.isMatchRunning) {
+			
+			Piece attackingPiece = board.checker.getAttackingPiece(board.checker.getKing(Game.getInstance().match.progress.getTurn()));
+
+			Piece king = board.checker.getKing(Game.getInstance().match.progress.getTurn());
+			
+			if(attackingPiece!=null && Game.getInstance().match.previousPlayManager.currentPlay == Game.getInstance().match.previousPlayManager.plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
+				
+				
+				if(attackingPiece.drawY>king.drawY && attackingPiece.drawX == king.x) {
+				
+				for(int i = attackingPiece.drawY-1;i>king.y;i--) {
+					
+					
+					g2.fillRect(attackingPiece.drawX*100, i*100, 100, 100);
+					
+					
+					
+					
+				}
+				
+				}else if(attackingPiece.drawY<king.drawY && attackingPiece.drawX == king.x) {
+					
+					for(int i = attackingPiece.drawY+1;i<king.y;i++) {
+						
+						
+						g2.fillRect(attackingPiece.drawX*100, i*100, 100, 100);
+						
+						
+						
+						
+					}
+					
+				}else if(attackingPiece.drawY==king.drawY && attackingPiece.drawX< king.x) {
+					
+					for(int i = attackingPiece.drawX+1;i<king.x;i++) {
+						
+						
+						g2.fillRect(i*100, attackingPiece.drawY*100, 100, 100);
+						
+						
+						
+						
+					}
+					
+				}else if(attackingPiece.drawY==king.drawY && attackingPiece.drawX>king.x) {
+					
+					for(int i = attackingPiece.drawX-1;i>king.x;i--) {
+						
+						
+						g2.fillRect(i*100, attackingPiece.drawY*100, 100, 100);
+						
+						
+						
+						
+					}
+					
+				}else if(attackingPiece.drawY>king.drawY && attackingPiece.drawX>king.x) {
+					
+					
+                        int whereX = attackingPiece.x;
+		        	 
+		        	 for(int i = attackingPiece.y-1;i>king.y;i--) {
+		        		 
+							g2.fillRect((whereX-1)*100, i*100, 100, 100);
+							whereX--;
+		        			 
+		        		 }
 		
+				}else if(attackingPiece.drawY>king.drawY && attackingPiece.drawX<king.x) {
+					
+					
+                    int whereX = attackingPiece.x;
+	        	 
+	        	 for(int i = attackingPiece.y-1;i>king.y;i--) {
+	        		 
+						g2.fillRect((whereX+1)*100, i*100, 100, 100);
+						whereX++;
+	        			 
+	        		 }
+	
+			}else if(attackingPiece.drawY<king.drawY && attackingPiece.drawX<king.x) {
+				
+				
+                int whereX = attackingPiece.x;
+        	 
+        	 for(int i = attackingPiece.y+1;i<king.y;i++) {
+        		 
+					g2.fillRect((whereX+1)*100, i*100, 100, 100);
+					whereX++;
+        			 
+        		 }
+
+		}else if(attackingPiece.drawY<king.drawY && attackingPiece.drawX>king.x) {
+			
+			
+            int whereX = attackingPiece.x;
+    	 
+    	 for(int i = attackingPiece.y+1;i<king.y;i++) {
+    		 
+				g2.fillRect((whereX-1)*100, i*100, 100, 100);
+				whereX--;
+    			 
+    		 }
+
+	}
+			
 		}
+		
+		
+		
+		
+		
+		
+	}
+	}
+	
+	
+	
+		
+}
+		
+	
+	
+
 			
 	
 		

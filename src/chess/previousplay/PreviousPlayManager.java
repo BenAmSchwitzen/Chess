@@ -246,7 +246,7 @@ public class PreviousPlayManager implements ActionListener {
 	
 	private void drawInvolvedFields(Graphics2D g2) {
 	
-		if(this.currentPlay==null)return;
+		if(this.currentPlay==null || this.currentPlay == this.plays.get(this.plays.size()-1))return;
 	
 		
 		//From this
