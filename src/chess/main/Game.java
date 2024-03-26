@@ -66,6 +66,7 @@ public class Game extends JPanel implements Runnable {
 		  
 		  gameThread = new Thread(this);
 		  gameThread.start();
+		
 		  
 	}
 	
@@ -105,7 +106,8 @@ public class Game extends JPanel implements Runnable {
 		 
 		else if(this.gameState == GameState.onWinningScreen) {
 			
-			
+			g2.setColor(Color.getHSBColor(100, 200, 200));
+			g2.fillRect(800, 0, 500, 800);
 			
 			this.match.drawBoard(g2);
 			this.match.drawBoardGraphics(g2);
@@ -133,13 +135,14 @@ public class Game extends JPanel implements Runnable {
 			
 			this.match.drawBoard(g2);
 			this.match.drawBoardGraphics(g2);
-			
 			this.match.previousPlayManager.drawPreviousPlayPieces(g2);
 			this.match.previousPlayManager.drawPlayButtons(g2);
 			
 			this.match.drawMatchRelatedUI(g2);
 			
 			board.drawCheckMateFelder(g2);
+			
+			
 			
 	}
 		
@@ -159,6 +162,10 @@ public class Game extends JPanel implements Runnable {
 	}
 
 	
+	
+		
+	
+	
 
 	@Override
 	public void run() {  
@@ -173,12 +180,12 @@ public class Game extends JPanel implements Runnable {
 			
 			if(currentTime-lastTime > drawInterval) {
 				
-				
-				
 				this.update();
-				
-				
 				this.repaint();
+				
+				
+				
+				
 				
 				
 				lastTime = currentTime;

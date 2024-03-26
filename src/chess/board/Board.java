@@ -2,6 +2,7 @@ package chess.board;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import chess.graphics.ReachableFeldDrawer;
 import chess.main.Game;
@@ -45,6 +46,7 @@ public class Board {
 //_________Graphics______________________________________
 	
 	
+	Path2D.Double p = new Path2D.Double();
 	
 	private ReachableFeldDrawer reachableFeldDrawer;
 	
@@ -97,8 +99,24 @@ public class Board {
 	
 	public void drawMovingPiece(Graphics2D g2) {
 		
-		if(selectedPiece!=null)
+		if(selectedPiece!=null) {
+			
+		
+			
 		g2.drawImage(selectedPiece.image, Game.getInstance().mouse.mouseX-feldSize/2, Game.getInstance().mouse.mouseY-feldSize/2, 100+10, 100-10+10, null);
+
+		//p.moveTo(selectedPiece.x*100+50,selectedPiece.y*100+50);
+		//p.lineTo(Game.getInstance().mouse.mouseX,Game.getInstance().mouse.mouseY);
+		//g2.draw(p);
+		//p.reset();
+		
+		
+		
+		}
+		
+		
+		
+		
 	}
 
 	public void drawPieces(Graphics2D g2) {

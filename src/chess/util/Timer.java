@@ -1,11 +1,14 @@
 package chess.util;
 
+import java.awt.Graphics2D;
+
+
 import chess.main.Game;
 
 public class Timer {
 
 	public int counter = 0;
-	
+	private int animationCounter = 0;
 	public int sec = 0;
 	public int min = 10;
 	
@@ -22,6 +25,15 @@ public class Timer {
 		if(counter>=Game.getInstance().updateSpeed) {
 			
 			sec--;
+			animationCounter++;
+		
+			
+			if(this.animationCounter>3) 
+				animationCounter = 0;
+				
+				
+			
+			
 			
 			if(sec<0) {
 				
@@ -52,6 +64,20 @@ public class Timer {
 		
 	}
 	
+	public void drawTimeAnimation(Graphics2D g2,int startX,int startY,int width,int height) {
+		
+	 switch(animationCounter) {
+	 
+	 case 0 : width = 0; height = -25;break;
+	 case 1 : width = 25; height = 0;break;
+	 case 2 : width = 0; height = 25;break;
+	 case 3 : width = -25; height = 0;break;
+	 }
+	 
+	 
+	 g2.drawLine(startX, startY, startX+width, startY+height);
+		
+	}
 	
 	
 }

@@ -18,7 +18,7 @@ public class Window extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		this.setIconImage(new ImageIcon(iconPath).getImage());
-		this.setVisible(true);
+		
 		
 		
 		

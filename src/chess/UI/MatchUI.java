@@ -42,10 +42,12 @@ public class MatchUI {
 
 	public void drawUIItems(Graphics2D g2) {
 
-		drawValueAdvantage(g2);
+		
 		
 		drawBlackPlayerUI(g2);
 		drawWhitePlayerUI(g2);
+		
+		drawValueAdvantage(g2);
 
 	}
 
@@ -57,6 +59,15 @@ public class MatchUI {
 		
 		drawWhiteTimer(g2);
 
+		g2.setColor(Color.ORANGE);
+		g2.fillRect(1130, 700, 50, 50);
+		
+		g2.setColor(Color.WHITE);
+		
+		if(match.progress.colorTurn == 'w')
+		this.match.progress.timerWhite.drawTimeAnimation(g2, 1155, 725,23,0);
+		
+		
 	}
 
 	private void drawBlackPlayerUI(Graphics2D g2) {
@@ -65,6 +76,14 @@ public class MatchUI {
 		g2.fillRect(880, 50, 300,50);
 		
 		drawBlackTimer(g2);
+		
+		g2.setColor(Color.ORANGE);
+		g2.fillRect(1130, 50, 50, 50);
+		
+		g2.setColor(Color.WHITE);
+		
+		if(match.progress.colorTurn == 'b')
+		this.match.progress.timerBlack.drawTimeAnimation(g2, 1155, 75,23,0);
 		
 	}
 	
@@ -95,14 +114,16 @@ public class MatchUI {
 			Math.abs(getValueDiff);
 			
 			g2.setFont(FontManager.getFont("Arial Bold",Font.BOLD,18));
-			g2.drawString("+ "+Integer.toString(getValueDiff), 950, 780);
+			g2.setColor(Color.BLACK);
+			g2.drawString("+ "+Integer.toString(getValueDiff), 920, 732);
 			
 		}else if(getValueDiff<0) {
 			
 			getValueDiff = -getValueDiff;
 			
 			g2.setFont(FontManager.getFont("Arial Bold",Font.BOLD,18));
-			g2.drawString("+ "+Integer.toString(getValueDiff), 950, 32);
+			g2.setColor(Color.BLACK);
+			g2.drawString("+ "+Integer.toString(getValueDiff), 920, 81);
 			
 		}
 		

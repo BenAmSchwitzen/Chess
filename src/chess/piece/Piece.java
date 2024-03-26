@@ -1,5 +1,6 @@
 package chess.piece;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ public abstract class Piece {
 	private String blackImage;
 	public BufferedImage image;
 	
+	
 	public boolean drawPiece = true;
 	
 	//___________________________________________________
@@ -52,6 +54,7 @@ public abstract class Piece {
 		
 		try {this.image = ImageIO.read(getClass().getResourceAsStream(this.color == 'w' ? this.whiteImage:this.blackImage));
 		} catch (IOException e) {e.printStackTrace();}
+		
 		
 		
 		this.y = y;
