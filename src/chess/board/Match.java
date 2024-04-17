@@ -3,7 +3,7 @@ package chess.board;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import javax.swing.JButton;
+
 
 import chess.UI.MatchUI;
 import chess.controller.Mouse;
@@ -279,7 +279,7 @@ public class Match {
 		board.selectedPiece.drawX = (mouse.mouseX/board.feldSize);
 		board.selectedPiece.drawY = (mouse.mouseY/board.feldSize);
 		
-	
+	  
 		
 		
 	}
@@ -337,7 +337,40 @@ public class Match {
         }
 
         
-      
+   private void setUpGame1() {  // Makes the game ready to play
+        	
+        	board.pieces.clear();
+        	
+        	
+        	
+        	board.pieces.add(new Dame('b', 7, 0));
+        	board.pieces.add(new Bauer('w', 6, 5));
+        	board.pieces.add(new Bauer('w', 6, 3));
+        	board.pieces.add(new König('w', 7, 4));
+        	board.pieces.add(new Dame('w', 7, 3));
+        	board.pieces.add(new König('b', 0, 4));
+        	
+        	
+        	board.pieces.add(new Turm('w', 7, 7));
+        	board.pieces.add(new Turm('b', 0, 0));
+        	board.pieces.add(new Turm('b', 1, 7));
+        	
+        	
+        	
+        	board.pieces.add(new Bauer('w', 7, 6));
+        	board.pieces.add(new Springer('b', 0, 1));
+        	board.pieces.add(new Springer('b', 0, 6));
+        	
+        	board.pieces.add(new Läufer('w', 7, 5));
+           
+            board.pieces.add(new Läufer('b', 0, 5));
+        	board.pieces.add(new Läufer('b', 0, 2));
+        	
+        	
+        	
+        	
+        	
+        }
         
         
         

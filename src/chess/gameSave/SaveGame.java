@@ -3,8 +3,6 @@ package chess.gameSave;
 import java.awt.Color;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-
 import chess.board.Match;
 import chess.util.Button;
 

@@ -1,10 +1,10 @@
 package chess.main;
 
-import java.awt.Image;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 public class Window extends JFrame {
 
 	private String iconPath ="chess.res/icons/chessIcon.png";

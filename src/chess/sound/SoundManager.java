@@ -1,8 +1,7 @@
 package chess.sound;
 
 import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
+
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;

@@ -1,17 +1,13 @@
 package chess.previousplay;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.SecureCacheResponse;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-
 import chess.board.Match;
 import chess.main.Game;
 import chess.main.GameState;

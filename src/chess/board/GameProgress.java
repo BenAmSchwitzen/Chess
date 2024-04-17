@@ -2,7 +2,6 @@ package chess.board;
 
 import chess.main.Game;
 import chess.main.GameState;
-import chess.piece.Bauer;
 import chess.piece.Piece;
 import chess.util.Timer;
 

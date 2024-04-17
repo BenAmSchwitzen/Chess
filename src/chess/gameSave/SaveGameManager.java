@@ -25,15 +25,7 @@ public class SaveGameManager {
 		
 	}
 	
-	public static void getMatchCount() {
-		
-		for(SaveGame match : matches) {
-			
-			
-			
-		}
-		
-	}
+	
 	
 	public static void drawMatches(Graphics2D g2) {
 		

@@ -1,25 +1,14 @@
 package chess.UI;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-
-import chess.board.Board;
 import chess.board.Checker;
-import chess.gameSave.SaveGameManager;
 import chess.main.Game;
 import chess.main.GameState;
 import chess.piece.Bauer;
-import chess.piece.König;
-import chess.piece.Läufer;
 import chess.piece.Piece;
 import chess.piece.Springer;
 import chess.sound.SoundManager;
@@ -29,16 +18,15 @@ public class MenuScreen {
 
 	 private Game game;
 	 
-	 Button b1;
-	 Button b2;
-	 Button b3;
-	 Button b4;
+	 public Button b1;
+	 public Button b2;
+	 public Button b3;
+	 public Button b4;
 	 
 	 ArrayList<Piece> pieces;
 	 
 	 public Piece menuPiece1 = new Springer('b', 4, 4);
 	 boolean springerTurn = false;
-	 private int lastX = -1,lastY = -1;
 	 private int updateCounter = 0;
 	 
 	 private String playIconPath ="chess.res/icons/playIcon.png";
@@ -68,7 +56,7 @@ public class MenuScreen {
 		b1 = new Button("  Play", 150, 900, 50, 135, Color.WHITE, Color.BLACK);
 		b1.setIcon(new ImageIcon(playIconPath));
 		
-		 b2 = new Button(" Achievements", 150, 1080, 50, 170, Color.WHITE, Color.BLACK);
+		 b2 = new Button("Puzzles", 150, 1080, 50, 170, Color.WHITE, Color.BLACK);
 		b2.setIcon(new ImageIcon(achievementIconPath));
 		
 		 b4 = new Button("  Settings", 250, 880, 50, 135, Color.WHITE, Color.BLACK);
@@ -94,15 +82,28 @@ public class MenuScreen {
 		
 		b1.addActionListener(a -> {
 			
-			game.gameState = GameState.INMATCH;
+			clearGameComponents();
 			
+			
+			
+			game.gameState = GameState.INMATCH;
 			SoundManager.setSound(0);
+			
+			
 			
 			
 		});
 		
           b2.addActionListener(a -> {
 
+        	  clearGameComponents();
+        	
+        	  Game.getInstance().puzzleManager.setUpPiecesForPuzzle(0);
+        	  
+        	  game.gameState = GameState.INPUZZLE;
+        	  SoundManager.setSound(0);
+        	  
+        	  
 		});
           
           
@@ -238,5 +239,15 @@ public class MenuScreen {
     	
     }
 
+    private void clearGameComponents() {
+    	
+    	for(Component c :  game.getComponents()) {
+    		
+    		game.remove(c);
+    		
+    	}
+    	
+    }
+    
 }
 

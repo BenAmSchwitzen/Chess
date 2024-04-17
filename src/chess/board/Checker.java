@@ -1,10 +1,7 @@
 package chess.board;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-import chess.main.Game;
+import java.util.List;
 import chess.piece.Bauer;
 import chess.piece.Dame;
 import chess.piece.König;
@@ -33,7 +30,8 @@ public class Checker {
      */	
 	  public boolean isFeldAvailable(Piece piece,int y,int x) {
 	       
-		  
+		 
+		 
 		  
 	      	return ((this.board.getPiece(y, x)!=null && this.board.getPiece(y, x).color != piece.color && !(board.getPiece(y, x) instanceof König)) || board.getPiece(y, x)==null);
 	      	 

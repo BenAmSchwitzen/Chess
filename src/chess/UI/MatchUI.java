@@ -136,8 +136,8 @@ public class MatchUI {
 		game.add(saveButton);
 		
 	}
-	
-	private void getButtonActionLeave() {
+	 
+	   private void getButtonActionLeave() {
 		
 		leaveButton.addActionListener(m -> {
 			

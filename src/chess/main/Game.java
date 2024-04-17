@@ -4,11 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
+
 
 import javax.swing.JPanel;
 
@@ -17,10 +13,10 @@ import chess.board.Board;
 import chess.board.Match;
 import chess.controller.Mouse;
 import chess.gameSave.SaveGameManager;
-import chess.piece.Piece;
-import chess.sound.SoundManager;
-import chess.util.Timer;
+import chess.puzzle.PuzzleManager;
 
+
+@SuppressWarnings("serial")
 public class Game extends JPanel implements Runnable {
 
 	 private static final Game game = new Game();
@@ -48,6 +44,8 @@ public class Game extends JPanel implements Runnable {
 	public MenuScreen menuScreen = new MenuScreen(this);
 	
 	public Match match = new Match(this.board);
+	
+	public PuzzleManager puzzleManager = new PuzzleManager(new Board());
 	
 	
 	public Game() {
@@ -144,6 +142,16 @@ public class Game extends JPanel implements Runnable {
 			
 			
 			
+	}else if(this.gameState == GameState.INPUZZLE) {
+		
+		
+		
+		this.match.drawBoard(g2);
+		this.puzzleManager.drawCurrentPuzzlePieces(g2);
+		
+		g2.setColor(Color.getHSBColor(100, 200, 200));
+		g2.fillRect(800, 0, 500, 800);
+		
 	}
 		
 		
@@ -154,8 +162,16 @@ public class Game extends JPanel implements Runnable {
 	private void update() {
 		
 		
-	 
-		match.update(mouse);
+	     if(this.gameState == GameState.INMATCH) {
+	    	
+	    	 match.update(mouse);
+	    	 
+	     }else if(this.gameState == GameState.INPUZZLE) {
+	    	 
+	    	 puzzleManager.update(mouse);
+	    	 
+	     }
+		
 		
 	
 		
