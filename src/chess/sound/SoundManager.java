@@ -14,6 +14,8 @@ public class SoundManager {
 	public static File moveSound = new File("chess.res/sounds/moveSound.wav");
 	public static File rochadeSound = new File("chess.res/sounds/rochadeSound.wav");
 	public static File takeSound = new File("chess.res/sounds/takeSound.wav");
+	public static File checkMateSound = new File("chess.res/sounds/checkmateSound.wav");
+	public static File checkSound = new File("chess.res/sounds/checkSound.wav");
 	
 	public  static boolean soundAlreadyPlayed = false;
 	
@@ -55,6 +57,8 @@ public class SoundManager {
         	 case 1 : return moveSound;
         	 case 2 : return rochadeSound;
         	 case 3 : return takeSound;
+        	 case 4 : return checkMateSound;
+        	 case 5 : return checkSound;
         	 
         	 }
         	 

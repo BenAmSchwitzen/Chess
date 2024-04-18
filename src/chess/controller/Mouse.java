@@ -31,7 +31,7 @@ public class Mouse extends MouseAdapter {
 		
 		this.pressed = false;
 		this.clicked = false;
-		System.out.println(this.clicked);
+		
 		
 	}
 	

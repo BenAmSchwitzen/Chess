@@ -1,6 +1,6 @@
 package chess.piece;
 
-@PieceInfo(name = Category.TURM,value = 5,blackImagePath = "/pieceImages/TurmBLACK.png",whiteImagePath = "/pieceImages/TurmWHITE.png")
+@PieceInfo(name = Category.TURM,value = 5,blackImagePath = "/pieceImages/TurmBLACK.png",whiteImagePath = "/pieceImages/TurmWhite.png")
 public class Turm extends Piece {
 
 	public Turm(char color, int y, int x) {

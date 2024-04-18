@@ -197,7 +197,7 @@ public class PuzzleManager {
     		if(pieces.size() > currentPuzzle)
     		setUpPiecesForPuzzle(currentPuzzle);
     		
-    		SoundManager.setSound(0);
+    		SoundManager.setSound(4);
     		
     	}
     	

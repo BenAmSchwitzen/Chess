@@ -30,7 +30,7 @@ public class MenuScreen {
 	 private int updateCounter = 0;
 	 
 	 private String playIconPath ="chess.res/icons/playIcon.png";
-	 private String achievementIconPath ="chess.res/icons/achievementIcon.png";
+	 private String puzzleIconPath ="chess.res/icons/puzzleIcon.png";
 	 private String quitIconPath ="chess.res/icons/quitIcon.png";
 	 private String settingsIconPath ="chess.res/icons/settingsIcon.png";
 	 
@@ -56,8 +56,8 @@ public class MenuScreen {
 		b1 = new Button("  Play", 150, 900, 50, 135, Color.WHITE, Color.BLACK);
 		b1.setIcon(new ImageIcon(playIconPath));
 		
-		 b2 = new Button("Puzzles", 150, 1080, 50, 170, Color.WHITE, Color.BLACK);
-		b2.setIcon(new ImageIcon(achievementIconPath));
+		 b2 = new Button(" Puzzles", 150, 1080, 50, 170, Color.WHITE, Color.BLACK);
+		b2.setIcon(new ImageIcon(puzzleIconPath));
 		
 		 b4 = new Button("  Settings", 250, 880, 50, 135, Color.WHITE, Color.BLACK);
 		b4.setIcon(new ImageIcon(settingsIconPath));

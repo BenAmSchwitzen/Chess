@@ -31,6 +31,9 @@ public class Match {
 	
 	public boolean isMatchRunning = true;
 	
+	private boolean hasBeenCheckSound = false;
+	private boolean willThereBeTakeSound = false;
+	
 	public Match(Board board) {
 		
 		this.board = board;
@@ -80,6 +83,7 @@ public class Match {
 	public void update(Mouse mouse) {
 		
 		this.progress.updateTimer();
+	
 	
 		
 		if(this.progress.getTurn() == 'w' && this.isMatchRunning) {
@@ -186,22 +190,50 @@ public class Match {
 				   
 				   previousPlayManager.addNewPlay(prevPlay);
 				
+				   
+				   if(board.checker.rochadePiece== null && board.checker.enPassantPiece  == null) {
+						
+						board.selectedPiece.y = board.selectedPiece.drawY;
+						board.selectedPiece.x = board.selectedPiece.drawX;
+						
+						
+						
+						}
+				   
+				  
+				  
 				
-				if(board.getPiece(board.selectedPiece.drawY, board.selectedPiece.drawX)!=null && board.checker.rochadePiece==null) { // piece gets Removed
+				
+				
+				    
+				   if(board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece)) {
+					   
+					   if(!SoundManager.soundAlreadyPlayed)
+						   willThereBeTakeSound = true;
+ 				   
+				   }
+
 					
-					board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX);
-					
-					  if(!SoundManager.soundAlreadyPlayed)
-					SoundManager.setSound(3); // Takes piece
-					SoundManager.soundAlreadyPlayed = true;
-				}
+				   
+				   if(board.checker.isKingCheck('b') || board.checker.isKingCheck('w')) {
+						
+						SoundManager.setSound(5);
+						hasBeenCheckSound =  true;
+						SoundManager.soundAlreadyPlayed = true;
+					}
+				  
+				  
 		
-				if(board.checker.rochadePiece== null && board.checker.enPassantPiece  == null) {
+				   
+				  if(willThereBeTakeSound && !hasBeenCheckSound) {
+					  SoundManager.setSound(3);
+			          SoundManager.soundAlreadyPlayed = true;
+				  }
+				 
+				 
+					
+				 
 				
-				board.selectedPiece.y = board.selectedPiece.drawY;
-				board.selectedPiece.x = board.selectedPiece.drawX;
-				
-				}
 				
 				if(board.checker.enPassantPiece!=null) {
 					
@@ -209,7 +241,7 @@ public class Match {
 					
 				}
 				
-				 if(!SoundManager.soundAlreadyPlayed)
+				 if(!SoundManager.soundAlreadyPlayed && !hasBeenCheckSound)
 					SoundManager.setSound(1);
 				 SoundManager.soundAlreadyPlayed = true;
 				
@@ -229,7 +261,7 @@ public class Match {
 					
 					this.previousPlayManager.currentPlay = this.previousPlayManager.plays.get(this.previousPlayManager.plays.size()-1);
 
-					SoundManager.setSound(0);
+					SoundManager.setSound(4);
 					
 					isMatchRunning = false;
 					
@@ -267,9 +299,12 @@ public class Match {
 			board.selectedPiece = null;
 			
 			SoundManager.soundAlreadyPlayed = false;
+		    hasBeenCheckSound = false;
+			willThereBeTakeSound = false;
+			
+			
 			
 		}
-		
 		
 	}
 	

@@ -74,6 +74,19 @@ public class Checker {
 				}
 			  
 			  
+			  public boolean isKingCheck(char color) {
+				  
+				  Piece king = getKing(color);
+				  
+				return  board.pieces.stream().filter(m -> m.color != king.color && m.canMove(king.y, king.x) && !isBlocked(m, king.y,king.x)).toList().size()>0;
+				  
+						
+				  
+				  
+			  }
+			  
+			  
+			  
 			  public void checkBauerDoubleMove(Piece piece,int y,int x) {
 				  
 				  if(!(piece instanceof Bauer)) {
@@ -123,7 +136,7 @@ public class Checker {
 				 
 			 
 			 piece.y = oldPieceY;
-       		piece.x = oldPieceX;
+             piece.x = oldPieceX;
 			 
               if(attacker == null)return false;
 		 
