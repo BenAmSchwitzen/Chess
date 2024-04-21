@@ -98,6 +98,8 @@ public class MenuScreen {
 
         	  clearGameComponents();
         	
+        	  Game.getInstance().puzzleManager.init();
+        	  
         	  Game.getInstance().puzzleManager.setUpPiecesForPuzzle(0);
         	  
         	  game.gameState = GameState.INPUZZLE;

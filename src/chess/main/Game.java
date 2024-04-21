@@ -152,6 +152,9 @@ public class Game extends JPanel implements Runnable {
 		g2.setColor(Color.getHSBColor(100, 200, 200));
 		g2.fillRect(800, 0, 500, 800);
 		
+		
+		this.puzzleManager.onDrawEvent(g2);
+		
 	}
 		
 		

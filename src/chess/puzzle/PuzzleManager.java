@@ -1,6 +1,10 @@
 package chess.puzzle;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +13,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
 
 import chess.board.Board;
 import chess.controller.Mouse;
@@ -22,6 +28,8 @@ import chess.piece.Piece;
 import chess.piece.Springer;
 import chess.piece.Turm;
 import chess.sound.SoundManager;
+import chess.util.Button;
+import chess.util.FontManager;
 
 public class PuzzleManager {
 
@@ -41,7 +49,26 @@ public class PuzzleManager {
 	private int amountOfPuzzles = 0;
 	
 	private boolean computerTurn = false;
+	
+	
 	private int computerTimer = 0;
+	
+	
+	private int newPuzzleTimer = 0;
+	private boolean waitForNextPuzzle = false;
+	
+	
+	private Button leaveButton;
+	
+	private int score = 0;
+    private boolean updateScore = false;
+    private int nextScore = 0;
+	
+	private int mistakes = 0;
+	private int correct = 0;
+	private int totalMoves = 0;
+	
+	private double accuracy = 0;
 	
 	public PuzzleManager(Board board) {
 		
@@ -53,7 +80,7 @@ public class PuzzleManager {
         
         setUpPiecesForPuzzle(0);
 		
-		
+	
 		
 	}
 	
@@ -78,6 +105,10 @@ public class PuzzleManager {
 	}
 	
 	public void drawCurrentPuzzlePieces(Graphics2D g2) {
+		
+		
+		//g2.setColor(new Color(50, 0, 0,tier));
+		//g2.fillRect(0, 0, Game.getInstance().getWidth(), Game.getInstance().getHeight());
 		
 		board.drawPieces(g2);
 		board.drawMovingPiece(g2);
@@ -184,8 +215,34 @@ public class PuzzleManager {
     public void update(Mouse mouse) {
     	
     	
+    	if(updateScore && this.score < nextScore) {
+    	
+    		this.score+=10;
+    		
+    	}else {
+    		
+    		
+    		
+    		this.updateScore = false;
+    		this.nextScore = 0;
+    		
+    		
+    	}
+    	
     	
     	if(currentPuzzleTurn>= getSinglePuzzleLength(currentPuzzle) && amountOfPuzzles > currentPuzzle) {
+    		
+    		
+    		if(!waitForNextPuzzle)SoundManager.setSound(4);
+    		
+    		this.waitForNextPuzzle = true;
+    		
+    	    this.newPuzzleTimer += waitForNextPuzzle ? 1 : 0;
+    	    
+    		
+    	}
+    	
+    	if(waitForNextPuzzle && newPuzzleTimer >= 80) {
     		
     		
     		currentPuzzleTurn = 0;
@@ -197,7 +254,11 @@ public class PuzzleManager {
     		if(pieces.size() > currentPuzzle)
     		setUpPiecesForPuzzle(currentPuzzle);
     		
-    		SoundManager.setSound(4);
+    		this.nextScore = (int) (Math.random()*3180)+ this.score;
+    		this.updateScore = true;
+    		
+    		waitForNextPuzzle = false;
+    		newPuzzleTimer = 0;
     		
     	}
     	
@@ -211,7 +272,8 @@ public class PuzzleManager {
     		
     		SoundManager.setSound(0);
     		Game.getInstance().gameState = GameState.INMENU;
-    		;
+    		
+    		this.onLeave();
     		
     		Game.getInstance().add(Game.getInstance().menuScreen.b1);
 			Game.getInstance().add(Game.getInstance().menuScreen.b2);
@@ -225,6 +287,8 @@ public class PuzzleManager {
        
         //-------------------------------------------------
         
+        if(waitForNextPuzzle)return;
+       
     	
        String nextMove = getMoveFromPuzzle(currentPuzzle, currentPuzzleTurn);  //  (0.0)->(1.0)
        
@@ -295,15 +359,33 @@ public class PuzzleManager {
     	
 			computerTurn = true;
 			
+			this.correct++;
+			
 			
 			}else {
+				
+				if(board.selectedPiece.drawY!= board.selectedPiece.y || board.selectedPiece.drawX != board.selectedPiece.x) 
+					this.mistakes++;
 				
 			
 				board.selectedPiece.drawY = board.selectedPiece.y;
 				board.selectedPiece.drawX = board.selectedPiece.x;
 				
+				
+				
 			}
 			
+			totalMoves++;
+			
+			if(this.correct == 0) {
+			this.accuracy = 100;
+    	
+		}else {
+			
+			this.accuracy = (this.correct/this.totalMoves );
+			
+		}
+    	 
 			
 			board.selectedPiece = null;
 			
@@ -312,11 +394,11 @@ public class PuzzleManager {
     	
     
 			
-    
+    }
  
 	
 
-    }
+    
     
     
     
@@ -378,16 +460,102 @@ public class PuzzleManager {
     
     
     
+    public void init() {
+	
+    	leaveButton = new Button(" Leave", 600, 1100, 50, 130,Color.white, Color.BLACK);
+    	leaveButton.setIcon(new ImageIcon("chess.res/icons/quitIcon.png"));
+    	
+    	this.setButtonAction();
+    	
+    	Game.getInstance().add(leaveButton);
+    	
+    	
+    }
+    
+    public void onLeave() {
+    	
+    	Game.getInstance().remove(leaveButton);
+    	leaveButton = null;
+    	
+    	this.correct = 0;
+    	this.mistakes = 0;
+    	this.score = 0;
+    	this.totalMoves = 0;
+    	this.accuracy = 0;
+    	
+    	this.updateScore = false;
+    	this.nextScore = 0;
+    	
+    }
+    
+    
+   public void setButtonAction() {
+	   
+	   if(leaveButton==null)return;
+	   
+	   leaveButton.addActionListener(e -> {
+		   
+		   
+			this.currentPuzzle = 0;
+    		this.currentPuzzleTurn = 0;
+    		this.computerTurn = false;
+    		this.computerTimer = 0;
+    		
+    		SoundManager.setSound(0);
+    		Game.getInstance().gameState = GameState.INMENU;
+    		
+    		onLeave();
+    		
+    		Game.getInstance().add(Game.getInstance().menuScreen.b1);
+			Game.getInstance().add(Game.getInstance().menuScreen.b2);
+			Game.getInstance().add(Game.getInstance().menuScreen.b3);
+			Game.getInstance().add(Game.getInstance().menuScreen.b4);
+		   
+		   
+	   });
+	 
+	   
+	   
+	   
+   }
     
     
     
-    
-    
-    
-    
-    
-    
-    
+    public void onDrawEvent(Graphics2D g2) {
+    	
+    	g2.setFont(FontManager.getFont("Arial Bold",Font.BOLD,18));
+    	g2.setColor(Color.ORANGE);
+    	
+    	g2.fillRect(1100,300, 120, 10);
+    	g2.fillRect(900,300, 120, 10);
+    	
+    	g2.fillRect(1000,450, 120, 10);
+    	
+    	g2.setColor(Color.WHITE);
+    	
+    	g2.drawString("Score", 1130, 350);
+    	
+    	if(updateScore) {
+    		g2.setColor(Color.ORANGE);
+    	}else {
+    		g2.setColor(Color.WHITE);
+    	}
+    	
+    	
+    	g2.drawString(Integer.toString(score), 1145, 280);
+    	
+    	g2.setColor(Color.WHITE);
+    	
+    	g2.drawString("Score", 1130, 350);
+    	
+    	g2.drawString("Mistakes", 920, 350);
+    	g2.drawString(Integer.toString(mistakes), 955, 280);
+    	
+    	g2.drawString("Accuracy", 1020, 500);
+    	g2.drawString("0.0", 1045, 430);
+    	
+    	
+    }
     
     
     

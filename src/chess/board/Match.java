@@ -166,7 +166,7 @@ public class Match {
 			
 			
 			
-			if(board.checker.isMoveValid(board.selectedPiece,board.selectedPiece.drawY,board.selectedPiece.drawX) 
+			if(board.checker.isMoveValid(board.selectedPiece,board.selectedPiece.drawY,board.selectedPiece.drawX)
 				
 				|| board.checker.checkRochade(board.selectedPiece, board.selectedPiece.drawY, board.selectedPiece.drawX)) {
 				
@@ -378,7 +378,7 @@ public class Match {
         	
         	
         	
-        	board.pieces.add(new Dame('b', 7, 0));
+        	board.pieces.add(new Turm('b', 7, 0));
         	board.pieces.add(new Bauer('w', 6, 5));
         	board.pieces.add(new Bauer('w', 6, 3));
         	board.pieces.add(new König('w', 7, 4));
@@ -387,21 +387,21 @@ public class Match {
         	
         	
         	board.pieces.add(new Turm('w', 7, 7));
-        	board.pieces.add(new Turm('b', 0, 0));
+        	board.pieces.add(new Turm('b', 1, 4));
         	board.pieces.add(new Turm('b', 1, 7));
         	
-        	
+        	board.pieces.add(new Springer('b', 4, 1));
         	
         	board.pieces.add(new Bauer('w', 7, 6));
         	board.pieces.add(new Springer('b', 0, 1));
         	board.pieces.add(new Springer('b', 0, 6));
         	
-        	board.pieces.add(new Läufer('w', 7, 5));
+        	board.pieces.add(new Läufer('w', 6, 4));
            
             board.pieces.add(new Läufer('b', 0, 5));
         	board.pieces.add(new Läufer('b', 0, 2));
         	
-        	
+        	board.pieces.add(new Bauer('w', 7, 5));
         	
         	
         	

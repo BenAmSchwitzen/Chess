@@ -78,7 +78,7 @@ public class Checker {
 				  
 				  Piece king = getKing(color);
 				  
-				return  board.pieces.stream().filter(m -> m.color != king.color && m.canMove(king.y, king.x) && !isBlocked(m, king.y,king.x)).toList().size()>0;
+				return  board.pieces.stream().filter(m -> m.color != king.color && m.canMove(king.y, king.x) && !isBlocked(m, king.y,king.x) || bauerAdditionalMovement(m, king.y, king.x)).toList().size()>0;
 				  
 						
 				  
@@ -466,7 +466,7 @@ public class Checker {
 				  // From where is the attack (blocking)
 				  
 				  
-				  return !kingCanMove && !canCheckBeBlocked && !canAttackingPieceBeTaken;
+				  return !kingCanMove && !canCheckBeBlocked  && !canAttackingPieceBeTaken;
 			  }
 			  
 			  
@@ -547,8 +547,8 @@ public class Checker {
 				
 				for(Piece piece : kingPieces) {
 					
-					if((piece.canMove(attackingPiece.y, attackingPiece.x)||board.checker.bauerAdditionalMovement(piece, attackingPiece.y, attackingPiece.x))
-	                       && !board.checker.isBlocked(piece, attackingPiece.y,attackingPiece.x)) {
+					if(piece.canMove(attackingPiece.y, attackingPiece.x)||board.checker.bauerAdditionalMovement(piece, attackingPiece.y, attackingPiece.x)
+	                       && !board.checker.isBlocked(piece, attackingPiece.y,attackingPiece.x) && !isCheckAfterMove(piece, attackingPiece.y,attackingPiece.x)) {
 						
 						
 						return true;
@@ -559,11 +559,13 @@ public class Checker {
 				
 				return false;
 			}
+			
+			
 	
 			public boolean canPieceAttackAttackingPiece(Piece piece,Piece attackingPiece,int y,int x) {
 				
 				
-				return   y == attackingPiece.y && x == attackingPiece.x;
+				return y == attackingPiece.y && x == attackingPiece.x;
 				
 			}
 			
