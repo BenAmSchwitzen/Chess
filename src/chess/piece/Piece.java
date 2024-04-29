@@ -1,6 +1,7 @@
 package chess.piece;
 
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -36,6 +37,7 @@ public abstract class Piece {
 	
 	
 	public boolean drawPiece = true;
+	public boolean considerPiece = true;
 	
 	//___________________________________________________
 	
@@ -53,7 +55,7 @@ public abstract class Piece {
 		try {this.image = ImageIO.read(getClass().getResourceAsStream(this.color == 'w' ? this.whiteImage:this.blackImage));
 		} catch (IOException e) {e.printStackTrace();}
 		
-		
+		this.scaleImage(image);
 		
 		this.y = y;
 		this.x = x;
@@ -71,7 +73,14 @@ public abstract class Piece {
 	
 	public abstract boolean canMove(int y,int x);
 		
-	
+	private void scaleImage(BufferedImage image) {
+		
+		BufferedImage scaledImage = new BufferedImage(100, 100, image.getType());
+		Graphics2D g2 = scaledImage.createGraphics();
+		g2.drawImage(image,0,0,100,100, null);
+		image = scaledImage;
+		
+	}
 
 	
 	

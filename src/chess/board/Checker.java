@@ -1,6 +1,7 @@
 package chess.board;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import chess.piece.Bauer;
 import chess.piece.Dame;
@@ -78,9 +79,9 @@ public class Checker {
 				  
 				  Piece king = getKing(color);
 				  
-				return  board.pieces.stream().filter(m -> m.color != king.color && m.canMove(king.y, king.x) && !isBlocked(m, king.y,king.x) || bauerAdditionalMovement(m, king.y, king.x)).toList().size()>0;
+				return  board.pieces.stream().anyMatch(p ->  p.color != king.color && (p.canMove(king.y,king.x) || bauerAdditionalMovement(p,king.y, king.x)) && !isBlocked(p,king.y,king.x));
 				  
-						
+					
 				  
 				  
 			  }
@@ -102,12 +103,61 @@ public class Checker {
 				  }
 				  
 			  }
+			  
+			  
+			  public boolean isCheckAfterMove(Piece piece,int y,int x) {
+				  
+				  boolean isCheckAfter = false;
+				  ArrayList<Piece>  attacker = new ArrayList<>();
+				  
+				  Piece king = this.getKing(piece.color);
+                
+				  int oldPieceY = piece.y;
+				  int oldPieceX = piece.x;
+				  
+				  Piece cP = board.getPiece(y,x);
+				  
+				  piece.y = y;
+				  piece.x = x;
+				  
+				
+				  
+				  if(cP!=null)
+				  cP.considerPiece = false;
+				  
+				  
+				  
+				  for(Piece p : board.pieces) {
+					  
+					  if(p.color!=king.color && !isBlocked(p, king.y, king.x) && (p.canMove(king.y, king.x) || bauerAdditionalMovement(p,king.y,king.x)) && p.considerPiece) {
+
+						  if(cP!=null)
+						  cP.considerPiece = true;
+						  piece.y = oldPieceY;
+						  piece.x = oldPieceX;
+						 return true;
+						  
+					  }
+					  
+					  
+				  }
+				  
+
+				  
+				  piece.y = oldPieceY;
+				  piece.x = oldPieceX;
+				  if(cP!=null)
+				  cP.considerPiece = true;
+				  
+				  return false;
+			  }
+			  
 		  
 			  /**
 				 * checks if the <b>specific piece</b> can enter a <b>field y,x</b>
 				 * without causing being checked
 			     */	
-			  public boolean isCheckAfterMove(Piece piece,int y,int x) {
+			  public boolean isCheckAfterMoveFake(Piece piece,int y,int x) {
 				
 				  boolean isCheckAfter = false;
 				  
@@ -196,6 +246,7 @@ public class Checker {
 			   */
 			  public void swapBauerToQueen(Piece piece) {
 				  
+				  
 
 				  if(piece instanceof Bauer) {
 					  
@@ -230,6 +281,8 @@ public class Checker {
 			  
 			  public void finalEnPassant(Piece piece,int y,int x) {
 				  
+				  if(enPassantPiece==null)return;
+				  
 				  if( piece.color == 'w') {
 					  
 					
@@ -252,11 +305,12 @@ public class Checker {
 				  
 			  }
 			  
-			  public void doEnpassant(Piece piece,int y,int x) {
+			  public void getEnPassantPiece(Piece piece,int y,int x) {
 				  
 				  if(enPassant(piece,y, x)) {
 					  
 					  this.enPassantPiece = board.getPiece(y, x);
+					 
 					  
 				  }else {
 					  this.enPassantPiece = null;
@@ -307,7 +361,66 @@ public class Checker {
 			  }
 			  
 			  
-		public boolean checkRochade(Piece piece,int y,int x) {
+			  public boolean checkRochade(Piece piece,int y,int x) {
+				  
+				  this.rochadePiece = null;
+				  
+				  if(piece instanceof König && board.getPiece(y, x)!=null && board.getPiece(y, x).color == piece.color && board.getPiece(y, x) instanceof Turm) {
+					  
+					  if(!piece.hasMoved && !board.getPiece(y, x).hasMoved) {
+						  
+						  if(!isAttacked((König) piece)  && !isAttacked(board.getPiece(y, x))) {
+						  
+						  if(piece.x<x) {
+								
+								for(int i = piece.x+1;i<x;i++) {
+									if(board.checker.isFeldAttackedByEnemy(piece.y, i, piece.color)) {
+										return false;
+										
+									}
+									
+								}
+								
+							}else if(piece.x>x) {
+								
+								for(int i = piece.x-1;i>x;i--) {
+									if(board.checker.isFeldAttackedByEnemy(piece.y, i, piece.color)) {
+										return false;
+										
+									}
+									
+								}
+								
+							}
+							if(board.getPiece(y, x).x == piece.drawX &&  board.getPiece(y, x).y == piece.drawY)
+							this.rochadePiece = board.getPiece(y, x);
+							
+							return true;
+							
+						}
+					  }
+				  }
+					
+		
+				
+				 return false;
+				  
+				  }
+			  
+			 public boolean isAttacked(Piece king) {
+				 
+				 for(Piece piece : board.pieces) {
+					 
+					 if(piece.color != king.color && !isBlocked(piece, king.y, king.x) && piece.canMove(king.y, king.x)) {
+						 return true;
+					 }
+					 
+				 }
+				 
+				 return false;
+			 }
+			 
+		public boolean checkRochadeReal(Piece piece,int y,int x) {
 			
 		     this.rochadePiece = null;
 			
@@ -315,7 +428,7 @@ public class Checker {
 				
 				if(!piece.hasMoved && !board.getPiece(y, x).hasMoved) {
 				
-					if(!board.checker.isFeldAttackedByEnemy(board.getPiece(y, x).y, board.getPiece(y, x).x, piece.color) && !board.checker.isFeldAttackedByEnemy(piece.y,piece.x, piece.color) && !board.checker.isBlocked(piece, y, x)) {
+					if(!board.checker.isFeldAttackedByEnemy(board.getPiece(y, x).y, board.getPiece(y, x).x, piece.color) && !board.checker.isFeldAttackedByEnemy(piece.y,piece.x,'b') && !board.checker.isBlocked(piece, y, x)) {
 						
 						// Wird dazwischen angegriffen
 						

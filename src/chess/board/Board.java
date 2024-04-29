@@ -20,6 +20,9 @@ public class Board {
 	public int feldSize;
 	private int anzahlFelder;
 	
+	private Color white = new Color(238, 238, 210);
+	private Color black = new Color(118, 150, 86);
+	
 //_______________________________________________
 	
 
@@ -48,7 +51,7 @@ public class Board {
 	
 	Path2D.Double p = new Path2D.Double();
 	
-	private ReachableFeldDrawer reachableFeldDrawer;
+	public ReachableFeldDrawer reachableFeldDrawer;
 	
 //___________________________________________
 	
@@ -84,7 +87,7 @@ public class Board {
 			
 			for(int j = 0;j<anzahlFelder;j++) {
 				
-				g2.setColor((i+j)%2 == 0 ? Color.WHITE : Color.LIGHT_GRAY);
+				g2.setColor((i+j)%2 == 0 ?  white : black );
 				
 				g2.fillRect(j*feldSize,i*feldSize, feldSize,feldSize);
 				

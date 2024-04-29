@@ -2,11 +2,15 @@ package chess.graphics;
 
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
+import java.util.ArrayList;
 
 import chess.board.Board;
 import chess.main.Game;
 import chess.piece.Piece;
+import chess.util.Vektor2D;
 
 
 
@@ -15,6 +19,14 @@ public class ReachableFeldDrawer {
 	public Board board;
 	
 	public Piece movingPieceOverThisPiece = null;
+	
+	public ArrayList<Vektor2D> arrows = new ArrayList<>();
+	public Vektor2D rVektor = null;
+	
+	public boolean markedOneFeld = false;
+	
+	
+	Path2D.Double p = new Path2D.Double();
 	
 	public ReachableFeldDrawer(Board board) {
 		
@@ -60,6 +72,39 @@ public class ReachableFeldDrawer {
 	
 		
 	}
+	
+	
+	public void addNewArrow(int startX,int startY,int endX,int endY) {
+		
+		arrows.add(new Vektor2D(startX, startY,endX,endY));
+		
+		
+	}
+	
+	
+	public void drawArrows(Graphics2D g2) {
+		
+		for(Vektor2D v : arrows) {
+			
+			g2.setColor(Color.BLACK);
+			if(v.startY<v.endY) {
+			g2.drawLine(v.startX*100+50, v.startY*100+100,v.endX*100+50,v.endY*100+50);
+			
+			}else {
+				g2.drawLine(v.startX*100+50, v.startY*100,v.endX*100+50,v.endY*100+50);
+			}
+		}
+		
+		
+	}
+		
+		public void clearArrows() {
+			
+			arrows.clear();
+			
+		}
+		
+	
 	
 	
 	public void makePiecesInvisible(Graphics2D g2) {
@@ -124,7 +169,7 @@ public class ReachableFeldDrawer {
 			
 			Piece king = board.checker.getKing(Game.getInstance().match.progress.getTurn());
 			
-			if(attackingPiece!=null && Game.getInstance().match.previousPlayManager.currentPlay == Game.getInstance().match.previousPlayManager.plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
+			if(attackingPiece!=null  && Game.getInstance().match.previousPlayManager.currentPlay == Game.getInstance().match.previousPlayManager.plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
 				
 				g2.setColor(Color.RED);
 				

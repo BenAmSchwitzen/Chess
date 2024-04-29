@@ -14,6 +14,7 @@ import chess.board.Match;
 import chess.controller.Mouse;
 import chess.gameSave.SaveGameManager;
 import chess.puzzle.PuzzleManager;
+import chess.settings.SettingsManager;
 
 
 @SuppressWarnings("serial")
@@ -32,9 +33,19 @@ public class Game extends JPanel implements Runnable {
 	
 	//_____ loop and FPS______________________________
 	
-	public double updateSpeed =144; // FPS
+	public double updateSpeed = 144; // FPS
 	private Thread gameThread; // The thread running the game
 	//_________________________________________________________
+	
+	
+	//_____ settings______________________________
+	public boolean sound = true;
+	public boolean boardgraphics = true;
+	public boolean arrows =  true;
+	public boolean randomPuzzles = true;
+		
+	//_________________________________________________________
+		
 	
 	
     public Mouse mouse = new Mouse();
@@ -47,6 +58,7 @@ public class Game extends JPanel implements Runnable {
 	
 	public PuzzleManager puzzleManager = new PuzzleManager(new Board());
 	
+	public SettingsManager settingsManager = new SettingsManager(this);
 	
 	public Game() {
 		
@@ -56,17 +68,15 @@ public class Game extends JPanel implements Runnable {
 		  this.setPreferredSize(new Dimension(this.windowWith, this.windowHeight));
 		  this.addMouseListener(mouse);
 		  this.addMouseMotionListener(mouse);
-		
-		  
-		
-		    
-		  
-		  
+
 		  gameThread = new Thread(this);
 		  gameThread.start();
 		
 		  
 	}
+	
+	
+	
 	
 	public static Game getInstance() {
 		
@@ -92,11 +102,13 @@ public class Game extends JPanel implements Runnable {
 		
 		this.match.drawBoard(g2);
 		this.match.drawBoardGraphics(g2);
-		this.match.drawPieces(g2); 
-		
-		this.match.previousPlayManager.drawPlayButtons(g2);
+ 		this.match.drawPieces(g2); 
+ 	
+	    this.match.previousPlayManager.drawPlayButtons(g2);
 		
 		this.match.drawMatchRelatedUI(g2);
+		
+		this.board.reachableFeldDrawer.drawArrows(g2);
 		
 		}
 		
@@ -154,6 +166,11 @@ public class Game extends JPanel implements Runnable {
 		
 		
 		this.puzzleManager.onDrawEvent(g2);
+		
+		
+	}else if(this.gameState == GameState.SETTINGS) {
+		
+		
 		
 	}
 		

@@ -98,7 +98,7 @@ public class MenuScreen {
 
         	  clearGameComponents();
         	
-        	  Game.getInstance().puzzleManager.init();
+        	  Game.getInstance().puzzleManager.initButtons();
         	  
         	  Game.getInstance().puzzleManager.setUpPiecesForPuzzle(0);
         	  
@@ -117,6 +117,21 @@ public class MenuScreen {
   		});
 		
 		
+          b4.addActionListener(a -> {
+        	  
+        	  clearGameComponents();
+        	  
+        	  game.settingsManager.addSettings();
+        	  game.settingsManager.addButtons();
+        	  
+        	  game.gameState = GameState.SETTINGS;
+        	  SoundManager.setSound(0);
+        	  
+        	
+        	  
+        	  
+          });
+          
 	}
 	
     public void drawMenuPieces(Graphics2D g2) {

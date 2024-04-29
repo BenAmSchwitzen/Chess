@@ -44,6 +44,14 @@ public class Button extends JButton {
 		
 	}
 	
+	public Button() {
+		
+		this.setBackground(null);
+		
+		this.setFocusable(false);
+		this.setBorder(null);
+		
+	}
 
 	
 	

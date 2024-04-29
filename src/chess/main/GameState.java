@@ -6,7 +6,8 @@ public enum GameState {
 	INMENU,
 	onWinningScreen,
 	INWATCH,
-	INPUZZLE
+	INPUZZLE,
+	SETTINGS
 	
 	
 	

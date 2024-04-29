@@ -19,6 +19,7 @@ import chess.piece.Turm;
 import chess.previousplay.PreviousPlay;
 import chess.previousplay.PreviousPlayManager;
 import chess.sound.SoundManager;
+import chess.util.Vektor2D;
 
 
 public class Match {
@@ -33,6 +34,8 @@ public class Match {
 	
 	private boolean hasBeenCheckSound = false;
 	private boolean willThereBeTakeSound = false;
+	
+	private int queena = 0;
 	
 	public Match(Board board) {
 		
@@ -67,11 +70,19 @@ public class Match {
 	
 	public void drawBoardGraphics(Graphics2D g2) {
 		
+		if(Game.getInstance().boardgraphics)
 		board.drawGraphics(g2);
+		
+		if(Game.getInstance().arrows)
+		board.reachableFeldDrawer.drawArrows(g2);
+		
 		
 	}
 	
 	public void drawPieces(Graphics2D g2) { // Zeichnet alle Pieces
+		
+		
+		
 		
 		board.drawPieces(g2);
 		
@@ -80,13 +91,112 @@ public class Match {
 		
 	}
 	
-	public void update(Mouse mouse) {
+	public void resetInvalidMove(Piece piece) {
 		
-		this.progress.updateTimer();
+		
+		piece.drawY = piece.y;
+		piece.drawX = piece.x;
+		
+	}
+	
+	private void resetTurnChangesAndValues() {
+		
+		board.checker.rochadePiece = null;
+		board.selectedPiece = null;
+		
+		SoundManager.soundAlreadyPlayed = false;
+	    hasBeenCheckSound = false;
+		willThereBeTakeSound = false;
+		
+	}
+	
+	private void updateValuesAfterTurn(Piece piece) {
+		
+		piece.hasMoved = true;
+		piece.moveCounter++;
+		
+		board.checker.swapBauerToQueen(piece);
+		
+		this.progress.increaseTotalMoves();
+		
+		
+		
+		
+	}
+	
+	private void onCheckEvent() {
+		
+		if(this.board.checker.isKingCheck(this.progress.colorTurn == 'w' ? 'b':'w')) {
+			hasBeenCheckSound =  true;
+		
+			
+				SoundManager.setSound(5);
+			
+				SoundManager.soundAlreadyPlayed = true;
+			
+		}
+		
+	}
 	
 	
+	private void removePiece(Piece piece) {
 		
-		if(this.progress.getTurn() == 'w' && this.isMatchRunning) {
+		 if(board.pieces.removeIf(m -> m.y == piece.drawY && m.x == piece.drawX && m!=piece)) {
+			   
+			   if(!SoundManager.soundAlreadyPlayed)
+				   willThereBeTakeSound = true;
+		   
+		   }
+		
+	}
+	
+	private void drawArrows(Mouse mouse) {
+		
+		if(!Game.getInstance().arrows)return;
+		
+		 if(mouse.currentKey == 3 && mouse.pressed && !board.reachableFeldDrawer.markedOneFeld) {
+			 
+			 if(board.checker.squareIsPossible(mouse.mouseY/100, mouse.mouseX/100)) {
+				 
+				 board.reachableFeldDrawer.rVektor = new Vektor2D();
+				 board.reachableFeldDrawer.rVektor.startX = mouse.mouseX/100;
+				 board.reachableFeldDrawer.rVektor.startY = mouse.mouseY/100;
+				 board.reachableFeldDrawer.markedOneFeld = true;
+				 
+			 }
+
+			 
+		 } else {
+			 
+			 if(board.checker.squareIsPossible(mouse.mouseY/100, mouse.mouseX/100) &&  board.reachableFeldDrawer.rVektor!=null && mouse.currentKey!=3 && board.reachableFeldDrawer.markedOneFeld) {
+				 
+				 board.reachableFeldDrawer.rVektor.endX = mouse.mouseX/100;
+				 board.reachableFeldDrawer.rVektor.endY = mouse.mouseY/100;
+				 
+				
+				if(board.reachableFeldDrawer.rVektor.startX !=board.reachableFeldDrawer.rVektor.endX || board.reachableFeldDrawer.rVektor.startY!=board.reachableFeldDrawer.rVektor.endY )
+				 board.reachableFeldDrawer.addNewArrow( board.reachableFeldDrawer.rVektor.startX,  board.reachableFeldDrawer.rVektor.startY,  board.reachableFeldDrawer.rVektor.endX,  board.reachableFeldDrawer.rVektor.endY);
+				 
+				
+				 
+				 board.reachableFeldDrawer.rVektor = null;
+				 this.board.reachableFeldDrawer.markedOneFeld = false;
+				 mouse.currentKey = -99;
+				 
+			 }
+			 
+			 
+			
+		 }
+			
+		
+	}
+	
+	
+	private void checkTimerOfWhite() {
+		
+		
+     if(this.progress.getTurn() == 'w' && this.isMatchRunning) {
 			
 			if(this.progress.timerWhite.min == 0 && this.progress.timerWhite.sec == 0) {
 				
@@ -100,11 +210,16 @@ public class Match {
 				
 				this.previousPlayManager.currentPlay = this.previousPlayManager.plays.get(this.previousPlayManager.plays.size()-1);
 				this.isMatchRunning = false;
+				SoundManager.setSound(4);
 				Game.getInstance().gameState = GameState.onWinningScreen;
 				
 			}
 			
 		}
+	}
+	
+	private void checkTimerOfBlack()  {
+		
 		
 		if(this.progress.getTurn() == 'b' && this.isMatchRunning) {
 			
@@ -113,6 +228,7 @@ public class Match {
 				
 				this.previousPlayManager.currentPlay = this.previousPlayManager.plays.get(this.previousPlayManager.plays.size()-1);
 				this.isMatchRunning = false;
+				SoundManager.setSound(4);
 				Game.getInstance().gameState = GameState.onWinningScreen;
 				
 			}
@@ -121,40 +237,106 @@ public class Match {
 			
 		}
 		
+	}
+	
+	
+	private void moveAnimationPiece(Mouse mouse) {
+		
+		if(board.selectedPiece!=null) {
+			
+			this.doPieceMovementAnimation(mouse);
+	
+			if(board.checker.mouseOutOfFeld(mouse.mouseY, mouse.mouseX))  {
+				
+				
+				board.selectedPiece.drawY = board.selectedPiece.y;
+				board.selectedPiece.drawX = board.selectedPiece.x;
+				
+				board.selectedPiece = null;
+				
+			}
+		
+		}
+		
+	}
+	
+	private void setUpPreviousPlay(PreviousPlay play,Piece piece) {
 		
 		
-		if(mouse.pressed && Game.getInstance().gameState == GameState.INMATCH) {
 		
+		 if(board.checker.rochadePiece!=null) {
+			   
+			   play.button.setText("k-T");
+			   play.button.setBackground(Color.WHITE);
+			   play.isRochade = true;
+			   if(!SoundManager.soundAlreadyPlayed)
+			   SoundManager.setSound(2);
+			   SoundManager.soundAlreadyPlayed = true;
+			   
+		   }
+		   
+		  
+		   play.savePieces(this.board.pieces); 
+		    
+		   previousPlayManager.addNewPlay(play); // put to end
+		
+	}
+	
+	
+	private boolean isThisMoveValid(Piece piece) {
+		
+	return	board.checker.isMoveValid(piece,piece.drawY,piece.drawX)
+		
+		|| board.checker.checkRochade(piece,piece.drawY, piece.drawX);
+		
+	}
+	
+	
+	private void mouseCheckForPiece(Mouse mouse) {
+		
+		
+
+		
+			
+			for(Piece piece : board.pieces) {
+				
+                  if(piece.drawY == mouse.mouseY/board.feldSize && piece.drawX == mouse.mouseX/board.feldSize  && progress.getTurn() == piece.color) {
+					
+                	 
+					this.board.selectedPiece = piece;  }
+					
+			}
+			
+
+		
+	}
+	
+	public void update(Mouse mouse) {
+		
+		
+		
+		
+		this.progress.updateTimer();
+	
+	    this.checkTimerOfWhite();
+	    
+	    this.checkTimerOfBlack();
+		
+	    this.drawArrows(mouse);
+		
+	   
+		
+		if(mouse.pressed && mouse.currentKey == 1 && Game.getInstance().gameState == GameState.INMATCH) {
+		
+			this.board.reachableFeldDrawer.clearArrows();
+			
 			
 			if(board.selectedPiece == null) {
 				
-				for(Piece piece : board.pieces) {
-					
-	                  if(piece.drawY == mouse.mouseY/board.feldSize && piece.drawX == mouse.mouseX/board.feldSize  && progress.getTurn() == piece.color) {
-						
-	                	 
-						this.board.selectedPiece = piece;  }
-						
+				mouseCheckForPiece(mouse);
 
 				
-				}
-		
-				
-			}else if(board.selectedPiece!=null) {
-				
-				this.doPieceMovementAnimation(mouse);
-		
-				if(board.checker.mouseOutOfFeld(mouse.mouseY, mouse.mouseX))  {
-					
-					
-					board.selectedPiece.drawY = board.selectedPiece.y;
-					board.selectedPiece.drawX = board.selectedPiece.x;
-					
-					board.selectedPiece = null;
-					
-				}
-			
-			}
+			}else moveAnimationPiece(mouse);
 			
 				
 		} else {
@@ -166,29 +348,26 @@ public class Match {
 			
 			
 			
-			if(board.checker.isMoveValid(board.selectedPiece,board.selectedPiece.drawY,board.selectedPiece.drawX)
+			if(isThisMoveValid(board.selectedPiece)) {
 				
-				|| board.checker.checkRochade(board.selectedPiece, board.selectedPiece.drawY, board.selectedPiece.drawX)) {
+				
+
+				   PreviousPlay prevPlay = new PreviousPlay(board.selectedPiece, board.getPiece(board.selectedPiece.drawY, board.selectedPiece.drawX));
 				
 				   this.board.checker.checkBauerDoubleMove(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX);
-
+ 
+				   
 				   board.checker.doRochade(board.selectedPiece);
-				   board.checker.doEnpassant(board.selectedPiece, board.selectedPiece.drawY, board.selectedPiece.drawX);
+				   board.checker.getEnPassantPiece(board.selectedPiece, board.selectedPiece.drawY, board.selectedPiece.drawX);
 				
-				   PreviousPlay prevPlay = new PreviousPlay(board.selectedPiece, board.getPiece(board.selectedPiece.drawY, board.selectedPiece.drawX));
+				  
 				   
-				   if(board.checker.rochadePiece!=null) {
-					   
-					   prevPlay.button.setText("k-T");
-					   prevPlay.button.setBackground(Color.WHITE);
-					   
-					   if(!SoundManager.soundAlreadyPlayed)
-					   SoundManager.setSound(2);
-					   SoundManager.soundAlreadyPlayed = true;
-					   
-				   }
+				 
 				   
-				   previousPlayManager.addNewPlay(prevPlay);
+                    removePiece(board.selectedPiece);
+				   
+                   
+				   
 				
 				   
 				   if(board.checker.rochadePiece== null && board.checker.enPassantPiece  == null) {
@@ -200,64 +379,44 @@ public class Match {
 						
 						}
 				   
-				  
-				  
-				
-				
-				
-				    
-				   if(board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece)) {
-					   
-					   if(!SoundManager.soundAlreadyPlayed)
-						   willThereBeTakeSound = true;
- 				   
-				   }
-
-					
 				   
-				   if(board.checker.isKingCheck('b') || board.checker.isKingCheck('w')) {
-						
-						SoundManager.setSound(5);
-						hasBeenCheckSound =  true;
-						SoundManager.soundAlreadyPlayed = true;
-					}
+				   setUpPreviousPlay(prevPlay,board.selectedPiece);
 				  
+				
+				
+				//here was remove piece
+				   
 				  
-		
+
+				   
+				 
+				  
+				   onCheckEvent();
+				   
+				   updateValuesAfterTurn(board.selectedPiece);
 				   
 				  if(willThereBeTakeSound && !hasBeenCheckSound) {
 					  SoundManager.setSound(3);
-			          SoundManager.soundAlreadyPlayed = true;
 				  }
 				 
 				 
-					
+	                board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX); // Das könnte mit arbeit in isMoveValid
+
+
+				
+				 if(!hasBeenCheckSound && !willThereBeTakeSound) {
+					SoundManager.setSound(1);}
+				
+				
+				
+				
+				
 				 
 				
 				
-				if(board.checker.enPassantPiece!=null) {
-					
-					board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX);
-					
-				}
-				
-				 if(!SoundManager.soundAlreadyPlayed && !hasBeenCheckSound)
-					SoundManager.setSound(1);
-				 SoundManager.soundAlreadyPlayed = true;
 				
 				
-				board.selectedPiece.hasMoved = true;
-				board.selectedPiece.moveCounter++;
-				
-				board.checker.swapBauerToQueen(board.selectedPiece);
-				
-				this.progress.increaseTotalMoves();
-				
-				prevPlay.savePieces(this.board.pieces);
-				
-				
-				
-				if(board.checker.isCheckMate(board.selectedPiece) || board.checker.cantDoAnyMoveAnymore('w') || board.checker.cantDoAnyMoveAnymore('b')) {
+	         if(board.checker.isCheckMate(board.selectedPiece) || board.checker.cantDoAnyMoveAnymore('w') || board.checker.cantDoAnyMoveAnymore('b')) {
 					
 					this.previousPlayManager.currentPlay = this.previousPlayManager.plays.get(this.previousPlayManager.plays.size()-1);
 
@@ -265,7 +424,7 @@ public class Match {
 					
 					isMatchRunning = false;
 					
-					
+					prevPlay.lastPlay = true;
 					
 					Game.getInstance().gameState = GameState.onWinningScreen;
                      
@@ -280,31 +439,34 @@ public class Match {
 					
 					isMatchRunning = false;
 					
+					prevPlay.lastPlay = true;
+					
 					Game.getInstance().gameState = GameState.onWinningScreen;
 					
 				}
+	         
+	         
 				
 				 this.progress.changeTurn();
 				
 			}else {
 				
-				board.selectedPiece.drawY = board.selectedPiece.y;
-				board.selectedPiece.drawX = board.selectedPiece.x;
+				resetInvalidMove(board.selectedPiece);
 				
-				
+				//Fail sound to add
 			}
 			
 			
-			board.checker.rochadePiece = null;
-			board.selectedPiece = null;
-			
-			SoundManager.soundAlreadyPlayed = false;
-		    hasBeenCheckSound = false;
-			willThereBeTakeSound = false;
+		    resetTurnChangesAndValues();
 			
 			
 			
 		}
+		
+		
+		
+		
+		
 		
 	}
 	
@@ -321,7 +483,7 @@ public class Match {
 	
 
         
-        private void setUpGame() {  // Makes the game ready to play
+        private void setUpGame1() {  // Makes the game ready to play
         	
         	board.pieces.clear();
         	
@@ -372,34 +534,26 @@ public class Match {
         }
 
         
-   private void setUpGame1() {  // Makes the game ready to play
+   private void setUpGame() {  // Makes the game ready to play
         	
         	board.pieces.clear();
         	
         	
         	
-        	board.pieces.add(new Turm('b', 7, 0));
-        	board.pieces.add(new Bauer('w', 6, 5));
-        	board.pieces.add(new Bauer('w', 6, 3));
+        
+        	
         	board.pieces.add(new König('w', 7, 4));
         	board.pieces.add(new Dame('w', 7, 3));
         	board.pieces.add(new König('b', 0, 4));
         	
         	
-        	board.pieces.add(new Turm('w', 7, 7));
-        	board.pieces.add(new Turm('b', 1, 4));
-        	board.pieces.add(new Turm('b', 1, 7));
+        
         	
-        	board.pieces.add(new Springer('b', 4, 1));
         	
-        	board.pieces.add(new Bauer('w', 7, 6));
-        	board.pieces.add(new Springer('b', 0, 1));
-        	board.pieces.add(new Springer('b', 0, 6));
         	
-        	board.pieces.add(new Läufer('w', 6, 4));
-           
-            board.pieces.add(new Läufer('b', 0, 5));
-        	board.pieces.add(new Läufer('b', 0, 2));
+        	board.pieces.add(new Bauer('w', 2, 6));
+        	
+        	;
         	
         	board.pieces.add(new Bauer('w', 7, 5));
         	

@@ -14,6 +14,12 @@ public class Vektor2D {
 		this.endY = endY;
 		
 	}
+	
+	public Vektor2D() {
+		
+		
+		
+	}
 
 
 	public int getStartX() {

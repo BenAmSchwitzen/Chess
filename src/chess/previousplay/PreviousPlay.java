@@ -27,6 +27,9 @@ public class PreviousPlay {
 	public int oldY,oldX;
 	public int newY,newX;
 	
+	public boolean lastPlay = false;
+	public boolean isRochade = false;
+	
 	public PreviousPlay(Piece movingPiece,Piece capturedPiece) {
 		
 		this.movingPiece = movingPiece;

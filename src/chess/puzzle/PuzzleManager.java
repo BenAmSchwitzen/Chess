@@ -49,7 +49,7 @@ public class PuzzleManager {
 	private int amountOfPuzzles = 0;
 	
 	private boolean computerTurn = false;
-	
+	private boolean playerHelp = false;
 	
 	private int computerTimer = 0;
 	
@@ -59,6 +59,8 @@ public class PuzzleManager {
 	
 	
 	private Button leaveButton;
+	private Button reloadButton;
+	private Button helpButton;
 	
 	private int score = 0;
     private boolean updateScore = false;
@@ -68,7 +70,8 @@ public class PuzzleManager {
 	private int correct = 0;
 	private int totalMoves = 0;
 	
-	private double accuracy = 0;
+	
+	
 	
 	public PuzzleManager(Board board) {
 		
@@ -187,6 +190,50 @@ public class PuzzleManager {
     }
     
     
+    public void setRandomPuzzleOrOrder() {
+    	
+    	if(!Game.getInstance().randomPuzzles) {
+			
+			
+            this.currentPuzzle++;
+    		
+    		
+		}else {
+			
+			int tempCurrent = currentPuzzle;
+			
+			this.currentPuzzle = (int) Math.floor(Math.random()*(amountOfPuzzles-1));
+			
+			while(tempCurrent== currentPuzzle) {
+				this.currentPuzzle = (int) Math.floor(Math.random()*(amountOfPuzzles-1));
+			}
+			
+		}
+    	
+    }
+    
+   private void updateScore() {
+	   
+	   
+	 
+	   
+	   if(updateScore && this.score < nextScore) {
+	    	
+   		this.score+=10;
+   		
+   	}else {
+   		
+   		
+   		
+   		this.updateScore = false;
+   		this.nextScore = 0;
+   		
+   		
+   	}
+	   
+   }
+    
+    
     private boolean doComputerTurn(int startY,int startX,int endY,int endX) {
     	
     	if(computerTimer>=60) {
@@ -200,9 +247,23 @@ public class PuzzleManager {
     	        piece.drawX = piece.x;
     	        computerTimer = 0;
     	        
-    	        board.pieces.removeIf(m -> m.y == piece.drawY && m.x == piece.drawX && m!=piece);
-    			
+    	       if(board.pieces.removeIf(m -> m.y == piece.drawY && m.x == piece.drawX && m!=piece)) {
+    	    	   
+    	    	   SoundManager.setSound(3);
+    	    	   
+    	       }else {
+    	    	   
+    	    	   SoundManager.setSound(1);
+    	    	   
+    	       }
+    	       
+    	        if(!playerHelp) {
     	        computerTurn = false;
+    	        }else {
+    	        	playerHelp = false;
+    	        	this.mistakes++;
+    	        	computerTurn = true;
+    	        }
     	        
     			currentPuzzleTurn++;
     			return true;
@@ -215,19 +276,7 @@ public class PuzzleManager {
     public void update(Mouse mouse) {
     	
     	
-    	if(updateScore && this.score < nextScore) {
-    	
-    		this.score+=10;
-    		
-    	}else {
-    		
-    		
-    		
-    		this.updateScore = false;
-    		this.nextScore = 0;
-    		
-    		
-    	}
+    	updateScore();
     	
     	
     	if(currentPuzzleTurn>= getSinglePuzzleLength(currentPuzzle) && amountOfPuzzles > currentPuzzle) {
@@ -246,7 +295,12 @@ public class PuzzleManager {
     		
     		
     		currentPuzzleTurn = 0;
-    		currentPuzzle++;
+    		
+    		
+    		setRandomPuzzleOrOrder();
+    		
+    		
+    		
     		
     		this.computerTurn = false;
     		this.computerTimer = 0;
@@ -307,15 +361,14 @@ public class PuzzleManager {
     	int endX = Integer.parseInt(endyx[1]);
     	
           
-    	if(computerTurn) {
+    	if(computerTurn || playerHelp) {
     		
     		
-    		if(doComputerTurn(startY, startX, endY, endX)) {
+    		
+    		if(!doComputerTurn(startY, startX, endY, endX)) {
     			
-    			SoundManager.setSound(1);
-    			
-    		}else {
     			this.computerTimer++;
+    			
     		}
     		
     	}
@@ -355,6 +408,8 @@ public class PuzzleManager {
 			
 			board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece);
 			
+			
+			
 			currentPuzzleTurn++;
     	
 			computerTurn = true;
@@ -377,14 +432,11 @@ public class PuzzleManager {
 			
 			totalMoves++;
 			
-			if(this.correct == 0) {
-			this.accuracy = 100;
+			
+			
     	
-		}else {
 			
-			this.accuracy = (this.correct/this.totalMoves );
-			
-		}
+		
     	 
 			
 			board.selectedPiece = null;
@@ -460,14 +512,22 @@ public class PuzzleManager {
     
     
     
-    public void init() {
+    public void initButtons() {
 	
     	leaveButton = new Button(" Leave", 600, 1100, 50, 130,Color.white, Color.BLACK);
     	leaveButton.setIcon(new ImageIcon("chess.res/icons/quitIcon.png"));
     	
+    	reloadButton = new Button(" Reload", 600, 900, 50, 130,Color.white, Color.BLACK);
+    	reloadButton.setIcon(new ImageIcon("chess.res/icons/quitIcon.png"));
+    	
+    	helpButton = new Button(" Help", 500,1000, 50, 130,Color.white, Color.BLACK);
+    	helpButton.setIcon(new ImageIcon("chess.res/icons/quitIcon.png"));
+    	
     	this.setButtonAction();
     	
     	Game.getInstance().add(leaveButton);
+    	Game.getInstance().add(reloadButton);
+    	Game.getInstance().add(helpButton);
     	
     	
     }
@@ -476,12 +536,16 @@ public class PuzzleManager {
     	
     	Game.getInstance().remove(leaveButton);
     	leaveButton = null;
+    	Game.getInstance().remove(reloadButton);
+    	reloadButton = null;
+    	Game.getInstance().remove(helpButton);
+    	helpButton = null;
     	
     	this.correct = 0;
     	this.mistakes = 0;
     	this.score = 0;
     	this.totalMoves = 0;
-    	this.accuracy = 0;
+    	
     	
     	this.updateScore = false;
     	this.nextScore = 0;
@@ -491,7 +555,7 @@ public class PuzzleManager {
     
    public void setButtonAction() {
 	   
-	   if(leaveButton==null)return;
+	   if(leaveButton==null || reloadButton==null)return;
 	   
 	   leaveButton.addActionListener(e -> {
 		   
@@ -514,7 +578,28 @@ public class PuzzleManager {
 		   
 	   });
 	 
+	   reloadButton.addActionListener(e -> {
+		   
+		   if(!waitForNextPuzzle) {
+		   setUpPiecesForPuzzle(currentPuzzle);
+		   this.computerTurn = false;
+		   this.computerTimer = 0;
+		   this.currentPuzzleTurn = 0; }
+		   
+		    
+		   
+	   });
 	   
+     helpButton.addActionListener(e -> {
+		   
+		   if(!waitForNextPuzzle) {
+		   
+			   this.playerHelp = true;
+			  ;}
+		   
+		    
+		   
+	   });
 	   
 	   
    }
@@ -529,8 +614,7 @@ public class PuzzleManager {
     	g2.fillRect(1100,300, 120, 10);
     	g2.fillRect(900,300, 120, 10);
     	
-    	g2.fillRect(1000,450, 120, 10);
-    	
+
     	g2.setColor(Color.WHITE);
     	
     	g2.drawString("Score", 1130, 350);
@@ -551,13 +635,10 @@ public class PuzzleManager {
     	g2.drawString("Mistakes", 920, 350);
     	g2.drawString(Integer.toString(mistakes), 955, 280);
     	
-    	g2.drawString("Accuracy", 1020, 500);
-    	g2.drawString("0.0", 1045, 430);
     	
     	
+    
     }
-    
-    
     
     
 }

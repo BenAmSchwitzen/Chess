@@ -3,10 +3,14 @@ package chess.controller;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.SwingUtilities;
+
 public class Mouse extends MouseAdapter {
 
 	public boolean pressed = false;
 	public boolean clicked = false;
+	
+	public int currentKey = -100;
 	
 	public int mouseY = 0;
 	public int mouseX = 0;
@@ -15,6 +19,9 @@ public class Mouse extends MouseAdapter {
 	public void mousePressed(MouseEvent e) {
 		
 		this.pressed = true;
+		
+		currentKey = e.getButton();
+	    
 		
 	}
 	
@@ -31,7 +38,7 @@ public class Mouse extends MouseAdapter {
 		
 		this.pressed = false;
 		this.clicked = false;
-		
+		currentKey = -99;
 		
 	}
 	
