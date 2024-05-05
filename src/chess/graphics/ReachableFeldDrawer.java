@@ -2,7 +2,6 @@ package chess.graphics;
 
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -169,10 +168,10 @@ public class ReachableFeldDrawer {
 			
 			Piece king = board.checker.getKing(Game.getInstance().match.progress.getTurn());
 			
-			if(attackingPiece!=null  && Game.getInstance().match.previousPlayManager.currentPlay == Game.getInstance().match.previousPlayManager.plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
+			if(attackingPiece!=null   && Game.getInstance().match.previousPlayManager.currentPlay == Game.getInstance().match.previousPlayManager.plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
 				
 				g2.setColor(Color.RED);
-				
+			
 				if(attackingPiece.drawY>king.drawY && attackingPiece.drawX == king.x) {
 					
 				for(int i = attackingPiece.drawY-1;i>king.y;i--) {

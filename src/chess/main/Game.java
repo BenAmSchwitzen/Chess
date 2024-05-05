@@ -43,6 +43,8 @@ public class Game extends JPanel implements Runnable {
 	public boolean boardgraphics = true;
 	public boolean arrows =  true;
 	public boolean randomPuzzles = true;
+	public boolean animations = true;
+	
 		
 	//_________________________________________________________
 		
@@ -60,6 +62,8 @@ public class Game extends JPanel implements Runnable {
 	
 	public SettingsManager settingsManager = new SettingsManager(this);
 	
+
+	
 	public Game() {
 		
 		  this.setDoubleBuffered(true);
@@ -68,6 +72,9 @@ public class Game extends JPanel implements Runnable {
 		  this.setPreferredSize(new Dimension(this.windowWith, this.windowHeight));
 		  this.addMouseListener(mouse);
 		  this.addMouseMotionListener(mouse);
+		  
+		 
+		  
 
 		  gameThread = new Thread(this);
 		  gameThread.start();
@@ -110,6 +117,8 @@ public class Game extends JPanel implements Runnable {
 		
 		this.board.reachableFeldDrawer.drawArrows(g2);
 		
+		
+		
 		}
 		
 		
@@ -121,10 +130,13 @@ public class Game extends JPanel implements Runnable {
 			
 			this.match.drawBoard(g2);
 			this.match.drawBoardGraphics(g2);
+			
+			board.drawCheckMateFelder(g2);
+			
 			this.match.previousPlayManager.drawPreviousPlayPieces(g2);
 			this.match.previousPlayManager.drawPlayButtons(g2);
 			
-			board.drawCheckMateFelder(g2);
+			
 			
 			this.match.matchUI.drawAfterMatchUIButtons(game);
 			
@@ -150,7 +162,7 @@ public class Game extends JPanel implements Runnable {
 			
 			this.match.drawMatchRelatedUI(g2);
 			
-			board.drawCheckMateFelder(g2);
+			
 			
 			
 			
@@ -159,18 +171,22 @@ public class Game extends JPanel implements Runnable {
 		
 		
 		this.match.drawBoard(g2);
-		this.puzzleManager.drawCurrentPuzzlePieces(g2);
+		
+	
 		
 		g2.setColor(Color.getHSBColor(100, 200, 200));
 		g2.fillRect(800, 0, 500, 800);
 		
+	    this.puzzleManager.onDrawEvent(g2);
+		this.puzzleManager.drawCurrentPuzzlePieces(g2);
 		
-		this.puzzleManager.onDrawEvent(g2);
 		
 		
 	}else if(this.gameState == GameState.SETTINGS) {
 		
-		
+		settingsManager.drawBackGrounnd(g2);
+		settingsManager.drawSettingsFeld(g2);
+		settingsManager.drawPiece(g2);
 		
 	}
 		
@@ -190,6 +206,10 @@ public class Game extends JPanel implements Runnable {
 	    	 
 	    	 puzzleManager.update(mouse);
 	    	 
+	     }else if(this.gameState == GameState.INMENU) {
+	    	 
+	    	 menuScreen.updateMenuGame();
+	    	 
 	     }
 		
 		
@@ -198,6 +218,7 @@ public class Game extends JPanel implements Runnable {
 	}
 
 	
+
 	
 		
 	

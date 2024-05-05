@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 
-
 import chess.UI.MatchUI;
 import chess.controller.Mouse;
 import chess.main.Game;
@@ -24,10 +23,10 @@ import chess.util.Vektor2D;
 
 public class Match {
 	
+	
 	public Board board;
 	public GameProgress progress;
 	public PreviousPlayManager previousPlayManager;
-	
 	public MatchUI matchUI;
 	
 	public boolean isMatchRunning = true;
@@ -35,7 +34,11 @@ public class Match {
 	private boolean hasBeenCheckSound = false;
 	private boolean willThereBeTakeSound = false;
 	
-	private int queena = 0;
+	private boolean preparationPhase = true;
+	private int preparationTimer = 0;
+	private int preparationSteps = 0;
+	
+	
 	
 	public Match(Board board) {
 		
@@ -50,7 +53,9 @@ public class Match {
 		previousPlayManager = new PreviousPlayManager(this);
 		
 		
+		
 	}
+	
 	
 	
 	public void drawMatchRelatedUI(Graphics2D g2) {
@@ -66,6 +71,7 @@ public class Match {
 		
 		
 		
+		
 	}
 	
 	public void drawBoardGraphics(Graphics2D g2) {
@@ -75,6 +81,7 @@ public class Match {
 		
 		if(Game.getInstance().arrows)
 		board.reachableFeldDrawer.drawArrows(g2);
+		
 		
 		
 	}
@@ -115,7 +122,7 @@ public class Match {
 		piece.hasMoved = true;
 		piece.moveCounter++;
 		
-		board.checker.swapBauerToQueen(piece);
+		//board.checker.swapBauerToQueen(piece);
 		
 		this.progress.increaseTotalMoves();
 		
@@ -124,11 +131,12 @@ public class Match {
 		
 	}
 	
-	private void onCheckEvent() {
+	private void onCheckEvent(PreviousPlay play) {
 		
 		if(this.board.checker.isKingCheck(this.progress.colorTurn == 'w' ? 'b':'w')) {
 			hasBeenCheckSound =  true;
 		
+			   play.isCheck = true;
 			
 				SoundManager.setSound(5);
 			
@@ -311,11 +319,69 @@ public class Match {
 		
 	}
 	
+	
+	private void doPreparation() {
+		
+	
+		
+		if(preparationTimer >= 15) {
+		
+			if(preparationSteps<8) {
+			
+		for(Piece p : board.pieces) {
+			
+			p.drawX++;
+			
+		}
+		preparationTimer = 0;
+		preparationSteps++;
+			
+			}else {
+				
+			preparationPhase = false;	
+			
+			}
+		
+		}else {
+			preparationTimer++;
+		}
+		
+	
+	}
+
+	private void finishPreparation() {
+		
+		for(Piece piece : board.pieces) {
+			
+			piece.drawX+=8;
+			
+		}
+		
+	}
+	
 	public void update(Mouse mouse) {
 		
+		   
+		
+			
+			if(preparationPhase  && Game.getInstance().animations) {
+				
+				doPreparation();
+				return;
+				
+			}else if(preparationPhase && !Game.getInstance().animations){
+				
+				setUpGameWithoutAnimation();
+				preparationPhase = false;
+			}
+		
+
+		
+			
+	
 		
 		
-		
+
 		this.progress.updateTimer();
 	
 	    this.checkTimerOfWhite();
@@ -324,7 +390,7 @@ public class Match {
 		
 	    this.drawArrows(mouse);
 		
-	   
+	    
 		
 		if(mouse.pressed && mouse.currentKey == 1 && Game.getInstance().gameState == GameState.INMATCH) {
 		
@@ -337,9 +403,12 @@ public class Match {
 
 				
 			}else moveAnimationPiece(mouse);
+			     
 			
 				
 		} else {
+			
+			
 			
 			if(board.selectedPiece== null) 
 				return;
@@ -375,7 +444,7 @@ public class Match {
 						board.selectedPiece.y = board.selectedPiece.drawY;
 						board.selectedPiece.x = board.selectedPiece.drawX;
 						
-						
+						board.checker.swapBauerToQueen(board.selectedPiece);
 						
 						}
 				   
@@ -388,12 +457,15 @@ public class Match {
 				   
 				  
 
-				   
+                 
 				 
 				  
-				   onCheckEvent();
+				   onCheckEvent(prevPlay);
 				   
-				   updateValuesAfterTurn(board.selectedPiece);
+                   updateValuesAfterTurn(board.selectedPiece);
+				   
+				   
+				   
 				   
 				  if(willThereBeTakeSound && !hasBeenCheckSound) {
 					  SoundManager.setSound(3);
@@ -402,10 +474,12 @@ public class Match {
 				 
 	                board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX); // Das könnte mit arbeit in isMoveValid
 
+	               
 
 				
-				 if(!hasBeenCheckSound && !willThereBeTakeSound) {
+				 if(!hasBeenCheckSound && !willThereBeTakeSound && !prevPlay.isRochade) {
 					SoundManager.setSound(1);}
+					 
 				
 				
 				
@@ -416,7 +490,7 @@ public class Match {
 				
 				
 				
-	         if(board.checker.isCheckMate(board.selectedPiece) || board.checker.cantDoAnyMoveAnymore('w') || board.checker.cantDoAnyMoveAnymore('b')) {
+	         if(board.checker.isCheckMate(this.progress.colorTurn == 'w' ? 'b':'w')) {
 					
 					this.previousPlayManager.currentPlay = this.previousPlayManager.plays.get(this.previousPlayManager.plays.size()-1);
 
@@ -431,10 +505,9 @@ public class Match {
 				}
 				
 				// Check but works
-				else if(board.checker.staleMate()) {
+				else if(board.checker.staleMate(this.progress.colorTurn == 'w' ? 'b':'w')) {
 					
 					this.previousPlayManager.currentPlay = this.previousPlayManager.plays.get(this.previousPlayManager.plays.size()-1);
-
 					SoundManager.setSound(0);
 					
 					isMatchRunning = false;
@@ -476,14 +549,14 @@ public class Match {
 		board.selectedPiece.drawX = (mouse.mouseX/board.feldSize);
 		board.selectedPiece.drawY = (mouse.mouseY/board.feldSize);
 		
-	  
+		
 		
 		
 	}
 	
 
         
-        private void setUpGame1() {  // Makes the game ready to play
+        private void setUpGame() {  // Makes the game ready to play
         	
         	board.pieces.clear();
         	
@@ -528,40 +601,78 @@ public class Match {
         	board.pieces.add(new Läufer('b', 0, 2));
         	
         	
+        	for(Piece piece : board.pieces) {
+        		
+        		piece.drawX-= 8;
+        		
         	
+		}
+        	
+        
+        }
+        	
+        	
+        	private void setUpGameWithoutAnimation() {
+        		
+        		board.pieces.clear();
+        		
+        		
+            	
+            	board.pieces.add(new Bauer('w', 6, 0));
+            	board.pieces.add(new Bauer('w', 6, 1));
+            	board.pieces.add(new Bauer('w', 6, 2));
+            	board.pieces.add(new Bauer('w', 6, 3));
+            	board.pieces.add(new Bauer('w', 6, 4));
+            	board.pieces.add(new Bauer('w', 6, 5));
+            	board.pieces.add(new Bauer('w', 6, 6));
+            	board.pieces.add(new Bauer('w', 6, 7));
+            	
+            	board.pieces.add(new Bauer('b', 1, 0));
+            	board.pieces.add(new Bauer('b', 1, 1));
+            	board.pieces.add(new Bauer('b', 1, 2));
+            	board.pieces.add(new Bauer('b', 1, 3));
+            	board.pieces.add(new Bauer('b', 1, 4));
+            	board.pieces.add(new Bauer('b', 1, 5));
+            	board.pieces.add(new Bauer('b', 1, 6));
+            	board.pieces.add(new Bauer('b', 1, 7));
+            	
+            	board.pieces.add(new Dame('w', 7, 3));
+            	board.pieces.add(new Dame('b', 0, 3));
+            	
+            	board.pieces.add(new König('w', 7, 4));
+            	board.pieces.add(new König('b', 0, 4));
+            	
+            	board.pieces.add(new Turm('w', 7, 0));
+            	board.pieces.add(new Turm('w', 7, 7));
+            	board.pieces.add(new Turm('b', 0, 0));
+            	board.pieces.add(new Turm('b', 0, 7));
+            	
+            	
+            	board.pieces.add(new Springer('w', 7, 1));
+            	board.pieces.add(new Springer('w', 7, 6));
+            	board.pieces.add(new Springer('b', 0, 1));
+            	board.pieces.add(new Springer('b', 0, 6));
+            	
+            	board.pieces.add(new Läufer('w', 7, 5));
+                board.pieces.add(new Läufer('w', 7, 2));
+                board.pieces.add(new Läufer('b', 0, 5));
+            	board.pieces.add(new Läufer('b', 0, 2));
+        		
+        	
+        	
+            
         	
         	
         }
 
         
-   private void setUpGame() {  // Makes the game ready to play
-        	
-        	board.pieces.clear();
+       
+       
         	
         	
         	
         
-        	
-        	board.pieces.add(new König('w', 7, 4));
-        	board.pieces.add(new Dame('w', 7, 3));
-        	board.pieces.add(new König('b', 0, 4));
-        	
-        	
-        
-        	
-        	
-        	
-        	board.pieces.add(new Bauer('w', 2, 6));
-        	
-        	;
-        	
-        	board.pieces.add(new Bauer('w', 7, 5));
-        	
-        	
-        	
-        }
-        
-        
+       
         
         
 }

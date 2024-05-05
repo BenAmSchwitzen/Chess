@@ -42,5 +42,12 @@ public String getName() {
 		return name;
 		
 	}
+
+
+public void onToggle(boolean on) {
+	
+	this.button.setForeground(on ? Color.WHITE:Color.BLACK);
+	
+}
 	
 }

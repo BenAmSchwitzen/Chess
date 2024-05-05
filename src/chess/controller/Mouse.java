@@ -3,8 +3,6 @@ package chess.controller;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.SwingUtilities;
-
 public class Mouse extends MouseAdapter {
 
 	public boolean pressed = false;

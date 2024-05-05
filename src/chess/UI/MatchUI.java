@@ -14,7 +14,7 @@ import chess.main.GameState;
 import chess.util.Button;
 import chess.util.FontManager;
 
-public class MatchUI {
+public class MatchUI{
 
 	public Match match;
 	
@@ -53,7 +53,7 @@ public class MatchUI {
 
 	private void drawWhitePlayerUI(Graphics2D g2) {
 
-		g2.setColor(Color.WHITE);
+		g2.setColor(Color.white);
 		g2.fillRect(880, 700, 300,50);
 		
 		
@@ -62,7 +62,7 @@ public class MatchUI {
 		g2.setColor(Color.ORANGE);
 		g2.fillRect(1130, 700, 50, 50);
 		
-		g2.setColor(Color.WHITE);
+		g2.setColor(Color.white);
 		
 		if(match.progress.colorTurn == 'w')
 		this.match.progress.timerWhite.drawTimeAnimation(g2, 1155, 725,23,0);
@@ -72,7 +72,7 @@ public class MatchUI {
 
 	private void drawBlackPlayerUI(Graphics2D g2) {
 
-		g2.setColor(Color.WHITE);
+		g2.setColor(Color.white);
 		g2.fillRect(880, 50, 300,50);
 		
 		drawBlackTimer(g2);
@@ -89,7 +89,7 @@ public class MatchUI {
 	
 	private void drawWhiteTimer(Graphics2D g2) {
 		
-		g2.setColor(Color.BLACK);
+		g2.setColor(Color.black);
 		g2.setFont(FontManager.getFont("Arial Bold",Font.BOLD,20));
 		g2.drawString(this.match.progress.timerWhite.timerString,1200,730);
 		
@@ -98,7 +98,7 @@ public class MatchUI {
 	private void drawBlackTimer(Graphics2D g2) {
 		
 		
-		g2.setColor(Color.BLACK);
+		g2.setColor(Color.black);
 		g2.setFont(FontManager.getFont("Arial Bold",Font.BOLD,20));
 		g2.drawString(this.match.progress.timerBlack.timerString,1200,80);
 		

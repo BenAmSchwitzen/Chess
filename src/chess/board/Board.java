@@ -3,14 +3,15 @@ package chess.board;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
-import java.util.ArrayList;
+import java.util.LinkedList;
+
 import chess.graphics.ReachableFeldDrawer;
 import chess.main.Game;
 import chess.piece.*;
 
 
 
-public class Board {
+public class Board{
 
 	
 	//________standard values_______________
@@ -23,13 +24,15 @@ public class Board {
 	private Color white = new Color(238, 238, 210);
 	private Color black = new Color(118, 150, 86);
 	
+	
+	
 //_______________________________________________
 	
 
 //____________storing the pieces on the board_________________________________
 	
 	
-	public ArrayList<Piece> pieces;
+	public LinkedList<Piece> pieces;
 	
 	public Piece selectedPiece = null;  // The piece selected by Mouse
          
@@ -53,6 +56,8 @@ public class Board {
 	
 	public ReachableFeldDrawer reachableFeldDrawer;
 	
+	
+	
 //___________________________________________
 	
 	public Game game;
@@ -73,10 +78,12 @@ public class Board {
 		this.feldSize = this.width/this.anzahlFelder;
 		
 		
-		this.pieces = new ArrayList<>();
+		this.pieces = new LinkedList<>();
 		
 		
 		this.reachableFeldDrawer = new ReachableFeldDrawer(this); // Event maybe
+		
+		
 		
 	}
 	
@@ -108,10 +115,7 @@ public class Board {
 			
 		g2.drawImage(selectedPiece.image, Game.getInstance().mouse.mouseX-feldSize/2, Game.getInstance().mouse.mouseY-feldSize/2, 100+10, 100-10+10, null);
 
-		//p.moveTo(selectedPiece.x*100+50,selectedPiece.y*100+50);
-		//p.lineTo(Game.getInstance().mouse.mouseX,Game.getInstance().mouse.mouseY);
-		//g2.draw(p);
-		//p.reset();
+		
 		
 		
 		
@@ -137,6 +141,10 @@ public class Board {
 		
 		
 	}
+	
+	
+        	
+		
 	
 
 	public void drawCheckMateFelder(Graphics2D g2) {

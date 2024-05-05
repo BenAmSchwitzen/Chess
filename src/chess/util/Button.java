@@ -2,11 +2,14 @@ package chess.util;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
+
 
 import javax.swing.JButton;
 
+@SuppressWarnings("serial")
 public class Button extends JButton {
+
+	
 
 	public String text;
 	public int width;

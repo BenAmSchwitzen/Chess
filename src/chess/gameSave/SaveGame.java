@@ -1,14 +1,17 @@
 package chess.gameSave;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 import chess.board.Match;
 import chess.util.Button;
 
-public class SaveGame {
+public class SaveGame implements Serializable {
 	
 	
+	
+	private static final long serialVersionUID = 1L;
 	public Match match;
 	public Button rewatchButton;
 	

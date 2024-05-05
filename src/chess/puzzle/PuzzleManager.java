@@ -3,30 +3,16 @@ package chess.puzzle;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
-
 import chess.board.Board;
 import chess.controller.Mouse;
 import chess.main.Game;
 import chess.main.GameState;
-import chess.piece.Bauer;
-import chess.piece.Dame;
-import chess.piece.König;
-import chess.piece.Läufer;
-import chess.piece.Piece;
-import chess.piece.Springer;
-import chess.piece.Turm;
+import chess.piece.*;
 import chess.sound.SoundManager;
 import chess.util.Button;
 import chess.util.FontManager;
@@ -57,6 +43,10 @@ public class PuzzleManager {
 	private int newPuzzleTimer = 0;
 	private boolean waitForNextPuzzle = false;
 	
+	private int animationCounter = 0;
+	public boolean waitForAnimationEnding = false;
+	private int animationTimes = 0;
+	public boolean animationsAllowed = true;
 	
 	private Button leaveButton;
 	private Button reloadButton;
@@ -67,9 +57,10 @@ public class PuzzleManager {
     private int nextScore = 0;
 	
 	private int mistakes = 0;
-	private int correct = 0;
-	private int totalMoves = 0;
 	
+	
+	private int successY = -99;
+	private int successX = -99;
 	
 	
 	
@@ -153,17 +144,6 @@ public class PuzzleManager {
 	}
          
  
-
-    private String getPieceString(Piece piece) {
-
-
-		
-		char alias = piece.name.toString().charAt(0);
-		int  pieceY = piece.y;
-		int pieceX = piece.x;
-		
-		return Character.toString(alias)+pieceY+pieceX;
-	} 
     
     public String [] getPuzzleMoves(int puzzle) {
     	
@@ -247,6 +227,9 @@ public class PuzzleManager {
     	        piece.drawX = piece.x;
     	        computerTimer = 0;
     	        
+    	        successY = endY;
+    	        successX = endX;
+    	        
     	       if(board.pieces.removeIf(m -> m.y == piece.drawY && m.x == piece.drawX && m!=piece)) {
     	    	   
     	    	   SoundManager.setSound(3);
@@ -314,6 +297,8 @@ public class PuzzleManager {
     		waitForNextPuzzle = false;
     		newPuzzleTimer = 0;
     		
+    		waitForAnimationEnding = true;
+    		
     	}
     	
     	
@@ -343,6 +328,19 @@ public class PuzzleManager {
         
         if(waitForNextPuzzle)return;
        
+        
+         if(waitForAnimationEnding && animationsAllowed) {
+        	 
+        	 doNewPuzzleAnimation();
+        	 return;
+         }
+        	 
+        	 
+        	 
+        	 
+         
+        
+        
     	
        String nextMove = getMoveFromPuzzle(currentPuzzle, currentPuzzleTurn);  //  (0.0)->(1.0)
        
@@ -389,7 +387,6 @@ public class PuzzleManager {
 			
 			if(board.selectedPiece.drawY == endY && board.selectedPiece.drawX == endX && board.selectedPiece.y == startY && board.selectedPiece.x == startX ) {
 			
-			
 				
 			if(board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece)) {
 				
@@ -408,13 +405,14 @@ public class PuzzleManager {
 			
 			board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece);
 			
-			
+			successY = endY;
+			successX = endX;
 			
 			currentPuzzleTurn++;
     	
 			computerTurn = true;
 			
-			this.correct++;
+			
 			
 			
 			}else {
@@ -430,7 +428,7 @@ public class PuzzleManager {
 				
 			}
 			
-			totalMoves++;
+		
 			
 			
 			
@@ -489,7 +487,43 @@ public class PuzzleManager {
      }
     
     
-    
+    private void doNewPuzzleAnimation() {
+    	
+    	if(animationCounter == 5) {
+    		
+    		animationCounter = 0;
+    		
+    		for(Piece p : board.pieces) {
+    			
+    			p.drawY--;
+    			p.drawX--;
+    			
+    		}
+    		
+    		animationTimes++;
+    		
+    		
+    	}else {
+    		
+    		animationCounter++;
+    	}
+    	
+    	if(animationTimes == 10) {
+    		
+    		for(Piece p : board.pieces) {
+    			
+    			p.drawY+=animationTimes;
+    			p.drawX+=animationTimes;
+    			
+    		}
+    		
+    		animationTimes = 0;
+    		waitForAnimationEnding = false;
+    		
+    	}
+    	
+    	
+    }
     
     private Piece createNewPiece(char startSymbol,int y,int x,char color) {
     	
@@ -510,6 +544,13 @@ public class PuzzleManager {
     }
     
     
+
+    	
+	
+    	
+    
+    
+    
     
     
     public void initButtons() {
@@ -518,10 +559,10 @@ public class PuzzleManager {
     	leaveButton.setIcon(new ImageIcon("chess.res/icons/quitIcon.png"));
     	
     	reloadButton = new Button(" Reload", 600, 900, 50, 130,Color.white, Color.BLACK);
-    	reloadButton.setIcon(new ImageIcon("chess.res/icons/quitIcon.png"));
+    	reloadButton.setIcon(new ImageIcon("chess.res/icons/reloadIcon.png"));
     	
     	helpButton = new Button(" Help", 500,1000, 50, 130,Color.white, Color.BLACK);
-    	helpButton.setIcon(new ImageIcon("chess.res/icons/quitIcon.png"));
+    	helpButton.setIcon(new ImageIcon("chess.res/icons/helpIcon.png"));
     	
     	this.setButtonAction();
     	
@@ -541,10 +582,10 @@ public class PuzzleManager {
     	Game.getInstance().remove(helpButton);
     	helpButton = null;
     	
-    	this.correct = 0;
+    
     	this.mistakes = 0;
     	this.score = 0;
-    	this.totalMoves = 0;
+    	
     	
     	
     	this.updateScore = false;
@@ -559,11 +600,16 @@ public class PuzzleManager {
 	   
 	   leaveButton.addActionListener(e -> {
 		   
+		   if(!waitForAnimationEnding || !animationsAllowed) {
 		   
 			this.currentPuzzle = 0;
     		this.currentPuzzleTurn = 0;
     		this.computerTurn = false;
     		this.computerTimer = 0;
+    		
+    		this.playerHelp = false;
+    		this.newPuzzleTimer = 0;
+    		this.waitForNextPuzzle = false;
     		
     		SoundManager.setSound(0);
     		Game.getInstance().gameState = GameState.INMENU;
@@ -574,13 +620,14 @@ public class PuzzleManager {
 			Game.getInstance().add(Game.getInstance().menuScreen.b2);
 			Game.getInstance().add(Game.getInstance().menuScreen.b3);
 			Game.getInstance().add(Game.getInstance().menuScreen.b4);
-		   
+			
+		   }
 		   
 	   });
 	 
 	   reloadButton.addActionListener(e -> {
 		   
-		   if(!waitForNextPuzzle) {
+		   if(!waitForNextPuzzle  && (!waitForAnimationEnding || !animationsAllowed)) {
 		   setUpPiecesForPuzzle(currentPuzzle);
 		   this.computerTurn = false;
 		   this.computerTimer = 0;
@@ -592,10 +639,9 @@ public class PuzzleManager {
 	   
      helpButton.addActionListener(e -> {
 		   
-		   if(!waitForNextPuzzle) {
+		   if(!waitForNextPuzzle && (!waitForAnimationEnding || !animationsAllowed) && !computerTurn) {
 		   
-			   this.playerHelp = true;
-			  ;}
+			   this.playerHelp = true;;}
 		   
 		    
 		   
@@ -635,11 +681,37 @@ public class PuzzleManager {
     	g2.drawString("Mistakes", 920, 350);
     	g2.drawString(Integer.toString(mistakes), 955, 280);
     	
-    	
+    	drawSuccess(g2);
     	
     
     }
     
+    private void drawSuccess(Graphics2D g2) {
+    	
+    	if(computerTurn) {
+    		
+    		g2.setColor(Color.GREEN);
+    		g2.fillRect(successX*100, successY*100, 100,100);
+    		
+    		
+    		
+    	}
+    	
+    	
+    }
+    
+    public int startWithRandomPuzzle() {
+    	
+    	int puzzleInt = (int) (Math.random()*amountOfPuzzles);
+    	
+    	currentPuzzle = puzzleInt;
+    	
+    	return puzzleInt;
+    	
+    }
+    
+    
+   
     
 }
 

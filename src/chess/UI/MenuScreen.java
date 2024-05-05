@@ -3,6 +3,7 @@ package chess.UI;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import chess.board.Checker;
@@ -25,8 +26,7 @@ public class MenuScreen {
 	 
 	 ArrayList<Piece> pieces;
 	 
-	 public Piece menuPiece1 = new Springer('b', 4, 4);
-	 boolean springerTurn = false;
+	
 	 private int updateCounter = 0;
 	 
 	 private String playIconPath ="chess.res/icons/playIcon.png";
@@ -46,6 +46,8 @@ public class MenuScreen {
 		  addMenuPieces();
 
 	      instantiateButtons();
+	      
+	      
 		
 	}
 	
@@ -100,7 +102,30 @@ public class MenuScreen {
         	
         	  Game.getInstance().puzzleManager.initButtons();
         	  
+        	  
+        	  
+        	  
+        	  if(!game.randomPuzzles) {
         	  Game.getInstance().puzzleManager.setUpPiecesForPuzzle(0);
+        	  
+        	  
+        	  }else {
+        		  
+        		  Game.getInstance().puzzleManager.setUpPiecesForPuzzle(Game.getInstance().puzzleManager.startWithRandomPuzzle());
+        		  
+        		  if(Game.getInstance().animations) {
+        		  Game.getInstance().puzzleManager.waitForAnimationEnding = true;
+        		  Game.getInstance().puzzleManager.animationsAllowed = true;
+        		
+        		  
+        	  }else {
+        		  
+        		  Game.getInstance().puzzleManager.waitForAnimationEnding = false;
+        		  Game.getInstance().puzzleManager.animationsAllowed = false; 
+        		
+        		  }
+        		  
+        	  }
         	  
         	  game.gameState = GameState.INPUZZLE;
         	  SoundManager.setSound(0);
@@ -111,7 +136,8 @@ public class MenuScreen {
           
           b3.addActionListener(a -> {
   			
-  			System.exit(1);
+       
+  			System.exit(0);
   			
   			
   		});
@@ -136,14 +162,13 @@ public class MenuScreen {
 	
     public void drawMenuPieces(Graphics2D g2) {
     	
-    	g2.drawImage(menuPiece1.image,menuPiece1.x*game.board.feldSize,menuPiece1.y*game.board.feldSize+5, game.board.feldSize, game.board.feldSize-10, null);
     	
     	
     	for(Piece piece : pieces) {
     	g2.drawImage(piece.image,piece.x*game.board.feldSize,piece.y*game.board.feldSize+5, game.board.feldSize, game.board.feldSize-10, null);
     	}
     	
-    	updateMenuGame();
+    	
     	
     }
 	
@@ -151,40 +176,20 @@ public class MenuScreen {
     private void addMenuPieces() {
     	
      	pieces.add(new Bauer('w', 6, 0));
-    	pieces.add(new Bauer('w', 6, 1));
+    	pieces.add(new Bauer('w', 3, 1));
     	pieces.add(new Bauer('w', 6, 2));
-    	pieces.add(new Bauer('w', 6, 3));
+    	pieces.add(new Bauer('w', 4, 3));
     	pieces.add(new Bauer('w', 6, 4));
-    	pieces.add(new Bauer('w', 6, 5));
+    	pieces.add(new Bauer('w', 5, 5));
     	pieces.add(new Bauer('w', 6, 6));
-    	pieces.add(new Bauer('w', 6, 7));
+    	pieces.add(new Bauer('w', 4, 7));
+    	
     	
     	
     }
     
-    public void updatePawns() {
-    	
-    	
-    	
-    	for(Piece piece : pieces) {
-    	
-    		if(piece.y == 0) {
-    			
-    			piece.y = 7;
-    			piece.drawY = 7;
-    			return;
-    			
-    		}
-    		
-    		if(piece.y-1!= menuPiece1.y && piece.drawX!=menuPiece1.drawX) {
-    			
-    			piece.drawY--;
-    			piece.y--;
-    		
-    		
-    	}
-    	
-    }}
+   
+  
     
     private int[] getRandomMove(Piece piece) {
     	
@@ -206,39 +211,36 @@ public class MenuScreen {
     
     }
 
-    private void updateMenuGame() {
+    public void updateMenuGame() {
     	
     	
     	updateCounter++;
 	    
     	if(updateCounter == 144) {
-    		
-    		if(springerTurn) {
-    			
-    			int randY = getRandomMove(menuPiece1)[0];
-    			int randX = getRandomMove(menuPiece1)[1];
-    			
-    			menuPiece1.y = randY;
-    			menuPiece1.x = randX;
-    			menuPiece1.drawY = menuPiece1.y;
-    			menuPiece1.drawX = menuPiece1.x;
-    			
-    			removeUpdateGamePiece(menuPiece1);
-    			
-    			springerTurn = false;
-    		}else {
-    			
-    			updatePawns();
-    			springerTurn = true;
-    		}
-    		
+    	
+    		updatePawns();
+    	
     		
     		updateCounter = 0;
     		
-    		
-    		
-    	    }
+    	}
     	
+    }
+    
+  public void  updatePawns() {
+    	
+	  int counter = 0;
+	  
+	  int randomPiece1 = (int) (Math.random()*pieces.size()); 
+	  
+    	
+	  Piece p = pieces.get(randomPiece1);
+	  
+	  p.y--;
+	  
+	  if(p.y == -1)
+	     p.y = 7;
+	  
     }
 
     private void removeUpdateGamePiece(Piece attackingPiece) {
@@ -266,5 +268,74 @@ public class MenuScreen {
     	
     }
     
+    public int getValidMovesCount(Piece piece) {
+    	
+    	int count = 0;
+
+		for(int i = 0;i<8;i++) {
+			
+			for(int j = 0;j<8;j++) {
+				
+				if(piece.canMove(i, j))count++;
+				
+				
+			}
+			
+		}
+			
+		  return count;
+
+    }
+    
+    
+    private int[][] getValidMoves(Piece piece) {
+    	
+    	int moves [][] = new int[getValidMovesCount(piece)][2];
+    	
+    	int counter = 0;
+    	
+             for(int i = 0;i<8;i++) {
+			
+			for(int j = 0;j<8;j++) {
+				
+				if(game.board.checker.isMoveValid(piece, i,j)) {
+					
+					moves[counter][0] = i;
+			        moves[counter][1] = j;
+			        counter++;
+			        
+				}
+
+			}
+			
+		}
+
+    	
+    	return moves;
+    	
+    }
+    
+    private void doRandomMove(Piece piece) {
+    	
+    	int möglicheZüge = getValidMovesCount(piece);
+    	
+    	int randomMove = (int) Math.floor(Math.random()*möglicheZüge-1);
+    	
+    	if(randomMove>möglicheZüge) {
+    		piece.y = getValidMoves(piece)[0][0];
+        	piece.x = getValidMoves(piece)[0][1];
+    	}else {
+    		
+        	piece.y = getValidMoves(piece)[randomMove][0];
+        	piece.x = getValidMoves(piece)[randomMove][1];
+    	}
+    	
+    	piece.drawY = piece.y;
+    	piece.drawX = piece.x;
+    	
+    	
+    }
+
+  
 }
 

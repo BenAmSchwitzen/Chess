@@ -90,6 +90,8 @@ public class PreviousPlayManager implements ActionListener {
 
 				if (play == plays.get(plays.size() - 1) && match.isMatchRunning) {
 
+					playWatchSound(play);
+					
 					currentPlay = null;
 
 					Game.getInstance().gameState = GameState.INMATCH;
@@ -137,9 +139,11 @@ public class PreviousPlayManager implements ActionListener {
 		}else if(play.isRochade) {
 			SoundManager.setSound(2);	
 			
+		}else if(play.isCheck) {
+			SoundManager.setSound(5);
+	
 		}else if(play.capturedPiece!=null) {
 			SoundManager.setSound(3);
-	
 		}else {
 			SoundManager.setSound(1);
 		}

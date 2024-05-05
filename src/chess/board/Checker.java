@@ -1,14 +1,11 @@
 package chess.board;
 
 
-import java.util.ArrayList;
+
+
 import java.util.List;
-import chess.piece.Bauer;
-import chess.piece.Dame;
-import chess.piece.König;
-import chess.piece.Läufer;
-import chess.piece.Piece;
-import chess.piece.Turm;
+import chess.piece.*;
+
 
 public class Checker {
 
@@ -86,8 +83,10 @@ public class Checker {
 				  
 			  }
 			  
-			  
-			  
+			  /**
+				 * checks if the <b>pawn</b> moved two squares.
+				 * If so he gets marked.
+			     */	
 			  public void checkBauerDoubleMove(Piece piece,int y,int x) {
 				  
 				  if(!(piece instanceof Bauer)) {
@@ -104,11 +103,13 @@ public class Checker {
 				  
 			  }
 			  
-			  
+			  /**
+				 * checks if the <b>specific piece</b> can enter a <b>field y,x</b>
+				 * without causing being checked
+			     */	
 			  public boolean isCheckAfterMove(Piece piece,int y,int x) {
 				  
-				  boolean isCheckAfter = false;
-				  ArrayList<Piece>  attacker = new ArrayList<>();
+
 				  
 				  Piece king = this.getKing(piece.color);
                 
@@ -153,52 +154,8 @@ public class Checker {
 			  }
 			  
 		  
-			  /**
-				 * checks if the <b>specific piece</b> can enter a <b>field y,x</b>
-				 * without causing being checked
-			     */	
-			  public boolean isCheckAfterMoveFake(Piece piece,int y,int x) {
-				
-				  boolean isCheckAfter = false;
-				  
-				  boolean pieceGrabsAttacker = false;
-				 
-				  
-				  char color = piece.color;
-				  
-				  Piece king = this.getKing(color);
-				  
-				 
-				 int oldPieceY = piece.y;
-				 int oldPieceX = piece.x;
-
-				 
-				 piece.y = y;
-				 piece.x = x;
-				
-				 
-				 
-			 isCheckAfter = board.pieces.stream().filter(m->m.color !=color)
-              .anyMatch(m->(m.canMove(king.y, king.x)||board.checker.bauerAdditionalMovement(m, king.y, king.x))
-                       && !board.checker.isBlocked(m, king.y, king.x)); 
-				 
-			 Piece attacker = getAttackingPiece(king);
-				 
 			 
-			 piece.y = oldPieceY;
-             piece.x = oldPieceX;
-			 
-              if(attacker == null)return false;
-		 
-                piece.y = oldPieceY;
-          		piece.x = oldPieceX;
-				 
-          		
-          		 pieceGrabsAttacker = canPieceAttackAttackingPiece(piece, attacker,y,x);
-				
-				 
-				  return isCheckAfter && !pieceGrabsAttacker;
-			  }
+			
 			  
 			  /**
 				 * checks if the king can move without being in check
@@ -234,7 +191,7 @@ public class Checker {
 					  return true;
 					  
 				  }
-				  
+				
 				  
 				  return false;
 			  }
@@ -242,7 +199,7 @@ public class Checker {
 			  
 			  
 			  /**
-			   * a pawn will be replaced with a queen when being on the last field 
+			   * a pawn will be replaced with a queen when being on the last square 
 			   */
 			  public void swapBauerToQueen(Piece piece) {
 				  
@@ -252,14 +209,21 @@ public class Checker {
 					  
 					  if((piece.color == 'w' && piece.y == 0) || (piece.color == 'b' && piece.y == 7)) {
 						  
-						  Piece newDame = new Dame(piece.color, piece.color == 'w' ? 0:7, piece.x);
+						  
+						  
+						  Dame newDame = new Dame(piece.color, piece.color == 'w' ? 0:7, piece.x);
 						  
 						  board.pieces.remove(piece);
+						
 						  board.pieces.add(newDame);
 					  }
 					  
 				  } }
 				  
+			  /**
+			   * 
+			   *  checks for an enPassant event
+			   */
 			  
 			  public boolean enPassant(Piece piece,int y,int x) {
 				  
@@ -318,15 +282,7 @@ public class Checker {
 				  
 			  }
 			  
-			  //For menu
-			  public int [][] possibleMoves(Piece piece) {
-				  
-				 int [][] moves = new int[1][1];
-				 
-				
-				  
-				  return moves;
-			  }
+			
 			  
 			  public void doRochade(Piece piece) {
 				  
@@ -374,7 +330,7 @@ public class Checker {
 						  if(piece.x<x) {
 								
 								for(int i = piece.x+1;i<x;i++) {
-									if(board.checker.isFeldAttackedByEnemy(piece.y, i, piece.color)) {
+									if(board.checker.isFeldAttackedByEnemy(piece.y, i, piece.color) || board.getPiece(piece.y, i)!=null) {
 										return false;
 										
 									}
@@ -384,7 +340,7 @@ public class Checker {
 							}else if(piece.x>x) {
 								
 								for(int i = piece.x-1;i>x;i--) {
-									if(board.checker.isFeldAttackedByEnemy(piece.y, i, piece.color)) {
+									if(board.checker.isFeldAttackedByEnemy(piece.y, i, piece.color)  || board.getPiece(piece.y, i)!=null) {
 										return false;
 										
 									}
@@ -409,6 +365,8 @@ public class Checker {
 			  
 			 public boolean isAttacked(Piece king) {
 				 
+				 if(king==null)return false;
+				 
 				 for(Piece piece : board.pieces) {
 					 
 					 if(piece.color != king.color && !isBlocked(piece, king.y, king.x) && piece.canMove(king.y, king.x)) {
@@ -420,66 +378,18 @@ public class Checker {
 				 return false;
 			 }
 			 
-		public boolean checkRochadeReal(Piece piece,int y,int x) {
-			
-		     this.rochadePiece = null;
-			
-			if(piece instanceof König && board.getPiece(y, x)!=null && board.getPiece(y, x).color == piece.color && board.getPiece(y, x) instanceof Turm) {
-				
-				if(!piece.hasMoved && !board.getPiece(y, x).hasMoved) {
-				
-					if(!board.checker.isFeldAttackedByEnemy(board.getPiece(y, x).y, board.getPiece(y, x).x, piece.color) && !board.checker.isFeldAttackedByEnemy(piece.y,piece.x,'b') && !board.checker.isBlocked(piece, y, x)) {
-						
-						// Wird dazwischen angegriffen
-						
-						if(piece.x<x) {
-							
-							for(int i = piece.x+1;i<x;i++) {
-								if(board.checker.isFeldAttackedByEnemy(piece.y, i, piece.color)) {
-									return false;
-									
-								}
-								
-							}
-							
-						}else if(piece.x>x) {
-							
-							for(int i = piece.x-1;i>x;i--) {
-								if(board.checker.isFeldAttackedByEnemy(piece.y, i, piece.color)) {
-									return false;
-									
-								}
-								
-							}
-							
-						}
-						if(board.getPiece(y, x).x == piece.drawX &&  board.getPiece(y, x).y == piece.drawY)
-						this.rochadePiece = board.getPiece(y, x);
-						
-						return true;
-						
-					}
-					
-					
-				
-				
-			}
-				
-			 
-			
-			}
-			 
-			
-			 return false;
-			 
-		 }
-		 
-		 
 			
 			
 		
+			 
+	
+			 public boolean staleMate(char color) {
+				 
+				 return cantDoAnyMoveAnymore(color) && !isAttacked(getKing(color));
+				 
+			 }
 		
-		public boolean staleMate() {
+		public boolean staleMateReal() {
 			
 			// King not attacked and cantdoany moveanymore
 			
@@ -549,7 +459,12 @@ public class Checker {
 			
 		}
 			  
-			  public boolean isCheckMate(Piece piece) {
+		 public boolean isCheckMate(char color) {
+			 
+			 return cantDoAnyMoveAnymore(color) && isAttacked(getKing(color));
+		 }
+		
+			  public boolean isCheckMate1(Piece piece) {
 				  
 				  boolean kingCanMove = false;
 				  boolean canCheckBeBlocked = false;

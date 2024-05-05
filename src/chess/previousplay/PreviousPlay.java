@@ -3,6 +3,7 @@ package chess.previousplay;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 
@@ -29,6 +30,7 @@ public class PreviousPlay {
 	
 	public boolean lastPlay = false;
 	public boolean isRochade = false;
+	public boolean isCheck = false;
 	
 	public PreviousPlay(Piece movingPiece,Piece capturedPiece) {
 		
@@ -63,7 +65,7 @@ public class PreviousPlay {
 		
 	}
 	
-	public void savePieces(ArrayList<Piece> pieces) {
+	public void savePieces(LinkedList<Piece> pieces) {
 		
 		for(Piece piece : pieces) {
 			
