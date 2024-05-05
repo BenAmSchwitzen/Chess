@@ -11,3 +11,7 @@ This project was made due my interest in chess. This implementation includes the
 
 
 ![Main-Game](https://github.com/BenAmSchwitzen/Chess/assets/135648700/988595e8-c14f-4689-b6ea-2587fada9317)
+
+
+
+![settings](https://github.com/BenAmSchwitzen/Chess/assets/135648700/bbc1dbaa-83d0-4eb8-a58a-5aeab3db2f9a)
