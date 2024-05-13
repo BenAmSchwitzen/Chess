@@ -11,7 +11,7 @@ This project was made due my interest in chess. This implementation includes the
 - sounds
 - ability to rewatch previous moves
 
-
+<img align="left" width="200" src="[https://www.rd.com/wp-content/uploads/2018/02/25_Hilarious-Photos-that-Will-Get-You-Through-the-Week_280228817_Doty911.jpg]"(https://github.com/BenAmSchwitzen/Chess/assets/135648700/ca29a94b-ab62-416e-9349-8674f1f674e4)" />
 ![Menu](https://github.com/BenAmSchwitzen/Chess/assets/135648700/ca29a94b-ab62-416e-9349-8674f1f674e4)
 
 ### The standard chess-game
