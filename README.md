@@ -22,7 +22,7 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
   - including sound, graphics, animations and more...
 
  - <strong>puzzles</strong>
- 
+   - find the best move possible 
 
 
 
