@@ -5,7 +5,7 @@ This project is an implementation of the standard chess-game. It was made due my
 This implementation includes **the standard chess-game**, **puzzles** and **interactive settings**.
 
 
-### Standard chess
+#### Standard chess
 
 - normal chess-game
 - animations and graphics ( interactive )
