@@ -18,6 +18,7 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
   - ability to <strong>rewatch</strong> all <strong>games</strong> and <strong>single-plays</strong>
 
 - <strong>settings</strong>
+  - interactive and visualized
 
 
 
