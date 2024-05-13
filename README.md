@@ -37,3 +37,6 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 <h4>game</h4>
 
 ![game](https://github.com/BenAmSchwitzen/Chess/assets/135648700/b986f12c-5895-4ebc-aa66-d0ad64dafdbf)
+
+
+![watchingMoves](https://github.com/BenAmSchwitzen/Chess/assets/135648700/59cfd084-e4de-4b5f-8f61-a5d891ed363a)
