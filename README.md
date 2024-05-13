@@ -5,7 +5,7 @@ This project is an implementation of the standard chess-game. It was made due my
 This implementation includes **the standard chess-game**, **puzzles**, **the ability to watch previous games / plays** and **interactive settings**.
 
 
- <h4 style : text-align : "center">standard chess-game</h4>
+ <h4 style : color: "blue">standard chess-game</h4>
 
 - normal chess-game
 - animations and graphics ( interactive )
