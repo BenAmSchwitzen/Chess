@@ -10,7 +10,7 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 
 ----
 
- <h3>[Features]</h3>
+ <h3>[ Features ]</h3>
 
 - normal chess-game
 - animations and graphics ( interactive )
