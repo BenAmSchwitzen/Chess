@@ -19,6 +19,7 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 
 - <strong>settings</strong>
   - interactive and visualized
+  - including sound, graphics, animations and more...
 
 
 
