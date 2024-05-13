@@ -5,7 +5,6 @@ This project is an implementation of the standard chess-game. It was made due my
 This implementation includes **the standard chess-game**, **puzzles**, **the ability to watch previous games / plays** and **interactive settings**.  
 
 
-
 <br>
 
 ----
