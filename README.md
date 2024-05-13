@@ -10,12 +10,14 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 
  <h3>Features</h3>
 
-- <strong>chess-game </strong>
+- <strong>chess-game</strong>
 
   - the standard game
   - interactive <strong>animations</strong> and <strong>graphics</strong>
   - <strong>sounds</strong> for each type of play
   - ability to <strong>rewatch</strong> all <strong>games</strong> and <strong>single-plays</strong>
+
+- <strong>settings</strong>
 
 
 
