@@ -28,7 +28,7 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
    - <strong>graphical and auditory feedback</strong>
    - playing against the <strong>computer</strong>
 
-
+----
 
 
 ![menu](https://github.com/BenAmSchwitzen/Chess/assets/135648700/9ecb9520-2608-4f6b-b6df-ffce67a1929e)
