@@ -24,6 +24,8 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
  - <strong>puzzles</strong>
    - find the best possible moves by facing random chess positions
    - ability to reset moves
+   - graphical feedback
+   - playing against the computer
 
 
 
