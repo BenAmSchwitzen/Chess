@@ -53,3 +53,4 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 <h3>puzzles</h3>
 
 ![puzzle](https://github.com/BenAmSchwitzen/Chess/assets/135648700/1d246800-2374-455c-b3a7-079b3e5f496d)
+![puzzle2](https://github.com/BenAmSchwitzen/Chess/assets/135648700/c5c809db-5e44-4b28-97c5-63fc2e53b972)
