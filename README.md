@@ -40,3 +40,4 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 
 ![game](https://github.com/BenAmSchwitzen/Chess/assets/135648700/b986f12c-5895-4ebc-aa66-d0ad64dafdbf)
 ![watchingMoves](https://github.com/BenAmSchwitzen/Chess/assets/135648700/59cfd084-e4de-4b5f-8f61-a5d891ed363a)
+![checkmate](https://github.com/BenAmSchwitzen/Chess/assets/135648700/25f7469d-d802-4b41-9b24-721fe182cc22)
