@@ -31,4 +31,5 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 ----
 
 <h4>Menu</h4>
+
 ![menu](https://github.com/BenAmSchwitzen/Chess/assets/135648700/9ecb9520-2608-4f6b-b6df-ffce67a1929e)
