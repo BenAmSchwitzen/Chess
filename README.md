@@ -47,3 +47,9 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 <h3>interactive settings</h3>
 
 ![settings](https://github.com/BenAmSchwitzen/Chess/assets/135648700/e5f3cf12-7264-4897-80d1-8d219a492823)
+
+</br>
+
+<h3>puzzles</h3>
+
+![puzzle](https://github.com/BenAmSchwitzen/Chess/assets/135648700/1d246800-2374-455c-b3a7-079b3e5f496d)
