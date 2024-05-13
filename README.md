@@ -21,5 +21,9 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
   - <strong>interactive</strong> and <strong>visualized</strong>
   - including sound, graphics, animations and more...
 
+ - <strong>puzzles</strong>
+ 
+
+
 
 
