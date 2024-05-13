@@ -26,7 +26,7 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
    - help-button offering the solution
    - ability to reset moves
    - graphical feedback
-   - playing against the computer
+   - playing against the <strong>computer</strong>
 
 
 
