@@ -1,9 +1,9 @@
 
 <h1>Chess</h1>
 
-This project is an implementation of the standard chess-game. It was made due my interest in chess.
+This project is an implementation of the standard chess-game.It was made due my interest in chess.
+It includes **the standard chess-game**, **puzzles** and **interactive settings**
 
-This project was made due my interest in chess. This implementation includes the <strong>standard chess-game and puzzles</strong>
 
 ### Standard chess
 
