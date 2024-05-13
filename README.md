@@ -16,7 +16,7 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 
   - the standard game
   - interactive animations and graphics
-  - sounds being adapted to the play
+  - sounds for each type of play
   - ability to rewatch previous moves
 
 
