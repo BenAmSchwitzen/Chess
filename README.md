@@ -6,6 +6,7 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 
 <br>
 
+---
 
  <h3>Features</h3>
 
