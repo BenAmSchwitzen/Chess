@@ -28,8 +28,7 @@ public class PreviousPlayManager implements ActionListener {
 	public JButton prevMovesButton;
 	public JButton postMoveButton;
 
-	private Color white = new Color(255, 238, 210);
-	private Color black = new Color(255, 238, 200);
+
 
 	public PreviousPlayManager(Match match) {
 
@@ -69,6 +68,7 @@ public class PreviousPlayManager implements ActionListener {
 
 			if (currentViewPlay != 0)
 				currentViewPlay -= 10;
+		
 
 		});
 
@@ -76,6 +76,7 @@ public class PreviousPlayManager implements ActionListener {
 
 			if (plays.size() > currentViewPlay + 10)
 				currentViewPlay += 10;
+		
 
 		});
 
@@ -87,6 +88,10 @@ public class PreviousPlayManager implements ActionListener {
 		for (PreviousPlay play : plays) {
 
 			if (play.button == e.getSource()) {
+				
+				
+				match.board.reachableFeldDrawer.arrows.clear();
+				match.board.reachableFeldDrawer.markedFelder.clear();
 
 				if (play == plays.get(plays.size() - 1) && match.isMatchRunning) {
 
@@ -228,19 +233,27 @@ public class PreviousPlayManager implements ActionListener {
 
 	private void drawInvolvedFields(Graphics2D g2) {
 
-		if (this.currentPlay == null)
+		if (this.currentPlay == null || !Game.getInstance().boardgraphics)
 			return;
-
+ 
 		// private Color white = new Color(238, 238, 210);
 		// private Color black = new Color(118, 150, 86);
 
-		g2.setColor(white);
+		//g2.setColor(white);
 
 		// From this
 		g2.fillRect(currentPlay.oldX * match.board.feldSize, currentPlay.oldY * match.board.feldSize,
 				match.board.feldSize, match.board.feldSize);
 
-		g2.setColor(black);
+		//g2.setColor(black);
+		
+		
+		//if(this.currentPlay.capturedPiece !=null) {
+			
+			//g2.setColor(Color.RED);
+			
+		//}
+		
 
 		// To this
 		g2.fillRect(currentPlay.newX * match.board.feldSize, currentPlay.newY * match.board.feldSize,

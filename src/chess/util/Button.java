@@ -2,7 +2,8 @@ package chess.util;
 
 import java.awt.Color;
 import java.awt.Font;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 
@@ -43,7 +44,36 @@ public class Button extends JButton {
 		this.setBorder(null);
 		
 		
+		this.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				
+				setBackground(Color.lightGray);
+			
+				repaint();
+			
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				
+				setBackground(backColor);
+				repaint();
+			}	
+			
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			
+				
+				setBackground(backColor);
+				
+			}
+			
+		});
 		
+	  
 		
 	}
 	

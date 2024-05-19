@@ -131,13 +131,15 @@ public class Board{
 		
 		pieces.stream().filter(m-> m.drawPiece && m != selectedPiece).forEach(m -> g2.drawImage(m.image, m.drawX*this.feldSize,m.drawY*feldSize+5, this.feldSize,this.feldSize-10, null));
 		
+
+		
 	}
 	
 	public void drawGraphics(Graphics2D g2) {
 		
 		this.reachableFeldDrawer.draw(g2);
 		this.reachableFeldDrawer.drawCurrentMovingSquare(g2);
-		this.reachableFeldDrawer.makePiecesInvisible(g2);
+		
 		
 		
 	}

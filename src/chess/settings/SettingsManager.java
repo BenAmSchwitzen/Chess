@@ -237,6 +237,7 @@ public class SettingsManager {
    
    public void drawBackGrounnd(Graphics2D g2) {
 	   
+	  
 	   g2.fillRect(0, 0,game.getWidth(), game.getHeight());
 	   
    }

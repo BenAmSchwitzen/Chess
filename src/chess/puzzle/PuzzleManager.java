@@ -261,6 +261,12 @@ public class PuzzleManager {
     	
     	updateScore();
     	
+
+     
+       
+        
+        
+    	
     	
     	if(currentPuzzleTurn>= getSinglePuzzleLength(currentPuzzle) && amountOfPuzzles > currentPuzzle) {
     		
@@ -329,12 +335,11 @@ public class PuzzleManager {
         if(waitForNextPuzzle)return;
        
         
-         if(waitForAnimationEnding && animationsAllowed) {
-        	 
-        	 doNewPuzzleAnimation();
-        	 return;
-         }
-        	 
+        if(waitForAnimationEnding && animationsAllowed) {
+       	 
+       	 doNewPuzzleAnimation();
+       	 return;
+        }
         	 
         	 
         	 
@@ -489,7 +494,7 @@ public class PuzzleManager {
     
     private void doNewPuzzleAnimation() {
     	
-    	if(animationCounter == 5) {
+    	if(animationCounter == 6) {
     		
     		animationCounter = 0;
     		
@@ -682,7 +687,8 @@ public class PuzzleManager {
     	g2.drawString(Integer.toString(mistakes), 955, 280);
     	
     	drawSuccess(g2);
-    	
+    
+    	board.reachableFeldDrawer.makePiecesInvisible(g2);
     
     }
     

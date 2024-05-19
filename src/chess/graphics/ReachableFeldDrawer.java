@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import chess.board.Board;
 import chess.main.Game;
+import chess.main.GameState;
 import chess.piece.Piece;
 import chess.util.Vektor2D;
 
@@ -20,9 +21,13 @@ public class ReachableFeldDrawer {
 	public Piece movingPieceOverThisPiece = null;
 	
 	public ArrayList<Vektor2D> arrows = new ArrayList<>();
+	public ArrayList<Vektor2D> markedFelder = new ArrayList<>();
+	
+	
 	public Vektor2D rVektor = null;
 	
-	public boolean markedOneFeld = false;
+	public boolean markedOneArrowFeld = false;
+	
 	
 	
 	Path2D.Double p = new Path2D.Double();
@@ -103,7 +108,26 @@ public class ReachableFeldDrawer {
 			
 		}
 		
+	public void drawMarkedFelder(Graphics2D g2) {
+		
+		if(Game.getInstance().gameState!= GameState.INMATCH)return;
+		
+		for(Vektor2D v : markedFelder) {
+			g2.setColor(Color.ORANGE);
+		     g2.fillRect(v.startX*Game.getInstance().board.feldSize, v.startY*Game.getInstance().board.feldSize, 100, 100);
+		  
+			
+		}
+		
+	}
 	
+	
+	public void clearMarkedFelder() {
+		
+		
+		this.markedFelder.clear();
+		
+	}
 	
 	
 	public void makePiecesInvisible(Graphics2D g2) {
@@ -160,7 +184,7 @@ public class ReachableFeldDrawer {
 			
 	public void drawCheckMateFelder(Graphics2D g2) {
 		
-		if(!Game.getInstance().match.isMatchRunning) {
+		if(!Game.getInstance().match.isMatchRunning && Game.getInstance().boardgraphics) {
 			
 			Piece attackingPiece = board.checker.getAttackingPiece(board.checker.getKing(Game.getInstance().match.progress.getTurn()));
 

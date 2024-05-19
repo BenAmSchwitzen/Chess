@@ -78,11 +78,12 @@ public class Match {
 		
 		if(Game.getInstance().boardgraphics)
 		board.drawGraphics(g2);
+		board.reachableFeldDrawer.drawMarkedFelder(g2);
 		
 		if(Game.getInstance().arrows)
 		board.reachableFeldDrawer.drawArrows(g2);
 		
-		
+		board.reachableFeldDrawer.makePiecesInvisible(g2);
 		
 	}
 	
@@ -109,6 +110,7 @@ public class Match {
 	private void resetTurnChangesAndValues() {
 		
 		board.checker.rochadePiece = null;
+		board.checker.enPassantPiece = null;
 		board.selectedPiece = null;
 		
 		SoundManager.soundAlreadyPlayed = false;
@@ -162,21 +164,21 @@ public class Match {
 		
 		if(!Game.getInstance().arrows)return;
 		
-		 if(mouse.currentKey == 3 && mouse.pressed && !board.reachableFeldDrawer.markedOneFeld) {
+		 if(mouse.currentKey == 2 && mouse.pressed && !board.reachableFeldDrawer.markedOneArrowFeld) {
 			 
 			 if(board.checker.squareIsPossible(mouse.mouseY/100, mouse.mouseX/100)) {
 				 
 				 board.reachableFeldDrawer.rVektor = new Vektor2D();
 				 board.reachableFeldDrawer.rVektor.startX = mouse.mouseX/100;
 				 board.reachableFeldDrawer.rVektor.startY = mouse.mouseY/100;
-				 board.reachableFeldDrawer.markedOneFeld = true;
+				 board.reachableFeldDrawer.markedOneArrowFeld = true;
 				 
 			 }
 
 			 
 		 } else {
 			 
-			 if(board.checker.squareIsPossible(mouse.mouseY/100, mouse.mouseX/100) &&  board.reachableFeldDrawer.rVektor!=null && mouse.currentKey!=3 && board.reachableFeldDrawer.markedOneFeld) {
+			 if(board.checker.squareIsPossible(mouse.mouseY/100, mouse.mouseX/100) &&  board.reachableFeldDrawer.rVektor!=null && mouse.currentKey!=2 && board.reachableFeldDrawer.markedOneArrowFeld) {
 				 
 				 board.reachableFeldDrawer.rVektor.endX = mouse.mouseX/100;
 				 board.reachableFeldDrawer.rVektor.endY = mouse.mouseY/100;
@@ -188,7 +190,7 @@ public class Match {
 				
 				 
 				 board.reachableFeldDrawer.rVektor = null;
-				 this.board.reachableFeldDrawer.markedOneFeld = false;
+				 this.board.reachableFeldDrawer.markedOneArrowFeld = false;
 				 mouse.currentKey = -99;
 				 
 			 }
@@ -197,6 +199,33 @@ public class Match {
 			
 		 }
 			
+		
+	}
+	
+	
+	private void drawMarkedFelder(Mouse mouse) {
+	
+   
+		
+		if(!Game.getInstance().boardgraphics)return;
+		
+		if(board.checker.squareIsPossible(mouse.mouseY/100, mouse.mouseX/100) && (mouse.clicked||mouse.pressed) && mouse.currentKey == 3) {
+			
+			
+			Vektor2D vektor = new Vektor2D(mouse.mouseX/100, mouse.mouseY/100, 100, 100);
+			
+			for(Vektor2D v2 : board.reachableFeldDrawer.markedFelder ) {
+				
+				if(vektor.startX == v2.startX && vektor.startY == v2.startY)   return;
+				
+			}
+			
+			board.reachableFeldDrawer.markedFelder.add(vektor);
+			
+			
+		}
+		
+		
 		
 	}
 	
@@ -277,16 +306,21 @@ public class Match {
 			   play.button.setText("k-T");
 			   play.button.setBackground(Color.WHITE);
 			   play.isRochade = true;
-			   if(!SoundManager.soundAlreadyPlayed)
-			   SoundManager.setSound(2);
-			   SoundManager.soundAlreadyPlayed = true;
+			  
+			   
+		   }else if(board.checker.enPassantPiece!=null) {
+			   
+			   play.newX = piece.drawX;
+			   play.newY = piece.drawY;
 			   
 		   }
+		 
+		   
 		   
 		  
 		   play.savePieces(this.board.pieces); 
 		    
-		   previousPlayManager.addNewPlay(play); // put to end
+		   previousPlayManager.addNewPlay(play); 
 		
 	}
 	
@@ -349,15 +383,7 @@ public class Match {
 	
 	}
 
-	private void finishPreparation() {
-		
-		for(Piece piece : board.pieces) {
-			
-			piece.drawX+=8;
-			
-		}
-		
-	}
+
 	
 	public void update(Mouse mouse) {
 		
@@ -389,12 +415,15 @@ public class Match {
 	    this.checkTimerOfBlack();
 		
 	    this.drawArrows(mouse);
+	    
+	    this.drawMarkedFelder(mouse);
 		
 	    
 		
 		if(mouse.pressed && mouse.currentKey == 1 && Game.getInstance().gameState == GameState.INMATCH) {
 		
 			this.board.reachableFeldDrawer.clearArrows();
+			this.board.reachableFeldDrawer.clearMarkedFelder();
 			
 			
 			if(board.selectedPiece == null) {
@@ -449,11 +478,15 @@ public class Match {
 						}
 				   
 				   
+	                board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX); // Das könnte mit arbeit in isMoveValid
+
+				   
+				   
 				   setUpPreviousPlay(prevPlay,board.selectedPiece);
 				  
 				
 				
-				//here was remove piece
+				
 				   
 				  
 
@@ -472,7 +505,7 @@ public class Match {
 				  }
 				 
 				 
-	                board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX); // Das könnte mit arbeit in isMoveValid
+	               // board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX); // Das könnte mit arbeit in isMoveValid
 
 	               
 
@@ -481,7 +514,11 @@ public class Match {
 					SoundManager.setSound(1);}
 					 
 				
-				
+				if(prevPlay.isRochade) {
+					
+					 SoundManager.setSound(2);
+					
+				}
 				
 				
 				

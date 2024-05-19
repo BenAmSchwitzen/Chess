@@ -3,15 +3,12 @@ package chess.UI;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
-import chess.board.Checker;
 import chess.main.Game;
 import chess.main.GameState;
 import chess.piece.Bauer;
 import chess.piece.Piece;
-import chess.piece.Springer;
 import chess.sound.SoundManager;
 import chess.util.Button;
 
@@ -47,8 +44,8 @@ public class MenuScreen {
 
 	      instantiateButtons();
 	      
-	      
-		
+	     
+	
 	}
 	
 
@@ -57,6 +54,9 @@ public class MenuScreen {
 		
 		b1 = new Button("  Play", 150, 900, 50, 135, Color.WHITE, Color.BLACK);
 		b1.setIcon(new ImageIcon(playIconPath));
+		
+	
+
 		
 		 b2 = new Button(" Puzzles", 150, 1080, 50, 170, Color.WHITE, Color.BLACK);
 		b2.setIcon(new ImageIcon(puzzleIconPath));
@@ -155,10 +155,16 @@ public class MenuScreen {
         	  
         	
         	  
-        	  
           });
-          
 	}
+          
+          
+	
+	
+	
+
+
+	
 	
     public void drawMenuPieces(Graphics2D g2) {
     	
@@ -190,26 +196,7 @@ public class MenuScreen {
     
    
   
-    
-    private int[] getRandomMove(Piece piece) {
-    	
-    	
-    	
-    	int [][] allPossibleMoves  = Checker.getPossibleFields(piece);
-    	
-    	int randomMove = (int) Math.floor(Math.random()*allPossibleMoves.length);
-    	
-    	int i = allPossibleMoves[randomMove][0];
-    	int j = allPossibleMoves[randomMove][1];
-    	
-    	
-    	
-			return new int[] {i,j};
-		
-    	
-    
-    
-    }
+
 
     public void updateMenuGame() {
     	
@@ -229,7 +216,7 @@ public class MenuScreen {
     
   public void  updatePawns() {
     	
-	  int counter = 0;
+	 
 	  
 	  int randomPiece1 = (int) (Math.random()*pieces.size()); 
 	  
@@ -243,20 +230,8 @@ public class MenuScreen {
 	  
     }
 
-    private void removeUpdateGamePiece(Piece attackingPiece) {
-    	
-    	for(Piece piece : pieces) {
-    	
-    		if(attackingPiece.drawY == piece.drawY && attackingPiece.drawX == piece.drawX) {
-    			
-    			pieces.remove(piece);
-    			return;
-    			
-    		}
-    		
-    	}
-    	
-    }
+  
+   
 
     private void clearGameComponents() {
     	
@@ -287,54 +262,8 @@ public class MenuScreen {
 
     }
     
-    
-    private int[][] getValidMoves(Piece piece) {
-    	
-    	int moves [][] = new int[getValidMovesCount(piece)][2];
-    	
-    	int counter = 0;
-    	
-             for(int i = 0;i<8;i++) {
-			
-			for(int j = 0;j<8;j++) {
-				
-				if(game.board.checker.isMoveValid(piece, i,j)) {
-					
-					moves[counter][0] = i;
-			        moves[counter][1] = j;
-			        counter++;
-			        
-				}
 
-			}
-			
-		}
-
-    	
-    	return moves;
-    	
-    }
     
-    private void doRandomMove(Piece piece) {
-    	
-    	int möglicheZüge = getValidMovesCount(piece);
-    	
-    	int randomMove = (int) Math.floor(Math.random()*möglicheZüge-1);
-    	
-    	if(randomMove>möglicheZüge) {
-    		piece.y = getValidMoves(piece)[0][0];
-        	piece.x = getValidMoves(piece)[0][1];
-    	}else {
-    		
-        	piece.y = getValidMoves(piece)[randomMove][0];
-        	piece.x = getValidMoves(piece)[randomMove][1];
-    	}
-    	
-    	piece.drawY = piece.y;
-    	piece.drawX = piece.x;
-    	
-    	
-    }
 
   
 }

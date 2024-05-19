@@ -21,6 +21,7 @@ public class Mouse extends MouseAdapter {
 		currentKey = e.getButton();
 	    
 		
+		
 	}
 	
 	@Override
@@ -46,6 +47,8 @@ public class Mouse extends MouseAdapter {
 		this.mouseY = e.getY();
 		this.mouseX = e.getX();
 		
+		
+		
 	}
 	
 	@Override
@@ -53,6 +56,7 @@ public class Mouse extends MouseAdapter {
 		
 		this.mouseY = e.getY();
 		this.mouseX = e.getX();
+		
 		
 	}
 	

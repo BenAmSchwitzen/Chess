@@ -4,10 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-
 import javax.swing.JPanel;
-
 import chess.UI.MenuScreen;
 import chess.board.Board;
 import chess.board.Match;
@@ -23,6 +20,7 @@ public class Game extends JPanel implements Runnable {
 	 private static final Game game = new Game();
 	 
 	 public GameState gameState = GameState.INMENU;
+	 
 	
 
 	//______Sizing_______________________________
@@ -74,7 +72,7 @@ public class Game extends JPanel implements Runnable {
 		  this.addMouseMotionListener(mouse);
 		  
 		 
-		  
+		
 
 		  gameThread = new Thread(this);
 		  gameThread.start();
@@ -109,6 +107,9 @@ public class Game extends JPanel implements Runnable {
 		
 		this.match.drawBoard(g2);
 		this.match.drawBoardGraphics(g2);
+		
+	
+		
  		this.match.drawPieces(g2); 
  	
 	    this.match.previousPlayManager.drawPlayButtons(g2);
@@ -147,7 +148,9 @@ public class Game extends JPanel implements Runnable {
 			
 			
 			
-			g2.setColor(Color.getHSBColor(100, 200, 200));
+			Color color = new Color(3,2,2,182);
+			 
+			 g2.setColor(color);
 			g2.fillRect(800, 0, 500, 800);
 			
 			SaveGameManager.drawMatches(g2);
@@ -202,6 +205,7 @@ public class Game extends JPanel implements Runnable {
 	    	
 	    	 match.update(mouse);
 	    	 
+	    	 
 	     }else if(this.gameState == GameState.INPUZZLE) {
 	    	 
 	    	 puzzleManager.update(mouse);
@@ -219,6 +223,9 @@ public class Game extends JPanel implements Runnable {
 
 	
 
+		
+		
+		
 	
 		
 	
