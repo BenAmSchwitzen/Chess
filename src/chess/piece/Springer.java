@@ -28,4 +28,11 @@ public class Springer extends Piece {
 		return false;
 	}
 
+	@Override
+	public Piece pCopy() {
+		
+		return new Springer(color, drawY, drawX);
+		
+	}
+
 }

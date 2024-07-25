@@ -31,6 +31,7 @@ public class PreviousPlay {
 	public boolean lastPlay = false;
 	public boolean isRochade = false;
 	public boolean isCheck = false;
+	public boolean isPromoting = false;
 	
 	public PreviousPlay(Piece movingPiece,Piece capturedPiece) {
 		
@@ -46,7 +47,7 @@ public class PreviousPlay {
 		
 		prevPieces = new ArrayList<>();
 		
-		if(capturedPiece!=null) {
+		if(capturedPiece!=null && !isPromoting) {
 			
 			this.button = new JButton(getName(movingPiece, capturedPiece));
 			

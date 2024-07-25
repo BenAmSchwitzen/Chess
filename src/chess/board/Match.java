@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 
 
 import chess.UI.MatchUI;
+import chess.computer.Computer;
 import chess.controller.Mouse;
 import chess.main.Game;
 import chess.main.GameState;
@@ -38,6 +39,11 @@ public class Match {
 	private int preparationTimer = 0;
 	private int preparationSteps = 0;
 	
+	
+	private Computer computer = new Computer();
+	private boolean computerTurn = false;
+	private int computerTimer = 0;
+
 	
 	
 	public Match(Board board) {
@@ -281,6 +287,7 @@ public class Match {
 		
 		if(board.selectedPiece!=null) {
 			
+			
 			this.doPieceMovementAnimation(mouse);
 	
 			if(board.checker.mouseOutOfFeld(mouse.mouseY, mouse.mouseX))  {
@@ -304,7 +311,7 @@ public class Match {
 		 if(board.checker.rochadePiece!=null) {
 			   
 			   play.button.setText("k-T");
-			   play.button.setBackground(Color.WHITE);
+			   play.button.setBackground(Color.RED);
 			   play.isRochade = true;
 			  
 			   
@@ -312,6 +319,10 @@ public class Match {
 			   
 			   play.newX = piece.drawX;
 			   play.newY = piece.drawY;
+			   
+		   } else if(play.isPromoting){
+			   
+			   play.button.setText("B - >");
 			   
 		   }
 		 
@@ -384,6 +395,43 @@ public class Match {
 	}
 
 
+	private void handleComputer() {
+		
+		
+		 if(Game.getInstance().computer) {
+			    
+		    	
+			    if(computerTurn) {
+			    	
+			    	if(computerTimer == 144) {
+			    		
+			    		
+			    		int [] finalMove = computer.getFinalMove(board, 'b',0);
+
+			    		
+			    		board.selectedPiece = board.pieces.get(finalMove[0]);
+			    		board.selectedPiece.drawY =  finalMove[1];
+			    		board.selectedPiece.drawX = finalMove[2];
+			    		
+			    	
+			    		computerTimer = 0;
+			    	
+			    	
+			    	}else {
+			    		
+			    		computerTimer++;
+			    	}
+
+			    	
+			    }
+			    
+			 
+			    }
+			    
+		
+		
+	}
+	
 	
 	public void update(Mouse mouse) {
 		
@@ -419,20 +467,25 @@ public class Match {
 	    this.drawMarkedFelder(mouse);
 		
 	    
+	    handleComputer();
+	   
+	    
 		
-		if(mouse.pressed && mouse.currentKey == 1 && Game.getInstance().gameState == GameState.INMATCH) {
+		if(mouse.pressed && mouse.currentKey == 1 && (!computerTurn || !Game.getInstance().computer)) {
 		
 			this.board.reachableFeldDrawer.clearArrows();
 			this.board.reachableFeldDrawer.clearMarkedFelder();
 			
 			
 			if(board.selectedPiece == null) {
-				
+				  board.checker.hasBeenCheckedForMoves = false;
 				mouseCheckForPiece(mouse);
 
 				
-			}else moveAnimationPiece(mouse);
-			     
+			}else  moveAnimationPiece(mouse);
+			
+			         
+			
 			
 				
 		} else {
@@ -442,11 +495,11 @@ public class Match {
 			if(board.selectedPiece== null) 
 				return;
 			
-			// Ab hier wird der Zug ausgewertet 1.Normal
 			
 			
 			
-			if(isThisMoveValid(board.selectedPiece)) {
+			
+			if(isThisMoveValid(board.selectedPiece) || board.checker.promotePiece !=null) {
 				
 				
 
@@ -473,12 +526,20 @@ public class Match {
 						board.selectedPiece.y = board.selectedPiece.drawY;
 						board.selectedPiece.x = board.selectedPiece.drawX;
 						
-						board.checker.swapBauerToQueen(board.selectedPiece);
+						if(!handlePromoting(board.selectedPiece,prevPlay)) {
+							
+							
+							return;
+							
+						}
+						
+						
+					
 						
 						}
 				   
 				   
-	                board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX); // Das könnte mit arbeit in isMoveValid
+	                board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX);
 
 				   
 				   
@@ -487,6 +548,8 @@ public class Match {
 				
 				
 				
+				 
+				   
 				   
 				  
 
@@ -497,7 +560,7 @@ public class Match {
 				   
                    updateValuesAfterTurn(board.selectedPiece);
 				   
-				   
+                 
 				   
 				   
 				  if(willThereBeTakeSound && !hasBeenCheckSound) {
@@ -505,7 +568,7 @@ public class Match {
 				  }
 				 
 				 
-	               // board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX); // Das könnte mit arbeit in isMoveValid
+	               // board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX); // Das könnte mit Arbeit in isMoveValid
 
 	               
 
@@ -558,6 +621,9 @@ public class Match {
 	         
 				
 				 this.progress.changeTurn();
+				 
+				 computerTurn = !computerTurn;
+				
 				
 			}else {
 				
@@ -580,16 +646,75 @@ public class Match {
 		
 	}
 	
+	private void doPromote(Piece piece) {
+		
+		 board.pieces.remove(piece);
+		 board.pieces.add(board.checker.promotePiece);
+	}
+	
+	private boolean handlePromoting(Piece piece,PreviousPlay play) {
+		
+		if(board.checker.isBauerPromoting(piece)) {
+			
+			if((computerTurn && Game.getInstance().computer)) {
+				
+				
+				board.checker.swapBauerToQueen(piece); 
+				
+				return true;
+				
+			} else {
+				
+				if(board.checker.promotePiece == null) {
+				
+					
+					board.checker.promotePiece = board.selectedPiece;
+					board.selectedPiece.drawPiece = false;
+					board.checker.isPromoting = true;
+					Game.getInstance().gameState = GameState.INPROMOTING;
+					matchUI.promoteScreen.addPromoteButtons();
+					return false;
+				} else {
+					
+					
+					play.isPromoting = true;
+				
+					this.doPromote(piece);
+					board.checker.promotePiece = null;
+					board.checker.isPromoting = false;
+					board.selectedPiece.drawPiece = true;
+					return true;
+				}
+				
+				
+				
+			}
+			
+			
+			
+		}
+		
+		
+		return true;
+	}
+	
 	
 	public void doPieceMovementAnimation(Mouse mouse) {
 		
-		board.selectedPiece.drawX = (mouse.mouseX/board.feldSize);
-		board.selectedPiece.drawY = (mouse.mouseY/board.feldSize);
 		
+		if(!board.checker.isPromoting) {
+			
+			board.selectedPiece.drawX = (mouse.mouseX/board.feldSize);
+			board.selectedPiece.drawY = (mouse.mouseY/board.feldSize);
+	
 		
+		}
 		
+	
 		
 	}
+		
+	
 	
 
         

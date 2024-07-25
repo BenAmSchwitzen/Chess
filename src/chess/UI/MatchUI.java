@@ -18,8 +18,11 @@ public class MatchUI{
 
 	public Match match;
 	
+	public PromoteScreen promoteScreen = new PromoteScreen(this);
+	
 	public Button leaveButton;
 	public Button saveButton;
+
 	
 	
 	
@@ -188,5 +191,7 @@ public class MatchUI{
 		
 	}
 	
+	
+
 	
 }

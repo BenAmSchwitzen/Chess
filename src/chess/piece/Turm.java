@@ -24,4 +24,12 @@ public class Turm extends Piece {
 		return false;
 	}
 
+	@Override
+	public Piece pCopy() {
+	
+		
+		return new Turm(color, drawY, drawX);
+		
+	}
+
 }

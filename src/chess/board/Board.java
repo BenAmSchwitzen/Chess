@@ -98,6 +98,7 @@ public class Board{
 				
 				g2.fillRect(j*feldSize,i*feldSize, feldSize,feldSize);
 				
+				beschrifteBoard(g2, i, j);
 				
 			}
 			
@@ -106,6 +107,52 @@ public class Board{
 		
 		
 	}
+	
+   private void beschrifteBoard(Graphics2D g2,int i,int j) {
+		
+	   
+	   
+	   if(i == 7) {
+		   
+		   g2.setColor((i+j)%2 == 0 ?  Color.BLACK : white);
+		   g2.drawString(Character.toString(getBoardLetter(j)),(j*feldSize)+(feldSize)-20, (i*feldSize)+(feldSize)-10);
+		   
+	   }
+	   
+	   if(j == 0) {
+		   g2.setColor((i+j)%2 == 0 ?  white : Color.BLACK);
+		   g2.drawString(Integer.toString(Math.abs(i-9)), (j*feldSize)+5, (i*feldSize)-feldSize+20);
+		   
+	   }
+	   
+      if(j == 0 && i == 7) {
+		   
+    	  g2.setColor(white);
+		  g2.drawString("1",(j*feldSize)+5, (i*feldSize)+20);   
+      }
+	   
+	}
+
+   
+   @SuppressWarnings("null")
+public char getBoardLetter(int j) {
+		
+
+		     switch(j) {
+		     
+		     case 0 : return 'a'; 
+		     case 1 : return 'b';
+		     case 2 : return 'c';
+		     case 3 : return 'd';
+		     case 4 : return 'e';
+		     case 5 : return 'f';
+		     case 6 : return 'g';
+		     case 7 : return 'h';  
+		     
+		     }
+		 return (Character) null;
+	}
+   
 	
 	public void drawMovingPiece(Graphics2D g2) {
 		
@@ -125,7 +172,8 @@ public class Board{
 		
 		
 	}
-
+	
+	
 	public void drawPieces(Graphics2D g2) {
 		
 		

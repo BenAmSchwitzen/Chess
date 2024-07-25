@@ -28,4 +28,11 @@ public class Dame extends Piece {
 		return false;
 	}
 
+	@Override
+	public Piece pCopy() {
+		
+		return new Dame(color, drawY, drawX);
+		
+	}
+
 }

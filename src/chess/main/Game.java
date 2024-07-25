@@ -14,6 +14,7 @@ import chess.puzzle.PuzzleManager;
 import chess.settings.SettingsManager;
 
 
+
 @SuppressWarnings("serial")
 public class Game extends JPanel implements Runnable {
 
@@ -42,7 +43,7 @@ public class Game extends JPanel implements Runnable {
 	public boolean arrows =  true;
 	public boolean randomPuzzles = true;
 	public boolean animations = true;
-	
+	public boolean computer = false;
 		
 	//_________________________________________________________
 		
@@ -164,14 +165,14 @@ public class Game extends JPanel implements Runnable {
 			this.match.previousPlayManager.drawPlayButtons(g2);
 			
 			this.match.drawMatchRelatedUI(g2);
+		
 			
-			
-			
+		
 			
 			
 	}else if(this.gameState == GameState.INPUZZLE) {
 		
-		
+
 		
 		this.match.drawBoard(g2);
 		
@@ -190,6 +191,22 @@ public class Game extends JPanel implements Runnable {
 		settingsManager.drawBackGrounnd(g2);
 		settingsManager.drawSettingsFeld(g2);
 		settingsManager.drawPiece(g2);
+	
+		
+	}else if(this.gameState == GameState.INPROMOTING) {
+		
+	
+		 
+		this.match.drawBoard(g2);
+		this.match.drawBoardGraphics(g2);
+		
+		this.match.drawMatchRelatedUI(g2);
+		g2.setColor(Color.getHSBColor(100, 200, 200));
+		g2.fillRect(800, 0, 500, 800);
+ 		
+		this.board.drawPieces(g2);
+			
+ 		this.match.matchUI.promoteScreen.hideSelectedPieceWhilePromotingOption();
 		
 	}
 		

@@ -15,6 +15,13 @@ public class Checker {
 	public Piece rochadePiece = null;
 	public Piece enPassantPiece = null;
 	
+    public Piece promotePiece = null;
+    public boolean isPromoting = false;
+	
+	
+	public int possibleMoves [][] = new int [63][2];
+	public boolean hasBeenCheckedForMoves = false;
+	
 	public Checker(Board board) {
 		
 		this.board = board;
@@ -22,7 +29,54 @@ public class Checker {
 	}
 	
 
+	public void getAllPossibleMoves(Piece piece) {
+	
+		int count = 0;
+		
+		for(int i = 0;i<8;i++) {
+			
+			for(int j = 0;j<8;j++) {
+				
+				if(isMoveValid(piece, i, j)) {
+					
+					possibleMoves[count][0] = i;
+					possibleMoves[count][1] = j;
+							
+					   count++;
+					
+				}else {
+					possibleMoves[count][0] = -99;
+					possibleMoves[count][1] = -99;
+					
+				}
+				
+			}
+			
+		}
+	
+		
+	}
+	
+	public boolean isMoveInListe(int y,int x,Piece piece) {
+		
+		for(int i = 0;i<possibleMoves.length;i++) {
+			
+			if(possibleMoves[i][0] == y && possibleMoves[i][1] == x) {
+				
+				return true;
+				
+			}
+			
+		}
+		
+		
+		
+		return false;
+		
+	}
 		  
+	
+	
 	 /**
 	 * checks if one <b>specific field</b> is available for a piece of a color
      */	
@@ -50,17 +104,19 @@ public class Checker {
 			     */	
 			  public boolean isMoveValid(Piece piece,int y,int x) { // in checker
 					
-				  if(piece==null)return false;
+				
 				  
-					return  (piece.canMove(y, x) || bauerAdditionalMovement(piece, y, x) || enPassant(piece, y, x))
+				  return  (piece.canMove(y, x) || bauerAdditionalMovement(piece, y, x) || enPassant(piece, y, x))
 							
-							&& !this.board.checker.isBlocked(piece, y, x)
+                            && !this.board.checker.isBlocked(piece, y, x)
 							
 							&& board.checker.isFeldAvailable(piece, y, x)
 							
 							&& !this.isCheckAfterMove(piece, y, x)
 							
 							&& squareIsPossible(y, x);
+							
+							
 							
 							
 						    
@@ -130,7 +186,9 @@ public class Checker {
 				  
 				  for(Piece p : board.pieces) {
 					  
-					  if(p.color!=king.color && !isBlocked(p, king.y, king.x) && (p.canMove(king.y, king.x) || bauerAdditionalMovement(p,king.y,king.x)) && p.considerPiece) {
+					  if(p.color!=king.color) {
+					  
+					  if(!isBlocked(p, king.y, king.x) && (p.canMove(king.y, king.x) || bauerAdditionalMovement(p,king.y,king.x)) && p.considerPiece) {
 
 						  if(cP!=null)
 						  cP.considerPiece = true;
@@ -140,6 +198,7 @@ public class Checker {
 						  
 					  }
 					  
+					  }
 					  
 				  }
 				  
@@ -219,6 +278,22 @@ public class Checker {
 					  }
 					  
 				  } }
+			  
+			  
+			  public boolean isBauerPromoting(Piece piece) {
+				  
+
+				  if(piece instanceof Bauer) {
+					  
+					  if((piece.color == 'w' && piece.y == 0) || (piece.color == 'b' && piece.y == 7)) {
+				    
+						  return true;
+				  
+					  }}
+				  
+				  return false;
+				  
+				  }
 				  
 			  /**
 			   * 
@@ -464,38 +539,7 @@ public class Checker {
 			 return cantDoAnyMoveAnymore(color) && isAttacked(getKing(color));
 		 }
 		
-			  public boolean isCheckMate1(Piece piece) {
-				  
-				  boolean kingCanMove = false;
-				  boolean canCheckBeBlocked = false;
-				  boolean canAttackingPieceBeTaken = true;
-				  
-				 
-				  
-				  Piece king = getKing(piece.color == 'w' ?'b':'w');
-				  
-				  Piece attackingPiece = getAttackingPiece(king);
-				  
-				  if(canKingMove(king)) {
-					  
-					  kingCanMove = true;
-					  
-				  }
-				  
-				  if(attackingPiece!=null) {
-				  
-			canAttackingPieceBeTaken  =  canTheAttackingPieceBeTaken(attackingPiece); 
 			
-				  canCheckBeBlocked = canTheAttackGetBlocked(attackingPiece, king);
-				  
-				  
-				  }
-				  
-				  // From where is the attack (blocking)
-				  
-				  
-				  return !kingCanMove && !canCheckBeBlocked  && !canAttackingPieceBeTaken;
-			  }
 			  
 			  
 				public Piece getAttackingPiece(Piece king) {
@@ -520,51 +564,7 @@ public class Checker {
 			
 			
 		
-			  
-			
-			public boolean canTheAttackGetBlocked(Piece attacker,Piece king) {
-				
-				
-				
-				List<Piece> kingPieces = board.pieces.stream().filter(m->m.color==king.color).toList();
-			              
-				
-				for(int i = 0;i<8;i++) {
-					
-					for(int j = 0;j<8;j++) {
-						
-						for(Piece piece : kingPieces) {
-							
-							int oldY = piece.y;
-							int oldX = piece.x;
-							
-							if(isMoveValid(piece, i, j)) {
-								
-								piece.y = i;
-								piece.x = j;
-								
-								if(board.checker.isBlocked(attacker, king.y,king.x)) {
-									
-									piece.y = oldY;
-									piece.x = oldX;
-									
-									return true;
-								}
-								piece.y = oldY;
-								piece.x = oldX;
-								
-							}
-							
-						}
-						
-						
-					}
-					
-				}
-				
-				
-				return false;
-			}
+		 
 	
 			public boolean canTheAttackingPieceBeTaken(Piece attackingPiece) {
 				

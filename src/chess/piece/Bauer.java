@@ -42,4 +42,11 @@ public class Bauer extends Piece {
 	return false;
 	
 }
+
+	@Override
+	public Piece pCopy() {
+		
+		return new Bauer(color, drawY, drawX);
+		
+	}
 }

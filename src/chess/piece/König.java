@@ -28,4 +28,12 @@ public class König extends Piece {
 		return false;
 	}
 
+	@Override
+	public Piece pCopy() {
+		
+		return new König(color, drawY, drawX);
+		
+		
+	}
+
 }

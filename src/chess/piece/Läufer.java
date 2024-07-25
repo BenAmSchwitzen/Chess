@@ -22,4 +22,12 @@ public class Läufer extends Piece {
 		return false;
 	}
 
+	@Override
+	public Piece pCopy() {
+		
+		
+	   return new Läufer(color, drawY, drawX);
+		
+	}
+
 }

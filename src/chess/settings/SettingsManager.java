@@ -125,17 +125,35 @@ public class SettingsManager {
 		};
 		
 		
+		 Setting s6 = new Setting("Computer") {
+				
+				@Override
+				public void onClick() {
+					
+				game.computer = !game.computer;
+					
+				this.getButton().setBackground(game.computer ? new Color(118, 150, 86) : new Color(238, 238, 210));
+				 this.onToggle(game.computer);
+				
+				}
+			};
+			
+		
+		
+		
 		 s1.getButton().setBackground(game.boardgraphics ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 s2.getButton().setBackground(game.sound ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 s3.getButton().setBackground(game.arrows ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 s4.getButton().setBackground(game.randomPuzzles ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 s5.getButton().setBackground(game.animations ? new Color(118, 150, 86) : new Color(238, 238, 210));
+		 s6.getButton().setBackground(game.computer ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 
 		settings.add(s1);
 		settings.add(s2);
 		settings.add(s3);
 		settings.add(s4);
 		settings.add(s5);
+		settings.add(s6);
 		
 		
 	}

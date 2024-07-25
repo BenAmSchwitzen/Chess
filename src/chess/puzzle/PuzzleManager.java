@@ -220,6 +220,7 @@ public class PuzzleManager {
     		
     		Piece piece = board.getPiece(startY,startX);
     		
+    		if(piece==null)return false;
     		
     	        piece.y = endY;
     	        piece.x = endX;
@@ -234,10 +235,13 @@ public class PuzzleManager {
     	    	   
     	    	   SoundManager.setSound(3);
     	    	   
+    	       }else if(doesPuzzlePieceCheckTheKing(piece, piece.drawY,piece.drawX)) {
+    	    	   
+    	    	   SoundManager.setSound(5);
+    	    	   
     	       }else {
     	    	   
     	    	   SoundManager.setSound(1);
-    	    	   
     	       }
     	       
     	        if(!playerHelp) {
@@ -397,7 +401,10 @@ public class PuzzleManager {
 				
 				SoundManager.setSound(3);
 				
-			}else {
+			}else if(doesPuzzlePieceCheckTheKing(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX)) {
+				SoundManager.setSound(5);
+				
+			} else {
 				
 				SoundManager.setSound(1);
 				
@@ -717,8 +724,41 @@ public class PuzzleManager {
     }
     
     
-   
-    
+    public boolean doesPuzzlePieceCheckTheKing(Piece piece,int y,int x) {
+		
+    	
+    	char color = piece.color == 'w' ? 'b' : 'w';
+    	
+    	König king = (König) board.checker.getKing(color);
+    	
+    	if(king==null)return false;
+    	
+    	
+        int oldY = piece.y;
+        int oldX = piece.x;
+        
+        piece.y = y;
+        piece.x = x;
+    	
+    	
+    	if(!board.checker.isBlocked(piece, king.y, king.x) && (piece.canMove(king.y, king.x) ||board.checker.bauerAdditionalMovement(piece,king.y,king.x))) {
+    		
+    		piece.y = oldY;
+    		piece.x = oldX;
+    		
+    		return true;
+    		
+    		
+    	}
+    	
+    	
+    	piece.y = oldY;
+		piece.x = oldX;
+    	return false;
+    	
+
 }
 
+    
+}
 

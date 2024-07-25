@@ -87,7 +87,7 @@ public class PreviousPlayManager implements ActionListener {
 
 		for (PreviousPlay play : plays) {
 
-			if (play.button == e.getSource()) {
+			if (play.button == e.getSource() && match.board.checker.promotePiece == null) {
 				
 				
 				match.board.reachableFeldDrawer.arrows.clear();
