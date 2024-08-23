@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import chess.piece.Bauer;
@@ -32,6 +33,15 @@ public class PreviousPlay {
 	public boolean isRochade = false;
 	public boolean isCheck = false;
 	public boolean isPromoting = false;
+	
+	
+	public int rochadeTX = 0;
+	public int rochadeTY = 0;
+	public int rochadeKX = 0;
+	public int rochadeKY = 0;
+	public boolean longRochade = false;
+	
+	public int number = 0;
 	
 	public PreviousPlay(Piece movingPiece,Piece capturedPiece) {
 		
@@ -64,6 +74,8 @@ public class PreviousPlay {
 		this.button.setFocusable(false);
 		this.button.setVisible(false);
 		
+		setPlayButtonIcon();
+		
 	}
 	
 	public void savePieces(LinkedList<Piece> pieces) {
@@ -94,13 +106,30 @@ public class PreviousPlay {
 		
 	}
 	
+	private void setPlayButtonIcon()  {
+		
+		String finalPath = "";
+		
+		switch(movingPiece.name) {
+		
+		case BAUER : finalPath = "chess.res/playIcons/pawnPlay.png"; break;
+		case DAME : finalPath = "chess.res/playIcons/damePlay.png"; break;
+		case KING : finalPath = "chess.res/playIcons/königPlay.png"; break;
+		case LÄUFER : finalPath = "chess.res/playIcons/bishopPlay.png"; break;
+		case TURM : finalPath = "chess.res/playIcons/rookPlay.png"; break;
+		case SPRINGER : finalPath = "chess.res/playIcons/springerPlay.png"; break; }
+		
+		this.button.setIcon(new ImageIcon(finalPath));
+		
+	}
+	
 	public String getName(Piece piece,Piece capturedPiece) {
 		
 	     String name = "";
 	     
 	     name += piece.name.toString().charAt(0);
 		 
-	     if(capturedPiece!=null) name+= " X "+capturedPiece.name.toString().charAt(0);
+	     if(capturedPiece!=null) name+= "X"+capturedPiece.name.toString().charAt(0);
 		
 	
 	     

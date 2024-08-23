@@ -18,9 +18,10 @@ public class Mouse extends MouseAdapter {
 		
 		this.pressed = true;
 		
+		
 		currentKey = e.getButton();
 	    
-		
+	
 		
 	}
 	
@@ -28,7 +29,8 @@ public class Mouse extends MouseAdapter {
 	public void mouseClicked(MouseEvent e) {
 		
 		this.clicked = true;
-		
+	
+	
 	}
 	
 	
@@ -37,6 +39,8 @@ public class Mouse extends MouseAdapter {
 		
 		this.pressed = false;
 		this.clicked = false;
+	
+		
 		currentKey = -99;
 		
 	}
@@ -56,7 +60,7 @@ public class Mouse extends MouseAdapter {
 		
 		this.mouseY = e.getY();
 		this.mouseX = e.getX();
-		
+	
 		
 	}
 	

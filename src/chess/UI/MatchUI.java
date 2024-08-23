@@ -144,6 +144,17 @@ public class MatchUI{
 		
 		leaveButton.addActionListener(m -> {
 			
+		  onLeave();
+			
+			
+		});
+		
+	}
+	   
+	   
+	   public void onLeave() {
+		   
+		   match.board.reachableFeldDrawer.checkedKing = null;
 			Game.getInstance().gameState = GameState.INMENU;
 			
 	   for(Component c : Game.getInstance().getComponents()) {
@@ -151,6 +162,8 @@ public class MatchUI{
 				Game.getInstance().remove(c);
 				
 			}
+	   
+	     match.board.perspectiveValue = 1;
 			
 			Game.getInstance().add(Game.getInstance().menuScreen.b1);
 			Game.getInstance().add(Game.getInstance().menuScreen.b2);
@@ -158,10 +171,9 @@ public class MatchUI{
 			Game.getInstance().add(Game.getInstance().menuScreen.b4);
 			
 			Game.getInstance().match = new Match(Game.getInstance().board);
-			
-		});
-		
-	}
+		   
+		   
+	   }
 	
 	
 	private void getButtonActionSave() {
@@ -170,9 +182,9 @@ public class MatchUI{
 
 			if(!hasGameBeenSaved) {
 				
-				
+				saveButton.setText("Saved");
 				saveButton.setBackground(Color.getHSBColor(222, 120, 122));
-				saveButton.setForeground(Color.BLACK);
+				saveButton.setForeground(Color.GREEN);
 				
 				SaveGameManager.safeGame(match);
 				

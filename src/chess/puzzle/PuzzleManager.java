@@ -1,12 +1,17 @@
 package chess.puzzle;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import chess.board.Board;
 import chess.controller.Mouse;
@@ -27,6 +32,9 @@ public class PuzzleManager {
 	private File turnsFile = new File("chess.res/puzzles/Turns.txt");
 	private File piecesFile = new File("chess.res/puzzles/PiecesForTurns.txt");
 	
+	private BufferedImage correctIconImage;
+	private String correctIconImagePath = "/icons/correctMoveIcon.png";
+	
 	private ArrayList<String> puzzles = new ArrayList<>();
 	private ArrayList<String> pieces = new ArrayList<>();
 	
@@ -36,7 +44,7 @@ public class PuzzleManager {
 	
 	private boolean computerTurn = false;
 	private boolean playerHelp = false;
-	
+	private int computerDelay = 60;
 	private int computerTimer = 0;
 	
 	
@@ -62,6 +70,10 @@ public class PuzzleManager {
 	private int successY = -99;
 	private int successX = -99;
 	
+	private int mistakesRow = 0;
+	private int helpY = 0;
+	private int helpX = 0;
+	
 	
 	
 	public PuzzleManager(Board board) {
@@ -75,6 +87,12 @@ public class PuzzleManager {
         setUpPiecesForPuzzle(0);
 		
 	
+        try {
+			this.correctIconImage = ImageIO.read(getClass().getResourceAsStream(correctIconImagePath));
+		} catch (IOException e) {
+		
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -216,7 +234,7 @@ public class PuzzleManager {
     
     private boolean doComputerTurn(int startY,int startX,int endY,int endX) {
     	
-    	if(computerTimer>=60) {
+    	if(computerTimer>=computerDelay) {
     		
     		Piece piece = board.getPiece(startY,startX);
     		
@@ -224,12 +242,22 @@ public class PuzzleManager {
     		
     	        piece.y = endY;
     	        piece.x = endX;
+    	      
+    	       
+    	        
+    	        
     	        piece.drawY = piece.y;
     	        piece.drawX = piece.x;
+    	        
+    	        board.checker.swapBauerToQueen(piece);
+    	        
     	        computerTimer = 0;
     	        
     	        successY = endY;
     	        successX = endX;
+    	        
+    	     
+    	        
     	        
     	       if(board.pieces.removeIf(m -> m.y == piece.drawY && m.x == piece.drawX && m!=piece)) {
     	    	   
@@ -243,15 +271,18 @@ public class PuzzleManager {
     	    	   
     	    	   SoundManager.setSound(1);
     	       }
-    	       
+    	     
     	        if(!playerHelp) {
     	        computerTurn = false;
     	        }else {
     	        	playerHelp = false;
     	        	this.mistakes++;
     	        	computerTurn = true;
+    	        	mistakesRow = 0;
+    	        	
     	        }
     	        
+    	       
     			currentPuzzleTurn++;
     			return true;
     		
@@ -265,10 +296,12 @@ public class PuzzleManager {
     	
     	updateScore();
     	
+    	
 
-     
+            if(Game.getInstance().keyBoard.currentKeyNumber == 27)
+            	onLeave();
        
-        
+         
         
     	
     	
@@ -367,6 +400,10 @@ public class PuzzleManager {
     	int endY = Integer.parseInt(endyx[0]);
     	int endX = Integer.parseInt(endyx[1]);
     	
+    	// in case the player needs help
+    	this.helpY = startY;
+    	this.helpX = startX;
+    	
           
     	if(computerTurn || playerHelp) {
     		
@@ -385,10 +422,15 @@ public class PuzzleManager {
 			
 			
 			board.selectedPiece = board.getPiece(mouse.mouseY/100, mouse.mouseX/100);
-
 			
+			
+		if(board.selectedPiece!=null && board.getPiece(startY, startX)!=null) {
+			if(board.selectedPiece.color != board.getPiece(startY, startX).color) {
+				board.selectedPiece = null;}}
+
 		}else if(board.selectedPiece!=null && mouse.pressed) {
 			
+
 			this.doPieceMovementAnimation(mouse);
 			
 		
@@ -396,6 +438,11 @@ public class PuzzleManager {
 			
 			if(board.selectedPiece.drawY == endY && board.selectedPiece.drawX == endX && board.selectedPiece.y == startY && board.selectedPiece.x == startX ) {
 			
+			
+				board.selectedPiece.y = board.selectedPiece.drawY;
+				board.selectedPiece.x = board.selectedPiece.drawX;
+				
+				board.checker.swapBauerToQueen(board.selectedPiece);
 				
 			if(board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece)) {
 				
@@ -412,13 +459,17 @@ public class PuzzleManager {
 			
 
 			
-			board.selectedPiece.y = board.selectedPiece.drawY;
-			board.selectedPiece.x = board.selectedPiece.drawX;
+			
+			
 			
 			board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece);
+
+			
 			
 			successY = endY;
 			successX = endX;
+			
+			mistakesRow = 0;
 			
 			currentPuzzleTurn++;
     	
@@ -427,14 +478,20 @@ public class PuzzleManager {
 			
 			
 			
+			
 			}else {
 				
-				if(board.selectedPiece.drawY!= board.selectedPiece.y || board.selectedPiece.drawX != board.selectedPiece.x) 
+				if(board.selectedPiece.drawY!= board.selectedPiece.y || board.selectedPiece.drawX != board.selectedPiece.x) {
+					
 					this.mistakes++;
 				
+					if(mistakesRow < 3)mistakesRow++; // Giving the player a hint if he is not about to find out the right move
+					
+				}
 			
 				board.selectedPiece.drawY = board.selectedPiece.y;
 				board.selectedPiece.drawX = board.selectedPiece.x;
+				
 				
 				
 				
@@ -595,16 +652,40 @@ public class PuzzleManager {
     	helpButton = null;
     	
     
+    
+    	
     	this.mistakes = 0;
     	this.score = 0;
     	
+    	this.mistakesRow = 0;
     	
     	
     	this.updateScore = false;
     	this.nextScore = 0;
     	
+    	
+    	this.currentPuzzle = 0;
+		this.currentPuzzleTurn = 0;
+		this.computerTurn = false;
+		this.computerTimer = 0;
+		
+		this.playerHelp = false;
+		this.newPuzzleTimer = 0;
+		this.waitForNextPuzzle = false;
+		
+		SoundManager.setSound(0);
+		
+		Game.getInstance().gameState = GameState.INMENU;
+		Game.getInstance().add(Game.getInstance().menuScreen.b1);
+		Game.getInstance().add(Game.getInstance().menuScreen.b2);
+		Game.getInstance().add(Game.getInstance().menuScreen.b3);
+		Game.getInstance().add(Game.getInstance().menuScreen.b4);
+    	
+		
     }
     
+    
+   
     
    public void setButtonAction() {
 	   
@@ -614,24 +695,10 @@ public class PuzzleManager {
 		   
 		   if(!waitForAnimationEnding || !animationsAllowed) {
 		   
-			this.currentPuzzle = 0;
-    		this.currentPuzzleTurn = 0;
-    		this.computerTurn = false;
-    		this.computerTimer = 0;
-    		
-    		this.playerHelp = false;
-    		this.newPuzzleTimer = 0;
-    		this.waitForNextPuzzle = false;
-    		
-    		SoundManager.setSound(0);
-    		Game.getInstance().gameState = GameState.INMENU;
+		
     		
     		onLeave();
-    		
-    		Game.getInstance().add(Game.getInstance().menuScreen.b1);
-			Game.getInstance().add(Game.getInstance().menuScreen.b2);
-			Game.getInstance().add(Game.getInstance().menuScreen.b3);
-			Game.getInstance().add(Game.getInstance().menuScreen.b4);
+    	
 			
 		   }
 		   
@@ -643,6 +710,7 @@ public class PuzzleManager {
 		   setUpPiecesForPuzzle(currentPuzzle);
 		   this.computerTurn = false;
 		   this.computerTimer = 0;
+		   this.mistakesRow = 0;
 		   this.currentPuzzleTurn = 0; }
 		   
 		    
@@ -696,6 +764,9 @@ public class PuzzleManager {
     	drawSuccess(g2);
     
     	board.reachableFeldDrawer.makePiecesInvisible(g2);
+    	
+    	this.drawHint(g2);
+    	
     
     }
     
@@ -710,6 +781,17 @@ public class PuzzleManager {
     		
     	}
     	
+    	
+    }
+    
+     // Has to be separated from the drawSuccess method because of drawing-order
+    public void drawSuccessImage(Graphics2D g2) {
+    	
+    	if(computerTurn) {
+    		
+    		g2.drawImage(correctIconImage,successX*100+75,successY*100-16, 32, 32, null);
+    		
+    	}
     	
     }
     
@@ -758,7 +840,22 @@ public class PuzzleManager {
     	
 
 }
+    
+     // Only draws if the player makes 3 mistakes in a row    
+    private void drawHint(Graphics2D g2) {
+    	
+    	if(mistakesRow < 3)return;
+    		
+    		g2.setColor(Color.YELLOW);
+    		g2.setStroke(new BasicStroke(3));
+    		g2.drawRect(helpX*board.feldSize,helpY*board.feldSize,board.feldSize, board.feldSize);
+    		
+    
+    	
+    }
+    		
 
+   
     
 }
 

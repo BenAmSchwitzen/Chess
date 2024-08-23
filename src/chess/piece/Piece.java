@@ -4,7 +4,8 @@ package chess.piece;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -43,6 +44,13 @@ public abstract class Piece {
 	
 	//___________________________________________________
 	
+	
+	//________ new ( Jedes Piece speichert nun seine möglichen Züge(Zielfelder),damit diese nicht die ganze Zeit neu berechnet werden müssen )
+	
+	public List<int []> possibleMoves;
+	
+	//______________
+	
 	public Piece(char color,int y,int x) {
 	
 		PieceInfo pieceInfo =  getClass().getAnnotation(PieceInfo.class);
@@ -70,6 +78,7 @@ public abstract class Piece {
 		this.hasMoved = false;
 		this.moveCounter = 0;
 		
+		this.possibleMoves = new ArrayList<>();
 		
 	}
 	

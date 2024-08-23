@@ -5,6 +5,7 @@ package chess.board;
 
 import java.util.List;
 import chess.piece.*;
+import chess.previousplay.PreviousPlay;
 
 
 public class Checker {
@@ -102,9 +103,9 @@ public class Checker {
 				 * checks if the <b>specific piece</b> can enter a <b>field y,x</b>
 				 * without breaking the rules
 			     */	
-			  public boolean isMoveValid(Piece piece,int y,int x) { // in checker
+			  public boolean isMoveValid(Piece piece,int y,int x) { 
 					
-				
+				if(piece==null)return false;
 				  
 				  return  (piece.canMove(y, x) || bauerAdditionalMovement(piece, y, x) || enPassant(piece, y, x))
 							
@@ -268,13 +269,25 @@ public class Checker {
 					  
 					  if((piece.color == 'w' && piece.y == 0) || (piece.color == 'b' && piece.y == 7)) {
 						  
-						  
-						  
-						  Dame newDame = new Dame(piece.color, piece.color == 'w' ? 0:7, piece.x);
-						  
 						  board.pieces.remove(piece);
-						
+						  
+						  Piece newDame = new Dame(piece.color, piece.color == 'w' ? 0:7, piece.x);
 						  board.pieces.add(newDame);
+						  board.selectedPiece = newDame;
+						  
+						  piece = null;
+						
+						
+						 
+						
+						 
+						
+						  
+						  
+						  
+						
+						 
+						  
 					  }
 					  
 				  } }
@@ -285,7 +298,7 @@ public class Checker {
 
 				  if(piece instanceof Bauer) {
 					  
-					  if((piece.color == 'w' && piece.y == 0) || (piece.color == 'b' && piece.y == 7)) {
+					  if(((piece.color == 'w' && piece.y == 0)  || (board.perspectiveValue == 1 && piece.color == 'w' && piece.y == 7)) || ((piece.color == 'b' && piece.y == 7)) || (board.perspectiveValue == -1 && piece.color == 'b' && piece.y == 0)) {
 				    
 						  return true;
 				  
@@ -326,7 +339,7 @@ public class Checker {
 					  
 					
 					  
-					  piece.y = y-1;
+					  piece.y = y-1*board.perspectiveValue;
 					  piece.x = x;
 					  board.selectedPiece.drawY = piece.y;
 					  board.selectedPiece.drawX = piece.x;
@@ -335,7 +348,11 @@ public class Checker {
 				  }else {
 					  
 					  
-					  piece.y = y+1;
+						  piece.y = y+1*board.perspectiveValue;
+						  
+					 
+					  
+					  
 					  piece.x = x;
 					  board.selectedPiece.drawY = piece.y;
 					  board.selectedPiece.drawX = piece.x;
@@ -358,30 +375,38 @@ public class Checker {
 			  }
 			  
 			
+		
 			  
-			  public void doRochade(Piece piece) {
+			  @Deprecated
+			  public void doRochadeFix(Piece piece) {
 				  
 				  if(rochadePiece!=null) {
-					  
+					  System.out.println("d");
 					  if(piece.x>rochadePiece.x) {
 						  
 						  rochadePiece.drawX += 3;
 						  rochadePiece.x += 3;
-						  
-						  piece.x-=2;
-						  piece.drawX = piece.x;
 						 
-						  
+						  piece.x = piece.x-2;
+						  piece.drawX = piece.x;
+						  System.out.println("da");
+						 
 						  return;
 					  }
 					  
                          if(piece.x<rochadePiece.x) {
 						  
-						  rochadePiece.drawX -= 2;
-						  rochadePiece.x -= 2;
-						  
-						  piece.x += 2;
-						  piece.drawX = piece.x;
+                        	
+                        		 
+                        		rochadePiece.drawX -= 2;
+       						  rochadePiece.x -= 2;
+       						  
+       						  piece.x += 2;
+       						  piece.drawX = piece.x;
+                        		 
+                        
+                        	 
+						 
 						  
 						  
 						  return;
@@ -389,6 +414,147 @@ public class Checker {
 					  
 				  }
 				  
+			  }
+			  
+			  
+			  public void doRochade(Piece piece,PreviousPlay play) {
+				  
+				  if(rochadePiece!=null) {
+					 if(piece.color == 'w') {
+						 
+						 whiteRochade(piece,play);
+					 }else {
+						 
+						 blackRochade(piece,play);
+ 
+					 }
+	
+					 play.rochadeTY = rochadePiece.drawY;
+					 play.rochadeTX = rochadePiece.drawX;
+					 play.rochadeKX = piece.drawX;
+					 play.rochadeKY = piece.drawY;
+					 
+					 
+				  }
+				  
+				  
+			  }
+			  
+			  
+			  private void blackRochade(Piece piece,PreviousPlay play) {
+				
+				  
+				 if(board.perspectiveValue == 1) {
+					 
+					  if(piece.x< rochadePiece.x) {
+						  piece.drawX = 6;
+						  rochadePiece.drawX = 5;
+						  piece.x = 6;
+						  rochadePiece.x = 5;
+						  
+						  play.longRochade = false;
+						  
+					  }else {
+						  
+						  piece.drawX = 2;
+						  rochadePiece.drawX = 3;
+						  piece.x = 2;
+						  rochadePiece.x = 3;
+						  
+						  play.longRochade = true;
+						  
+						  
+					  }
+ 
+					  
+				  }else if(board.perspectiveValue == -1) {
+					  if(piece.x< rochadePiece.x) {
+						  piece.drawX = 5;
+						  rochadePiece.drawX = 4;
+						  piece.x = 5;
+						  rochadePiece.x = 4;
+						  
+						  play.longRochade = true;
+						  
+					  }else {
+						  
+						  
+						  
+						  
+						  piece.drawX = 1;
+						  rochadePiece.drawX = 2;
+						  piece.x = 1;
+						  rochadePiece.x = 2;
+						  
+						  play.longRochade = false;
+						  
+						  
+					  }
+					  
+				  }
+				  
+				  
+			  }
+			  
+              private void whiteRochade(Piece piece,PreviousPlay play) {
+				  
+            	  if(piece.x< rochadePiece.x) {
+					  piece.drawX = 6;
+					  rochadePiece.drawX = 5;
+					  piece.x =6;
+					  rochadePiece.x = 5;
+					  
+					  play.longRochade = false;
+					  
+					  
+					  
+				  }else {
+					  
+					  piece.drawX = 2;
+					  rochadePiece.drawX = 3;
+					  piece.x = 2;
+					  rochadePiece.x = 3;
+					  
+					  play.longRochade = true;
+					  
+				  }
+			  }
+			  
+			  
+			  @Deprecated
+			  public boolean drawRochade(Piece piece,int y,int x) {
+				  
+				  if(board.getPiece(y, x)==null || piece==null)return false;
+				      if(!(board.getPiece(y, x) instanceof Turm) || !(piece instanceof König))return false;
+				  
+				      Turm turm = (Turm) board.getPiece(y, x);
+				      
+				      if(turm.color != piece.color || piece.hasMoved || turm.hasMoved)return false;
+				      
+				      if(isFeldAttackedByEnemy(piece.y, piece.x, piece.color) || isFeldAttackedByEnemy(turm.y, turm.x, turm.color) || piece.y !=turm.y)return false;
+				      
+				      
+				       // Ab hier folgen die Checks bezüglich der Zwischenräume
+				      
+				      // rechts
+				      if(piece.x<turm.x) {
+				      for(int i = piece.x+1;i<turm.x;i++) {
+				    	  
+				    	  if(isFeldAttackedByEnemy(y, i, piece.color)|| board.getPiece(piece.y, i)!=null)return false;
+				    	  
+				      }
+				      
+				      }else if(piece.x>turm.x) {
+				      // links
+                          for(int i = piece.x-1;i>turm.x;i--) {
+				    	  
+				    	  if(isFeldAttackedByEnemy(y, i, piece.color) || board.getPiece(piece.y, i)!=null)return false;
+				    	  
+				      }
+				      }
+
+				  this.rochadePiece = turm;   
+				  return true;
 			  }
 			  
 			  
@@ -402,6 +568,8 @@ public class Checker {
 						  
 						  if(!isAttacked((König) piece)  && !isAttacked(board.getPiece(y, x))) {
 						  
+							
+							  
 						  if(piece.x<x) {
 								
 								for(int i = piece.x+1;i<x;i++) {
@@ -423,6 +591,11 @@ public class Checker {
 								}
 								
 							}
+						  
+						  
+							 
+						  
+						  
 							if(board.getPiece(y, x).x == piece.drawX &&  board.getPiece(y, x).y == piece.drawY)
 							this.rochadePiece = board.getPiece(y, x);
 							
@@ -838,8 +1011,13 @@ public class Checker {
 		 
 	 }
 
+	 
+
+	 
+	 
 	
 	 public boolean isBauerBlocked(Piece piece,int y,int x) {
+		 
 		 
 
 			 int diffY = 0;
@@ -850,7 +1028,7 @@ public class Checker {
 				 diffY =  piece.y-y;
 				 diffX =  piece.x-x;
 				 
-				 if(board.getPiece(piece.y-1,piece.x)!=null && diffY == 1 && diffX ==  0) {
+				 if(board.getPiece(piece.y-1*board.perspectiveValue,piece.x)!=null && diffY == 1*board.perspectiveValue && diffX ==  0) {
 					 
 					 return true;
 					 
@@ -863,7 +1041,7 @@ public class Checker {
 				 diffY =  piece.y-y;
 				 diffX =  piece.x-x;
 				 
-				 if(board.getPiece(piece.y+1, piece.x)!=null && diffY == -1 && diffX ==  0) {
+				 if(board.getPiece(piece.y+1*board.perspectiveValue, piece.x)!=null && diffY == -1*board.perspectiveValue && diffX ==  0) {
 					 
 					 return true;
 					 
@@ -893,14 +1071,14 @@ public class Checker {
     public boolean bauerAdditionalMovementWhite(Piece piece,int y,int x) {
 		 
 		
-		 if((board.getPiece(piece.y-1, piece.x-1)!=null && piece.y-y == 1 && piece.x-x == 1)
-				 || (board.getPiece(piece.y-1, piece.x+1)!=null && piece.y-y == 1 && piece.x-x == -1)
+		 if((board.getPiece(piece.y-1*board.perspectiveValue, piece.x-1)!=null && piece.y-y == 1*board.perspectiveValue && piece.x-x == 1)
+				 || (board.getPiece(piece.y-1*board.perspectiveValue, piece.x+1)!=null && piece.y-y == 1*board.perspectiveValue && piece.x-x == -1)
 				 ) {
 			 return true;
 		 }
 		 
-		 if((board.getPiece(piece.y-2, piece.x)== null && piece.y-y == 2 && piece.x-x == 0) &&
-				 (board.getPiece(piece.y-1, piece.x)== null && !piece.hasMoved)
+		 if((board.getPiece(piece.y-2*board.perspectiveValue, piece.x)== null && piece.y-y == 2*board.perspectiveValue && piece.x-x == 0) &&
+				 (board.getPiece(piece.y-1*board.perspectiveValue, piece.x)== null && !piece.hasMoved)
 				 
 				 ) {
 			 
@@ -917,17 +1095,19 @@ public class Checker {
  
    public boolean bauerAdditionalMovementBlack(Piece piece,int y,int x) {
 	 
-	
+	   
+	   
+	   
 	 
-	   if((board.getPiece(piece.y+1, piece.x-1)!=null && piece.y-y == -1 && piece.x-x == 1)
-				 || (board.getPiece(piece.y+1, piece.x+1)!=null && piece.y-y == -1 && piece.x-x == -1)
+	   if((board.getPiece(piece.y+1*board.perspectiveValue, piece.x-1)!=null && piece.y-y == -1*board.perspectiveValue && piece.x-x == 1)
+				 || (board.getPiece(piece.y+1*board.perspectiveValue, piece.x+1)!=null && piece.y-y == -1*board.perspectiveValue && piece.x-x == -1)
 				 ) {
 			 return true;
 		 }
 		 
 	   
-		 if((board.getPiece(piece.y+2, piece.x)== null && piece.y-y == -2 && piece.x-x == 0) &&
-				 (board.getPiece(piece.y+1, piece.x)== null && !piece.hasMoved)
+		 if((board.getPiece(piece.y+2*board.perspectiveValue, piece.x)== null && piece.y-y == -2*board.perspectiveValue && piece.x-x == 0) &&
+				 (board.getPiece(piece.y+1*board.perspectiveValue, piece.x)== null && !piece.hasMoved)
 				 
 				 ) {
 			 
@@ -935,6 +1115,7 @@ public class Checker {
 			 
 		 }
 	   
+	    
 		 
 		 return false;
 		 

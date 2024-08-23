@@ -57,6 +57,8 @@ public class Board{
 	public ReachableFeldDrawer reachableFeldDrawer;
 	
 	
+	public int perspectiveValue = 1; // Adapts the movement values of black and white peaces according to the direction of the board
+	
 	
 //___________________________________________
 	
@@ -81,7 +83,7 @@ public class Board{
 		this.pieces = new LinkedList<>();
 		
 		
-		this.reachableFeldDrawer = new ReachableFeldDrawer(this); // Event maybe
+		this.reachableFeldDrawer = new ReachableFeldDrawer(this); // could be turned into an event
 		
 		
 		
@@ -176,6 +178,7 @@ public char getBoardLetter(int j) {
 	
 	public void drawPieces(Graphics2D g2) {
 		
+	
 		
 		pieces.stream().filter(m-> m.drawPiece && m != selectedPiece).forEach(m -> g2.drawImage(m.image, m.drawX*this.feldSize,m.drawY*feldSize+5, this.feldSize,this.feldSize-10, null));
 		
@@ -221,9 +224,105 @@ public char getBoardLetter(int j) {
 	
 	
 		  
+		public void turnBoardAround(char turn) {
+			
+			if(!Game.getInstance().turnBoard || Game.getInstance().computer)return;
+			
+			
+			perspectiveValue *=-1;
+
+			for(Piece piece : pieces) {
+				
+				
+				piece.drawY = 7-piece.drawY;
+				piece.drawX = 7-piece.drawX;
+				
+			    piece.y = piece.drawY;
+			    piece.x = piece.drawX;
+			
+			}
+			
 		
-		  
-		  
-	  
-	
+
+		
+		}
+		
+		//Updates all possible moves for each piece
+		
+		public void updatePossibleMoves(char color) {
+			
+			
+			
+				pieces.stream().filter(m -> m.color == color).forEach(m -> {
+					
+					m.possibleMoves.clear();
+					
+					
+                     for(int i = 0;i< 8;i++) {
+						
+						for(int j = 0;j< 8;j++) {
+					
+							
+							if(checker.isMoveValid(m, i,j))
+							    m.possibleMoves.add(new int[]{i,j});
+					
+						}
+
+					}
+						
+                     // Die Rochade-Moves, falls möglich
+                     updateMovesWithRochade(m);
+
+					
+				});
+					
+
+					
+					}
+		
+		 // Fügt gegebenfalls die Rochade-Züge noch extra hinzu, falls eben möglich
+		private void updateMovesWithRochade(Piece piece) {
+			
+			
+			if(piece instanceof König && piece.color == 'w' || (piece.color == 'b' && this.perspectiveValue == -1) ) {
+           	 
+           	 if(checker.checkRochade(piece, 7, 7)) 
+  				   piece.possibleMoves.add(new int[] {7,7});
+
+  			  if(checker.checkRochade(piece, 7, 0)) 
+  				piece.possibleMoves.add(new int[] {7,0});
+  			  
+  			  
+           	 }	else if(piece instanceof König && piece.color == 'b') {
+           		 
+           		 if(checker.checkRochade(piece, 0, 7)) 
+    				   piece.possibleMoves.add(new int[] {0,7});
+
+    			  if(checker.checkRochade(piece, 0, 0)) 
+    				piece.possibleMoves.add(new int[] {0,0});
+           		 
+           		 
+           		 
+           		 
+           	 }
+			
+			
+		}
+						
+					
+		             //Uses the new possibleMoves list in order to find out whether a square is possible to enter
+					public boolean canPieceGoToSpecificFeld(Piece piece,int y,int x) {
+						
+					    return piece.possibleMoves.stream().anyMatch(m -> y == m[0] && x == m[1]);
+						
+						
+					}
+
+
+
+
 }
+		  
+		 
+	
+

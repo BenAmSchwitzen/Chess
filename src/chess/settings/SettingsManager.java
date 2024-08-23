@@ -126,7 +126,7 @@ public class SettingsManager {
 		
 		
 		 Setting s6 = new Setting("Computer") {
-				
+			 
 				@Override
 				public void onClick() {
 					
@@ -136,7 +136,47 @@ public class SettingsManager {
 				 this.onToggle(game.computer);
 				
 				}
+				
+				
 			};
+			
+			
+
+			 Setting s7 = new Setting("Turn board") {
+					
+					@Override
+					public void onClick() {
+						
+					game.turnBoard = !game.turnBoard;
+						
+					this.getButton().setBackground(game.turnBoard ? new Color(118, 150, 86) : new Color(238, 238, 210));
+					 this.onToggle(game.turnBoard);
+					 
+				
+				     kPiece.drawY = 7- kPiece.drawY;
+				     kPiece.drawX = 7- kPiece.drawX;
+						
+				     kPiece.y =  kPiece.drawY;
+				     kPiece.x =  kPiece.drawX;
+				     
+				     dPiece.drawY = 7- dPiece.drawY;
+				     dPiece.drawX = 7- dPiece.drawX;
+						
+				     dPiece.y =  dPiece.drawY;
+				     dPiece.x =  dPiece.drawX;
+				     
+				     lPiece.drawY = 7-lPiece.drawY;
+				     lPiece.drawX = 7-lPiece.drawX;
+						
+				     lPiece.y =  lPiece.drawY;
+				     lPiece.x =  lPiece.drawX;
+				     
+			
+					 
+					 
+					
+					}
+				};
 			
 		
 		
@@ -147,6 +187,7 @@ public class SettingsManager {
 		 s4.getButton().setBackground(game.randomPuzzles ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 s5.getButton().setBackground(game.animations ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 s6.getButton().setBackground(game.computer ? new Color(118, 150, 86) : new Color(238, 238, 210));
+		 s7.getButton().setBackground(game.turnBoard ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 
 		settings.add(s1);
 		settings.add(s2);
@@ -154,6 +195,7 @@ public class SettingsManager {
 		settings.add(s4);
 		settings.add(s5);
 		settings.add(s6);
+		settings.add(s7);
 		
 		
 	}
@@ -163,7 +205,7 @@ public class SettingsManager {
    public void addButtons() {
 	   
 	   int startX = 120;
-	   int startY = 110;
+	   int startY = 80;
 	   int abstand = 100;
 	   int count = 0;
 	   
@@ -201,7 +243,7 @@ public class SettingsManager {
 	   leaveButton.addActionListener(e  ->  {
 		   
 		   
-		   onLeave();
+		   onLeave(1);
 		   
 	   });
 		
@@ -209,10 +251,14 @@ public class SettingsManager {
    }
    
    
+   
 	   
    
    
-   private void onLeave() {
+   public void onLeave(int exitMethod) {
+	   
+	   
+	   if(exitMethod != 1 && (exitMethod != 27 || Game.getInstance().keyBoard.currentKeyNumber !=27))return;
 	   
 	   for(Component c : game.getComponents()) {
 		   game.remove(c);
@@ -310,5 +356,9 @@ public class SettingsManager {
 		}
 	   
    }
+   
+   
+   
+   
 	
 }

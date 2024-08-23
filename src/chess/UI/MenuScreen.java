@@ -3,7 +3,11 @@ package chess.UI;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import chess.main.Game;
 import chess.main.GameState;
@@ -31,6 +35,9 @@ public class MenuScreen {
 	 private String quitIconPath ="chess.res/icons/quitIcon.png";
 	 private String settingsIconPath ="chess.res/icons/settingsIcon.png";
 	 
+	 private String logoIconPath = "chess.res/icons/ChessLogo.png";
+	 private BufferedImage logo;
+	 
 	 private ArrayList<Button> buttons;
 	
 	public MenuScreen(Game game) {
@@ -44,7 +51,11 @@ public class MenuScreen {
 
 	      instantiateButtons();
 	      
-	     
+	     try {
+			this.logo = ImageIO.read(getClass().getResourceAsStream("/icons/ChessLogo.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	
 	}
 	
@@ -163,6 +174,13 @@ public class MenuScreen {
 	
 	
 
+	public void drawLogo(Graphics2D g2) {
+		g2.setColor(Color.BLACK);
+		//g2.fillRect(800, 0, 140, 65);
+		g2.fillRoundRect(800, 0, 140, 100,20,0);
+		
+		g2.drawImage(logo, 800, 20, 140, 70, null);
+	}
 
 	
 	

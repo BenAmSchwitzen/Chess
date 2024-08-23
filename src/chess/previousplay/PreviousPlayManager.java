@@ -81,10 +81,46 @@ public class PreviousPlayManager implements ActionListener {
 		});
 
 	}
+	
+	
+	
+	
+	public void onKeyClick(int key) {
+		
+		if(this.currentPlay==null)return;
+		
+		if(key != 37 && key != 39)return;
+		
+		 int forwardOrBackwardNumber = key == 37 ? -1 : 1;
+		
+		       if((key == 37 && currentPlay.number-1 == 0) || (key == 39 && currentPlay.number-1 == plays.size()-1  ) )return;
+
+		       Game.getInstance().gameState = GameState.INWATCH;
+		       
+				actionPerformed(new ActionEvent(plays.get(currentPlay.number+forwardOrBackwardNumber-1).button, currentViewPlay, forwardOrBackwardNumber == -1 ? "backwards" : "forwards"));
+
+				if(currentPlay.number > currentViewPlay+10 && key == 39) {
+					
+					currentViewPlay+=10;
+					
+				}else if(currentPlay.number< currentViewPlay+1 && key == 37) {
+					currentViewPlay-=10;
+				}
+				
+				
+				 Game.getInstance().keyBoard.currentKeyNumber = -1;
+				
+			}
+			
+		
+		
+		
+	
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-
+         
 		for (PreviousPlay play : plays) {
 
 			if (play.button == e.getSource() && match.board.checker.promotePiece == null) {
@@ -95,9 +131,10 @@ public class PreviousPlayManager implements ActionListener {
 
 				if (play == plays.get(plays.size() - 1) && match.isMatchRunning) {
 
-					playWatchSound(play);
 					
-					currentPlay = null;
+					
+					currentPlay = play;
+					playWatchSound(currentPlay);
 
 					Game.getInstance().gameState = GameState.INMATCH;
 
@@ -113,11 +150,12 @@ public class PreviousPlayManager implements ActionListener {
 
 					this.currentPlay = play;
 					
-					playWatchSound(play);
+					playWatchSound(currentPlay);
 					
 					this.currentPlay.button.setBorder(
 							BorderFactory.createBevelBorder(0, Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK));
 					this.currentPlay.button.setBackground(Color.YELLOW);
+			        
 
 				}
 
@@ -132,7 +170,7 @@ public class PreviousPlayManager implements ActionListener {
 
 				}
 			}
-
+           
 		}
 	}
 	
@@ -217,15 +255,11 @@ public class PreviousPlayManager implements ActionListener {
 
 		drawInvolvedFields(g2);
 
+		
+		
 		if (this.currentPlay != null) {
 
-			for (Piece piece : this.currentPlay.prevPieces) {
-
-				g2.drawImage(piece.image, piece.drawX * this.match.board.feldSize,
-						piece.drawY * this.match.board.feldSize + 5, this.match.board.feldSize,
-						this.match.board.feldSize - 10, null);
-
-			}
+			currentPlay.prevPieces.forEach(m -> g2.drawImage(m.image, m.drawX * this.match.board.feldSize, m.drawY * this.match.board.feldSize+5,this.match.board.feldSize, this.match.board.feldSize-10, null));
 
 		}
 
@@ -236,28 +270,31 @@ public class PreviousPlayManager implements ActionListener {
 		if (this.currentPlay == null || !Game.getInstance().boardgraphics)
 			return;
  
-		// private Color white = new Color(238, 238, 210);
-		// private Color black = new Color(118, 150, 86);
-
-		//g2.setColor(white);
+		
+		if(!currentPlay.isRochade) {
 
 		// From this
 		g2.fillRect(currentPlay.oldX * match.board.feldSize, currentPlay.oldY * match.board.feldSize,
 				match.board.feldSize, match.board.feldSize);
 
-		//g2.setColor(black);
-		
-		
-		//if(this.currentPlay.capturedPiece !=null) {
-			
-			//g2.setColor(Color.RED);
-			
-		//}
-		
-
 		// To this
 		g2.fillRect(currentPlay.newX * match.board.feldSize, currentPlay.newY * match.board.feldSize,
 				match.board.feldSize, match.board.feldSize);
+		
+		}else {
+			
+			
+			g2.fillRect(currentPlay.rochadeKX * match.board.feldSize, currentPlay.rochadeKY * match.board.feldSize,
+					match.board.feldSize, match.board.feldSize);
+				
+			g2.fillRect(currentPlay.rochadeTX* match.board.feldSize, currentPlay.rochadeTY * match.board.feldSize,
+					match.board.feldSize, match.board.feldSize);
+			
+			
+		}
+		
+		
+		
 
 	}
 

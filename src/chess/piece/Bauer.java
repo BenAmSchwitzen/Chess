@@ -1,5 +1,6 @@
 package chess.piece;
 
+import chess.main.Game;
 
 @PieceInfo(name = Category.BAUER,value = 1,blackImagePath = "/pieceImages/BauerBLACK.png",whiteImagePath = "/pieceImages/BauerWHITE.png")
 public class Bauer extends Piece {
@@ -24,13 +25,13 @@ public class Bauer extends Piece {
 		
 		// One step && two steps(without enemy)
 		
-		if(diffY == 1 && diffX == 0 && this.color == 'w') {
+		if(diffY == 1*Game.getInstance().match.board.perspectiveValue && diffX == 0 && this.color == 'w') {
 			
 			return true;
 			
 		}
 		
-         if(diffY == -1 && diffX == 0 && this.color == 'b') {
+         if(diffY == -1*Game.getInstance().match.board.perspectiveValue && diffX == 0 && this.color == 'b') {
 			
 			return true;
 			

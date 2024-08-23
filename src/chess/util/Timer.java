@@ -1,5 +1,6 @@
 package chess.util;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 
 
@@ -74,7 +75,7 @@ public class Timer {
 	 case 3 : width = -25; height = 0;break;
 	 }
 	 
-	 
+	 g2.setStroke(new BasicStroke(4));
 	 g2.drawLine(startX, startY, startX+width, startY+height);
 		
 	}

@@ -42,7 +42,7 @@ public class SoundManager {
         		 gainControl.setValue(Game.getInstance().sound ? 0 : -80);
         		 
         		 playSound(clip);
-        		 soundAlreadyPlayed = true;
+        		 soundAlreadyPlayed = false;
         		 
         	 }catch(Exception e) {
         		 

@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import chess.UI.MenuScreen;
 import chess.board.Board;
 import chess.board.Match;
+import chess.controller.Keyboard;
 import chess.controller.Mouse;
 import chess.gameSave.SaveGameManager;
 import chess.puzzle.PuzzleManager;
@@ -44,12 +45,14 @@ public class Game extends JPanel implements Runnable {
 	public boolean randomPuzzles = true;
 	public boolean animations = true;
 	public boolean computer = false;
+	public boolean turnBoard = false;
 		
 	//_________________________________________________________
 		
 	
 	
     public Mouse mouse = new Mouse();
+    public Keyboard keyBoard = new Keyboard();
     
 	public Board board = new Board();
 	
@@ -63,6 +66,8 @@ public class Game extends JPanel implements Runnable {
 	
 
 	
+
+	
 	public Game() {
 		
 		  this.setDoubleBuffered(true);
@@ -72,7 +77,8 @@ public class Game extends JPanel implements Runnable {
 		  this.addMouseListener(mouse);
 		  this.addMouseMotionListener(mouse);
 		  
-		 
+		  this.addKeyListener(this.keyBoard);
+		  
 		
 
 		  gameThread = new Thread(this);
@@ -101,11 +107,16 @@ public class Game extends JPanel implements Runnable {
 		
 		super.paintComponent(g);
 		
-		
-		
-		
+
 		if(this.gameState == GameState.INMATCH) {
 		
+			if(this.match.firstVisited) {
+				board.updatePossibleMoves('w');
+				
+				this.match.firstVisited = false;
+			}
+			
+			
 		this.match.drawBoard(g2);
 		this.match.drawBoardGraphics(g2);
 		
@@ -136,6 +147,7 @@ public class Game extends JPanel implements Runnable {
 			board.drawCheckMateFelder(g2);
 			
 			this.match.previousPlayManager.drawPreviousPlayPieces(g2);
+			
 			this.match.previousPlayManager.drawPlayButtons(g2);
 			
 			
@@ -153,6 +165,9 @@ public class Game extends JPanel implements Runnable {
 			 
 			 g2.setColor(color);
 			g2.fillRect(800, 0, 500, 800);
+			
+			
+			this.menuScreen.drawLogo(g2);
 			
 			SaveGameManager.drawMatches(g2);
 			
@@ -181,8 +196,11 @@ public class Game extends JPanel implements Runnable {
 		g2.setColor(Color.getHSBColor(100, 200, 200));
 		g2.fillRect(800, 0, 500, 800);
 		
-	    this.puzzleManager.onDrawEvent(g2);
+	  
+		this.puzzleManager.onDrawEvent(g2);
 		this.puzzleManager.drawCurrentPuzzlePieces(g2);
+		
+		this.puzzleManager.drawSuccessImage(g2);
 		
 		
 		
@@ -213,6 +231,8 @@ public class Game extends JPanel implements Runnable {
 		
 		
 		
+		
+		
 	}
 	
 	private void update() {
@@ -221,6 +241,7 @@ public class Game extends JPanel implements Runnable {
 	     if(this.gameState == GameState.INMATCH) {
 	    	
 	    	 match.update(mouse);
+	    	 this.match.previousPlayManager.onKeyClick(keyBoard.currentKeyNumber);
 	    	 
 	    	 
 	     }else if(this.gameState == GameState.INPUZZLE) {
@@ -230,6 +251,15 @@ public class Game extends JPanel implements Runnable {
 	     }else if(this.gameState == GameState.INMENU) {
 	    	 
 	    	 menuScreen.updateMenuGame();
+	    	 
+	     }else if(this.gameState == GameState.SETTINGS) {
+	    	 
+	    	 settingsManager.onLeave(27);
+	    	 
+	     }else if(this.gameState == GameState.INWATCH || this.gameState == GameState.onWinningScreen) {
+	    	 
+	    	 this.match.previousPlayManager.onKeyClick(keyBoard.currentKeyNumber);
+	    	 
 	    	 
 	     }
 		

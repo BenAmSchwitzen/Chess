@@ -17,12 +17,61 @@ public class Computer {
 	
 	
 
-			
 	
+     public int[][] getAllMoves(Board board,char color)  {
+		
+		int [][] array = new int[50][3];
+		int moveCount = 0;
+		
+		
+		
+		    	 for(int i = 0;i<board.pieces.size();i++) {
+		    		 
+		    		 if(board.pieces.get(i).color != color)continue;
+		    		
+		    		  Piece p = board.pieces.get(i);
+		    		 
+		    		 
+		    		 for(int m = 0; m<p.possibleMoves.size();m++) {
+		    			 
+		    			 
+		    			 array[moveCount][0] = i;
+		    			 array[moveCount][1] = p.possibleMoves.get(m)[0];
+		    			 array[moveCount][2] =  p.possibleMoves.get(m)[1];
+		    			 
+		    			 moveCount++;
+		    			 
+		    			 
+		    		 }
+ 
+		    		 
+		    	 }
+		    		
+
+		 
+		  int [][]finalArray = new int [moveCount][3];
+		  
+		   for(int i = 0;i<moveCount;i++) {
+			   
+			   finalArray[i][0] = array[i][0];
+			   finalArray[i][1] = array[i][1];
+			   finalArray[i][2] = array[i][2];
+			   
+			   
+		   }
+		
+		
+		return finalArray;
+		 
+		  
+		
+		
+	}
+		
 		 
 		
 		
-	public int[][] getAllMoves(Board board,char color)  {
+	public int[][] getAllMovesOld(Board board,char color)  {
 		
 		int [][] array = new int[50][3];
 		int count = 0;

@@ -3,6 +3,7 @@ package chess.board;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import javax.swing.ImageIcon;
 
 import chess.UI.MatchUI;
 import chess.computer.Computer;
@@ -43,6 +44,15 @@ public class Match {
 	private Computer computer = new Computer();
 	private boolean computerTurn = false;
 	private int computerTimer = 0;
+	
+	public Piece checkedKing = null;  // Used to animate the checked king after checkmate
+	
+	public boolean firstVisited = true; // For animation purposes
+	
+	
+    
+	
+
 
 	
 	
@@ -125,12 +135,21 @@ public class Match {
 		
 	}
 	
-	private void updateValuesAfterTurn(Piece piece) {
+	private void updateValuesAfterTurn(Piece piece,PreviousPlay play) {
 		
 		piece.hasMoved = true;
 		piece.moveCounter++;
 		
 		//board.checker.swapBauerToQueen(piece);
+		
+		if(this.progress.totalMoves == 0)
+		   this.progress.totalMoves++;
+			
+			
+		play.number = this.progress.totalMoves;
+		
+	     previousPlayManager.currentPlay = play;
+		
 		
 		this.progress.increaseTotalMoves();
 		
@@ -157,7 +176,7 @@ public class Match {
 	
 	private void removePiece(Piece piece) {
 		
-		 if(board.pieces.removeIf(m -> m.y == piece.drawY && m.x == piece.drawX && m!=piece)) {
+		 if(board.pieces.removeIf(m -> m.y == piece.drawY && m.x == piece.drawX && m!=piece && board.checker.rochadePiece!=m)) {
 			   
 			   if(!SoundManager.soundAlreadyPlayed)
 				   willThereBeTakeSound = true;
@@ -310,7 +329,13 @@ public class Match {
 		
 		 if(board.checker.rochadePiece!=null) {
 			   
-			   play.button.setText("k-T");
+			   //play.button.setText("k-T");
+			 
+			 // short and long rochade
+			 
+			   play.button.setText(play.longRochade ? "0-0-0":"0-0");
+			 
+			 
 			   play.button.setBackground(Color.RED);
 			   play.isRochade = true;
 			  
@@ -327,20 +352,55 @@ public class Match {
 		   }
 		 
 		   
+		  // The code belows refreshes the move-buttons 
 		   
+		   if(previousPlayManager.plays.size()% 10 == 0 &&previousPlayManager.plays.size()>0) {
+			   
+			   previousPlayManager.currentViewPlay+=10;
+			   
+		   }
+		 
+		
 		  
 		   play.savePieces(this.board.pieces); 
 		    
 		   previousPlayManager.addNewPlay(play); 
+		   
+		   
+		 
+		   
+		   
+		   
 		
 	}
 	
 	
-	private boolean isThisMoveValid(Piece piece) {
+	public boolean isThisMoveValid(Piece piece) {
 		
-	return	board.checker.isMoveValid(piece,piece.drawY,piece.drawX)
+	
 		
-		|| board.checker.checkRochade(piece,piece.drawY, piece.drawX);
+		if(board.canPieceGoToSpecificFeld(piece,piece.drawY,piece.drawX)) {
+			
+			if(piece instanceof König && board.getPiece(piece.drawY,piece.drawX)!=null && board.getPiece(piece.drawY,piece.drawX) instanceof Turm && piece.color == board.getPiece(piece.drawY,piece.drawX).color) {
+				
+				
+				return board.checker.checkRochade(piece,piece.drawY, piece.drawX);
+				
+			}else {
+				
+				return true;
+			}
+			
+			
+			
+		}else {
+			
+			return false;
+			
+		}
+		                  
+		//Dieser Code ist alt,da nur mit dem Code über diesem Rochade als possibleMove anerkannt werden kann,weil nun checkRochade auf jeden Fall berechnet(ausgeführt) wird und somit rochadePiece zugewiesen werden kann,falls eine Rochade möglich ist
+		//return board.canPieceGoToSpecificFeld(piece,piece.drawY,piece.drawX) || board.checker.checkRochade(piece,piece.drawY, piece.drawX);
 		
 	}
 	
@@ -355,10 +415,18 @@ public class Match {
 				
                   if(piece.drawY == mouse.mouseY/board.feldSize && piece.drawX == mouse.mouseX/board.feldSize  && progress.getTurn() == piece.color) {
 					
+                	
                 	 
-					this.board.selectedPiece = piece;  }
+                	  
+					this.board.selectedPiece = piece;
+			
+					return;
+				
 					
+                  }
+                  
 			}
+			
 			
 
 		
@@ -435,7 +503,14 @@ public class Match {
 	
 	public void update(Mouse mouse) {
 		
-		   
+		
+		if(Game.getInstance().keyBoard.currentKeyNumber == 27) {
+			
+			 matchUI.onLeave();
+			 board.selectedPiece = null;
+			
+		}
+		  
 		
 			
 			if(preparationPhase  && Game.getInstance().animations) {
@@ -478,8 +553,13 @@ public class Match {
 			
 			
 			if(board.selectedPiece == null) {
-				  board.checker.hasBeenCheckedForMoves = false;
+				
+				board.checker.hasBeenCheckedForMoves = false;
 				mouseCheckForPiece(mouse);
+				
+				
+					
+				
 
 				
 			}else  moveAnimationPiece(mouse);
@@ -492,7 +572,8 @@ public class Match {
 			
 			
 			
-			if(board.selectedPiece== null) 
+			
+			if(board.selectedPiece== null)
 				return;
 			
 			
@@ -508,7 +589,8 @@ public class Match {
 				   this.board.checker.checkBauerDoubleMove(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX);
  
 				   
-				   board.checker.doRochade(board.selectedPiece);
+				  // board.checker.doRochade(board.selectedPiece);
+				   board.checker.doRochade(board.selectedPiece,prevPlay);
 				   board.checker.getEnPassantPiece(board.selectedPiece, board.selectedPiece.drawY, board.selectedPiece.drawX);
 				
 				  
@@ -558,7 +640,7 @@ public class Match {
 				  
 				   onCheckEvent(prevPlay);
 				   
-                   updateValuesAfterTurn(board.selectedPiece);
+                   updateValuesAfterTurn(board.selectedPiece,prevPlay);
 				   
                  
 				   
@@ -596,9 +678,13 @@ public class Match {
 
 					SoundManager.setSound(4);
 					
+					this.board.perspectiveValue = 1;
+				    this.checkedKing = (König) board.checker.getKing(Game.getInstance().match.progress.getTurn() == 'w' ? 'b' : 'w');
+					
 					isMatchRunning = false;
 					
 					prevPlay.lastPlay = true;
+					prevPlay.button.setIcon(new ImageIcon("chess.res/playIcons/checkmatePlay.png"));
 					
 					Game.getInstance().gameState = GameState.onWinningScreen;
                      
@@ -613,6 +699,7 @@ public class Match {
 					isMatchRunning = false;
 					
 					prevPlay.lastPlay = true;
+					prevPlay.button.setIcon(new ImageIcon("chess.res/playIcons/stalematePlay.png"));
 					
 					Game.getInstance().gameState = GameState.onWinningScreen;
 					
@@ -622,12 +709,27 @@ public class Match {
 				
 				 this.progress.changeTurn();
 				 
+				
+				 
+				 
+				 
 				 computerTurn = !computerTurn;
 				
+				 if(this.checkedKing==null)
+				 turnBoard();
 				
+				 
+				 this.board.updatePossibleMoves(this.progress.getTurn());
+				 
+				
+				 
+				
+				 
 			}else {
 				
 				resetInvalidMove(board.selectedPiece);
+				
+				
 				
 				//Fail sound to add
 			}
@@ -707,7 +809,7 @@ public class Match {
 			board.selectedPiece.drawX = (mouse.mouseX/board.feldSize);
 			board.selectedPiece.drawY = (mouse.mouseY/board.feldSize);
 	
-		
+		    
 		}
 		
 	
@@ -721,6 +823,8 @@ public class Match {
         private void setUpGame() {  // Makes the game ready to play
         	
         	board.pieces.clear();
+    		
+    		
         	
         	board.pieces.add(new Bauer('w', 6, 0));
         	board.pieces.add(new Bauer('w', 6, 1));
@@ -740,8 +844,7 @@ public class Match {
         	board.pieces.add(new Bauer('b', 1, 6));
         	board.pieces.add(new Bauer('b', 1, 7));
         	
-        	board.pieces.add(new Dame('w', 7, 3));
-        	board.pieces.add(new Dame('b', 0, 3));
+        
         	
         	board.pieces.add(new König('w', 7, 4));
         	board.pieces.add(new König('b', 0, 4));
@@ -752,15 +855,9 @@ public class Match {
         	board.pieces.add(new Turm('b', 0, 7));
         	
         	
-        	board.pieces.add(new Springer('w', 7, 1));
-        	board.pieces.add(new Springer('w', 7, 6));
-        	board.pieces.add(new Springer('b', 0, 1));
-        	board.pieces.add(new Springer('b', 0, 6));
         	
-        	board.pieces.add(new Läufer('w', 7, 5));
-            board.pieces.add(new Läufer('w', 7, 2));
-            board.pieces.add(new Läufer('b', 0, 5));
-        	board.pieces.add(new Läufer('b', 0, 2));
+        	
+        	
         	
         	
         	for(Piece piece : board.pieces) {
@@ -769,6 +866,8 @@ public class Match {
         		
         	
 		}
+        	
+        	
         	
         
         }
@@ -821,8 +920,7 @@ public class Match {
             	board.pieces.add(new Läufer('b', 0, 2));
         		
         	
-        	
-            
+            	
         	
         	
         }
@@ -831,7 +929,15 @@ public class Match {
        
        
         	
-        	
+        	private void turnBoard() {
+        		
+        		if(Game.getInstance().turnBoard) {
+        			
+        			board.turnBoardAround(progress.getTurn());
+        			
+        		}
+        		
+        	}
         	
         
        
