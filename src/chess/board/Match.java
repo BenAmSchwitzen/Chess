@@ -2,6 +2,7 @@ package chess.board;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.stream.IntStream;
 
 import javax.swing.ImageIcon;
 
@@ -50,7 +51,9 @@ public class Match {
 	public boolean firstVisited = true; // For animation purposes
 	
 	
-    
+	private boolean selectedAttackingAndCheckedPiece = false;
+	public Piece mKing = null;
+	public Piece mAttacker = null;
 	
 
 
@@ -67,6 +70,9 @@ public class Match {
 		this.matchUI = new MatchUI(this);
 		
 		previousPlayManager = new PreviousPlayManager(this);
+		
+		
+		
 		
 		
 		
@@ -680,11 +686,29 @@ public class Match {
 					
 					this.board.perspectiveValue = 1;
 				    this.checkedKing = (König) board.checker.getKing(Game.getInstance().match.progress.getTurn() == 'w' ? 'b' : 'w');
+				    
+				    
 					
 					isMatchRunning = false;
 					
 					prevPlay.lastPlay = true;
 					prevPlay.button.setIcon(new ImageIcon("chess.res/playIcons/checkmatePlay.png"));
+					
+					Piece attackingPiece = board.checker.getAttackingPiece(board.checker.getKing(progress.getTurn()== 'w' ? 'b':'w'));
+					Piece king = board.checker.getKing(progress.getTurn()== 'w' ? 'b':'w');
+
+					if(!selectedAttackingAndCheckedPiece) {
+						
+						mKing = previousPlayManager.currentPlay.getPrevPlayPiece(king.y, king.x);
+						mAttacker = previousPlayManager.currentPlay.getPrevPlayPiece(attackingPiece.y, attackingPiece.x);
+						
+						mKing.standOut = true;
+						mAttacker.standOut = true;
+						
+						selectedAttackingAndCheckedPiece = true;
+					}
+					
+					
 					
 					Game.getInstance().gameState = GameState.onWinningScreen;
                      
@@ -824,27 +848,19 @@ public class Match {
         	
         	board.pieces.clear();
     		
-    		
+        	IntStream.range(0,8).forEach(i -> {
+    			
+    			board.pieces.add(new Bauer('w', 6, i));
+        		board.pieces.add(new Bauer('b', 1, i));
+    			
+    			
+    		});
+
         	
-        	board.pieces.add(new Bauer('w', 6, 0));
-        	board.pieces.add(new Bauer('w', 6, 1));
-        	board.pieces.add(new Bauer('w', 6, 2));
-        	board.pieces.add(new Bauer('w', 6, 3));
-        	board.pieces.add(new Bauer('w', 6, 4));
-        	board.pieces.add(new Bauer('w', 6, 5));
-        	board.pieces.add(new Bauer('w', 6, 6));
-        	board.pieces.add(new Bauer('w', 6, 7));
         	
-        	board.pieces.add(new Bauer('b', 1, 0));
-        	board.pieces.add(new Bauer('b', 1, 1));
-        	board.pieces.add(new Bauer('b', 1, 2));
-        	board.pieces.add(new Bauer('b', 1, 3));
-        	board.pieces.add(new Bauer('b', 1, 4));
-        	board.pieces.add(new Bauer('b', 1, 5));
-        	board.pieces.add(new Bauer('b', 1, 6));
-        	board.pieces.add(new Bauer('b', 1, 7));
         	
-        
+        	board.pieces.add(new Dame('w', 7, 3));
+        	board.pieces.add(new Dame('b', 0, 3));
         	
         	board.pieces.add(new König('w', 7, 4));
         	board.pieces.add(new König('b', 0, 4));
@@ -855,8 +871,19 @@ public class Match {
         	board.pieces.add(new Turm('b', 0, 7));
         	
         	
+        	board.pieces.add(new Springer('w', 7, 1));
+        	board.pieces.add(new Springer('w', 7, 6));
+        	board.pieces.add(new Springer('b', 0, 1));
+        	board.pieces.add(new Springer('b', 0, 6));
+        	
+        	board.pieces.add(new Läufer('w', 7, 5));
+            board.pieces.add(new Läufer('w', 7, 2));
+            board.pieces.add(new Läufer('b', 0, 5));
+        	board.pieces.add(new Läufer('b', 0, 2));
         	
         	
+        	
+        
         	
         	
         	
@@ -878,24 +905,16 @@ public class Match {
         		board.pieces.clear();
         		
         		
+        		IntStream.range(0,8).forEach(i -> {
+        			
+        			board.pieces.add(new Bauer('w', 6, i));
+            		board.pieces.add(new Bauer('b', 1, i));
+        			
+        			
+        		});
+        		
             	
-            	board.pieces.add(new Bauer('w', 6, 0));
-            	board.pieces.add(new Bauer('w', 6, 1));
-            	board.pieces.add(new Bauer('w', 6, 2));
-            	board.pieces.add(new Bauer('w', 6, 3));
-            	board.pieces.add(new Bauer('w', 6, 4));
-            	board.pieces.add(new Bauer('w', 6, 5));
-            	board.pieces.add(new Bauer('w', 6, 6));
-            	board.pieces.add(new Bauer('w', 6, 7));
-            	
-            	board.pieces.add(new Bauer('b', 1, 0));
-            	board.pieces.add(new Bauer('b', 1, 1));
-            	board.pieces.add(new Bauer('b', 1, 2));
-            	board.pieces.add(new Bauer('b', 1, 3));
-            	board.pieces.add(new Bauer('b', 1, 4));
-            	board.pieces.add(new Bauer('b', 1, 5));
-            	board.pieces.add(new Bauer('b', 1, 6));
-            	board.pieces.add(new Bauer('b', 1, 7));
+        	
             	
             	board.pieces.add(new Dame('w', 7, 3));
             	board.pieces.add(new Dame('b', 0, 3));

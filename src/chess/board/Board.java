@@ -24,7 +24,8 @@ public class Board{
 	private Color white = new Color(238, 238, 210);
 	private Color black = new Color(118, 150, 86);
 	
-	
+	private int selectTimer = 0;
+	private int selectSize = 0;
 	
 //_______________________________________________
 	
@@ -159,15 +160,34 @@ public char getBoardLetter(int j) {
 	public void drawMovingPiece(Graphics2D g2) {
 		
 		if(selectedPiece!=null) {
-			
 		
 			
-		g2.drawImage(selectedPiece.image, Game.getInstance().mouse.mouseX-feldSize/2, Game.getInstance().mouse.mouseY-feldSize/2, 100+10, 100-10+10, null);
+			
+			if(selectTimer<60) {
+				
+				selectTimer++;
+				
+				if(selectTimer%10 == 0)selectSize+=1;
+				
+				
+			
+			}
+		
+		
+		
+		
+			
+		g2.drawImage(selectedPiece.image, Game.getInstance().mouse.mouseX-feldSize/2, Game.getInstance().mouse.mouseY-feldSize/2, 100+selectSize, 100-10+10+selectSize, null);
 
 		
 		
 		
 		
+		}else {
+			
+			selectTimer = 0;
+			selectSize =0 ;
+			
 		}
 		
 		
@@ -180,7 +200,7 @@ public char getBoardLetter(int j) {
 		
 	
 		
-		pieces.stream().filter(m-> m.drawPiece && m != selectedPiece).forEach(m -> g2.drawImage(m.image, m.drawX*this.feldSize,m.drawY*feldSize+5, this.feldSize,this.feldSize-10, null));
+		pieces.stream().filter(m-> m.drawPiece && m != selectedPiece && !m.standOut).forEach(m -> g2.drawImage(m.image, m.drawX*this.feldSize,m.drawY*feldSize+5, this.feldSize,this.feldSize-10, null));
 		
 
 		
@@ -246,6 +266,10 @@ public char getBoardLetter(int j) {
 
 		
 		}
+		
+		
+	
+		
 		
 		//Updates all possible moves for each piece
 		

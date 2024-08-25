@@ -35,7 +35,7 @@ public class MenuScreen {
 	 private String quitIconPath ="chess.res/icons/quitIcon.png";
 	 private String settingsIconPath ="chess.res/icons/settingsIcon.png";
 	 
-	 private String logoIconPath = "chess.res/icons/ChessLogo.png";
+	
 	 private BufferedImage logo;
 	 
 	 private ArrayList<Button> buttons;

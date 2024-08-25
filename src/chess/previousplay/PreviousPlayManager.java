@@ -11,7 +11,6 @@ import javax.swing.JButton;
 import chess.board.Match;
 import chess.main.Game;
 import chess.main.GameState;
-import chess.piece.Piece;
 import chess.sound.SoundManager;
 import chess.util.FontManager;
 
@@ -27,6 +26,12 @@ public class PreviousPlayManager implements ActionListener {
 
 	public JButton prevMovesButton;
 	public JButton postMoveButton;
+	
+	
+	private int sizeTimer = 0;
+	private int size = 0;
+	private int sizeChanged = 1;
+	
 
 
 
@@ -259,9 +264,20 @@ public class PreviousPlayManager implements ActionListener {
 		
 		if (this.currentPlay != null) {
 
-			currentPlay.prevPieces.forEach(m -> g2.drawImage(m.image, m.drawX * this.match.board.feldSize, m.drawY * this.match.board.feldSize+5,this.match.board.feldSize, this.match.board.feldSize-10, null));
+			currentPlay.prevPieces.stream().filter(m -> !m.standOut).forEach(m -> g2.drawImage(m.image, m.drawX * this.match.board.feldSize, m.drawY * this.match.board.feldSize+5,this.match.board.feldSize, this.match.board.feldSize-10, null));
 
 		}
+		
+		
+           if(match.mAttacker!=null  && match.mKing!=null && match.previousPlayManager.currentPlay == plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
+			
+
+			
+			g2.drawImage(match.mAttacker.image, match.mAttacker.drawX*match.board.feldSize,match.mAttacker.drawY*match.board.feldSize+5, match.board.feldSize+standOutAnimation(),match.board.feldSize-10+standOutAnimation(), null);
+			g2.drawImage(match.mKing.image, match.mKing.drawX*match.board.feldSize,match.mKing.drawY*match.board.feldSize+5, match.board.feldSize+standOutAnimation(),match.board.feldSize-10+standOutAnimation(), null);
+			
+		}
+		
 
 	}
 
@@ -297,5 +313,30 @@ public class PreviousPlayManager implements ActionListener {
 		
 
 	}
+	
+	 private int standOutAnimation() {
+		 if(sizeTimer<200) {
+			   
+			   if(sizeTimer % 50 == 0) {
+				   
+				   size+=sizeChanged;
+				   
+			   }
+			   sizeTimer++;
+			   
+			   
+		   }else {
+			   
+			   sizeTimer = 0;
+			   sizeChanged *= -1;
+			   
+		   }
+	  
+	  	return size;
+	  	
+	  }
+		
+	
+	
 
 }

@@ -269,13 +269,25 @@ public class Checker {
 					  
 					  if((piece.color == 'w' && piece.y == 0) || (piece.color == 'b' && piece.y == 7)) {
 						  
-						  board.pieces.remove(piece);
+						
 						  
-						  Piece newDame = new Dame(piece.color, piece.color == 'w' ? 0:7, piece.x);
-						  board.pieces.add(newDame);
-						  board.selectedPiece = newDame;
+						
 						  
-						  piece = null;
+						  
+						  //piece = newDame;
+						 
+						  
+						  for (int i = 0; i < board.pieces.size(); i++) {
+				                if (board.pieces.get(i).equals(piece)) {
+				                    board.pieces.set(i, new Dame(piece.color, piece.color == 'w' ? 0:7, piece.x));
+				                    board.selectedPiece =board.pieces.get(i);
+				                    piece = board.pieces.get(i);
+				                    break;
+				                }
+				            }
+						  
+						  
+						
 						
 						
 						 
@@ -381,7 +393,7 @@ public class Checker {
 			  public void doRochadeFix(Piece piece) {
 				  
 				  if(rochadePiece!=null) {
-					  System.out.println("d");
+					 
 					  if(piece.x>rochadePiece.x) {
 						  
 						  rochadePiece.drawX += 3;
@@ -389,7 +401,7 @@ public class Checker {
 						 
 						  piece.x = piece.x-2;
 						  piece.drawX = piece.x;
-						  System.out.println("da");
+						 
 						 
 						  return;
 					  }
@@ -429,12 +441,13 @@ public class Checker {
  
 					 }
 	
+					 if(play!=null) {
 					 play.rochadeTY = rochadePiece.drawY;
 					 play.rochadeTX = rochadePiece.drawX;
 					 play.rochadeKX = piece.drawX;
 					 play.rochadeKY = piece.drawY;
 					 
-					 
+					 }
 				  }
 				  
 				  
@@ -452,6 +465,7 @@ public class Checker {
 						  piece.x = 6;
 						  rochadePiece.x = 5;
 						  
+						  if(play!=null)
 						  play.longRochade = false;
 						  
 					  }else {
@@ -461,6 +475,7 @@ public class Checker {
 						  piece.x = 2;
 						  rochadePiece.x = 3;
 						  
+						  if(play!=null)
 						  play.longRochade = true;
 						  
 						  
@@ -474,6 +489,7 @@ public class Checker {
 						  piece.x = 5;
 						  rochadePiece.x = 4;
 						  
+						  if(play!=null)
 						  play.longRochade = true;
 						  
 					  }else {
@@ -486,6 +502,7 @@ public class Checker {
 						  piece.x = 1;
 						  rochadePiece.x = 2;
 						  
+						  if(play!=null)
 						  play.longRochade = false;
 						  
 						  
@@ -504,6 +521,7 @@ public class Checker {
 					  piece.x =6;
 					  rochadePiece.x = 5;
 					  
+					  if(play!=null)
 					  play.longRochade = false;
 					  
 					  
@@ -515,6 +533,7 @@ public class Checker {
 					  piece.x = 2;
 					  rochadePiece.x = 3;
 					  
+					  if(play!=null)
 					  play.longRochade = true;
 					  
 				  }

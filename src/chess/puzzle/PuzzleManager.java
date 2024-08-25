@@ -73,6 +73,10 @@ public class PuzzleManager {
 	private int mistakesRow = 0;
 	private int helpY = 0;
 	private int helpX = 0;
+	private int hintTimer = 0;
+	private int hintStroke = 0;
+	private int hintSizeChange = 1;
+	
 	
 	
 	
@@ -240,38 +244,69 @@ public class PuzzleManager {
     		
     		if(piece==null)return false;
     		
-    	        piece.y = endY;
-    	        piece.x = endX;
-    	      
-    	       
+    		piece.drawY = endY;
+    		piece.drawX = endX;
+    		
+    		
+    		
+    		board.checker.checkRochade(piece,piece.drawY,piece.drawX);
+			board.checker.doRochade(piece, null);
+			
+    		
+    		
+    	        piece.y = piece.drawY;
+    	        piece.x = piece.drawX;
     	        
-    	        
-    	        piece.drawY = piece.y;
-    	        piece.drawX = piece.x;
-    	        
+    	        System.out.println("davor");
+    	        board.pieces.forEach(m -> System.out.println(m.name));
+    	        System.out.println("-------------------------------");
     	        board.checker.swapBauerToQueen(piece);
-    	        
+    	        System.out.println("danach");
+    	        board.pieces.forEach(m -> System.out.println(m.name));
+    	        System.out.println("-------------------------------");
     	        computerTimer = 0;
     	        
-    	        successY = endY;
-    	        successX = endX;
+    	        
+    	        //board.selectedPiece = piece;
+    	        
+    	        if(board.checker.rochadePiece==null) {
+    				successY = endY;
+    				successX = endX;
+    				
+    				}else {
+    					
+    					successY = piece.drawY;
+    					successX = piece.drawX;
+    					
+    				}
+    				
     	        
     	     
     	        
     	        
-    	       if(board.pieces.removeIf(m -> m.y == piece.drawY && m.x == piece.drawX && m!=piece)) {
+    	       if(board.pieces.removeIf(m -> m.y == piece.y && m.x == piece.x && piece!=m)) {
     	    	   
     	    	   SoundManager.setSound(3);
     	    	   
-    	       }else if(doesPuzzlePieceCheckTheKing(piece, piece.drawY,piece.drawX)) {
+    	       }else if(doesPuzzlePieceCheckTheKing(piece, piece.y,piece.x) || (board.checker.rochadePiece!=null && doesPuzzlePieceCheckTheKing(board.checker.rochadePiece, board.checker.rochadePiece.drawY,board.checker.rochadePiece.drawX))) {
     	    	   
     	    	   SoundManager.setSound(5);
+    	    	   
+    	       }else if(board.checker.rochadePiece!=null){
+    	    	   
+    	    	   SoundManager.setSound(2);
     	    	   
     	       }else {
     	    	   
     	    	   SoundManager.setSound(1);
     	       }
     	     
+    	       
+    	       
+    	       
+
+    	       
+    	       
     	        if(!playerHelp) {
     	        computerTurn = false;
     	        }else {
@@ -438,9 +473,14 @@ public class PuzzleManager {
 			
 			if(board.selectedPiece.drawY == endY && board.selectedPiece.drawX == endX && board.selectedPiece.y == startY && board.selectedPiece.x == startX ) {
 			
-			
+				board.checker.checkRochade(board.selectedPiece, endY, endX);
+				board.checker.doRochade(board.selectedPiece, null);
+				
+				
 				board.selectedPiece.y = board.selectedPiece.drawY;
 				board.selectedPiece.x = board.selectedPiece.drawX;
+				
+				
 				
 				board.checker.swapBauerToQueen(board.selectedPiece);
 				
@@ -448,13 +488,16 @@ public class PuzzleManager {
 				
 				SoundManager.setSound(3);
 				
-			}else if(doesPuzzlePieceCheckTheKing(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX)) {
+			}else if(doesPuzzlePieceCheckTheKing(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX) ||(board.checker.rochadePiece!=null && doesPuzzlePieceCheckTheKing(board.checker.rochadePiece,board.checker.rochadePiece.drawY, board.checker.rochadePiece.drawX))) {
 				SoundManager.setSound(5);
 				
-			} else {
+			} else if(board.checker.rochadePiece!=null){
+				
+				SoundManager.setSound(2);
+				
+			}else {
 				
 				SoundManager.setSound(1);
-				
 			}
 			
 
@@ -465,9 +508,16 @@ public class PuzzleManager {
 			board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece);
 
 			
-			
+			if(board.checker.rochadePiece==null) {
 			successY = endY;
 			successX = endX;
+			
+			}else {
+				
+				successY = board.selectedPiece.drawY;
+				successX = board.selectedPiece.drawX;
+				
+			}
 			
 			mistakesRow = 0;
 			
@@ -651,7 +701,7 @@ public class PuzzleManager {
     	Game.getInstance().remove(helpButton);
     	helpButton = null;
     	
-    
+         
     
     	
     	this.mistakes = 0;
@@ -672,6 +722,8 @@ public class PuzzleManager {
 		this.playerHelp = false;
 		this.newPuzzleTimer = 0;
 		this.waitForNextPuzzle = false;
+		
+		board.pieces.clear();
 		
 		SoundManager.setSound(0);
 		
@@ -728,8 +780,8 @@ public class PuzzleManager {
 	   });
 	   
 	   
+   
    }
-    
     
     
     public void onDrawEvent(Graphics2D g2) {
@@ -846,16 +898,50 @@ public class PuzzleManager {
     	
     	if(mistakesRow < 3)return;
     		
+
+    	
     		g2.setColor(Color.YELLOW);
-    		g2.setStroke(new BasicStroke(3));
+    		g2.setStroke(new BasicStroke(doHintAnimation()));
     		g2.drawRect(helpX*board.feldSize,helpY*board.feldSize,board.feldSize, board.feldSize);
     		
     
     	
-    }
-    		
-
-   
     
+    
+    
+   }
+    
+    
+    private int doHintAnimation() {
+    	
+    	if(hintTimer<100) {
+ 		   
+ 		   if(hintTimer % 20 == 0) {
+ 			   
+ 			   hintStroke+=hintSizeChange;
+ 			   
+ 		   }
+ 		   hintTimer++;
+ 		   
+ 		   
+ 	   }else {
+ 		   
+ 		   hintTimer = 0;
+ 		   hintSizeChange *= -1;
+ 		   
+ 	   }
+    	
+    	return hintStroke;
+    	
+    }
+    
+   
 }
+
+    	
+    	
+    
+   
+   
+
 

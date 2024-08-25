@@ -152,6 +152,7 @@ public class Game extends JPanel implements Runnable {
 			
 			
 			
+			
 			this.match.matchUI.drawAfterMatchUIButtons(game);
 			
 		}else if(this.gameState == GameState.INMENU) {

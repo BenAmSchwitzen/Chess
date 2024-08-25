@@ -35,6 +35,8 @@ public class ReachableFeldDrawer {
 	private int radius = 35;
 	private int animationTimer = 0;
 	
+
+	
 	
 	
 	Path2D.Double p = new Path2D.Double();
@@ -225,6 +227,10 @@ public class ReachableFeldDrawer {
 	
 	
 	
+	
+	
+ 
+	
   public void drawCurrentMovingSquare(Graphics2D g2) {
 		
 		if(board.selectedPiece==null)return;
@@ -310,7 +316,13 @@ public class ReachableFeldDrawer {
 			
 			if(attackingPiece!=null   && Game.getInstance().match.previousPlayManager.currentPlay == Game.getInstance().match.previousPlayManager.plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
 				
+				
+				
+				
 				g2.setColor(Color.RED);
+				
+				
+				
 			
 				if(attackingPiece.drawY>king.drawY && attackingPiece.drawX == king.x) {
 					
@@ -436,7 +448,7 @@ public class ReachableFeldDrawer {
 		     
 		
 		 
-		
+		 
 		
 		
 		

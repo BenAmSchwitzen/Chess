@@ -30,8 +30,7 @@ public class Keyboard implements KeyListener {
 		currentKeyNumber = e.getKeyCode();
 		
 		
-		System.out.println(e.getKeyChar());
-		System.out.println(e.getKeyCode());
+		
 		
 	}
 

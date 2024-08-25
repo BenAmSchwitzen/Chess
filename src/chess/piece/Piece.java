@@ -41,6 +41,7 @@ public abstract class Piece {
 	
 	public boolean drawPiece = true;
 	public boolean considerPiece = true;
+	public boolean standOut = false;
 	
 	//___________________________________________________
 	

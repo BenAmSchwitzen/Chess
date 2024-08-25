@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -161,6 +162,14 @@ public class PreviousPlay {
 
 		
 		return Character.toString(pieceLetter)+Character.toString(buchstabe).toUpperCase()+Integer.toString(y);
+	}
+	
+	
+	public Piece getPrevPlayPiece(int y,int x) {
+		
+		return prevPieces.stream().filter(m -> m.y == y && m.x == x).collect(Collectors.toList()).get(0);
+		
+		
 	}
 	
 
