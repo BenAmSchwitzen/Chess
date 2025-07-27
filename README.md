@@ -32,15 +32,20 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 
 <h3>menu</h3>
 
-![menu](https://github.com/BenAmSchwitzen/Chess/assets/135648700/9ecb9520-2608-4f6b-b6df-ffce67a1929e)
+<img width="1304" height="833" alt="menu1" src="https://github.com/user-attachments/assets/57e32d44-7d1c-4775-a8e7-0d42af7bb964" />
+
 
 </br>
 
 <h3>game</h3>
 
-![game](https://github.com/BenAmSchwitzen/Chess/assets/135648700/b986f12c-5895-4ebc-aa66-d0ad64dafdbf)
-![watchingMoves](https://github.com/BenAmSchwitzen/Chess/assets/135648700/59cfd084-e4de-4b5f-8f61-a5d891ed363a)
-![checkmate](https://github.com/BenAmSchwitzen/Chess/assets/135648700/25f7469d-d802-4b41-9b24-721fe182cc22)
+<img width="1302" height="831" alt="game" src="https://github.com/user-attachments/assets/1890597e-8398-4a0d-ab66-ae3fafe3c0a0" />
+
+<img width="1300" height="831" alt="game2" src="https://github.com/user-attachments/assets/81e7de56-3a4a-40c8-aa95-4b64d22c0b46" />
+
+<img width="1300" height="802" alt="game3" src="https://github.com/user-attachments/assets/70125ebe-2193-45db-8468-cde0eaf36963" />
+
+
 
 </br>
 
@@ -51,6 +56,8 @@ This implementation includes **the standard chess-game**, **puzzles**, **the abi
 </br>
 
 <h3>puzzles</h3>
+
+<img width="1301" height="832" alt="puzzle" src="https://github.com/user-attachments/assets/bb1a48b7-6bc6-43d5-9f9d-dc912bbc0329" />
 
 ![puzzle](https://github.com/BenAmSchwitzen/Chess/assets/135648700/1d246800-2374-455c-b3a7-079b3e5f496d)
 ![puzzle2](https://github.com/BenAmSchwitzen/Chess/assets/135648700/c5c809db-5e44-4b28-97c5-63fc2e53b972)
