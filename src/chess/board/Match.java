@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 import chess.UI.MatchUI;
 import chess.computer.Computer;
 import chess.controller.Mouse;
+import chess.graphics.JiggleAnimation;
 import chess.main.Game;
 import chess.main.GameState;
 import chess.piece.Bauer;
@@ -55,6 +56,15 @@ public class Match {
 	public Piece mKing = null;
 	public Piece mAttacker = null;
 	
+	
+	public  boolean dragging = false;
+	
+	public JiggleAnimation jiggleAnimation = null;
+	
+
+	
+	
+	
 
 
 	
@@ -71,6 +81,8 @@ public class Match {
 		
 		previousPlayManager = new PreviousPlayManager(this);
 		
+		this.jiggleAnimation = new JiggleAnimation();
+		
 		
 		
 		
@@ -81,20 +93,24 @@ public class Match {
 	
 	
 	public void drawMatchRelatedUI(Graphics2D g2) {
-		
 		matchUI.drawUIItems(g2);
 		
 	}
 	
 	
 	public void drawBoard(Graphics2D g2) {  // Zeichnet das Board
-		
 		board.drawBoard(g2);
 		
 		
+	}
+	
+	
+	public void drawAnimations(Graphics2D g2) {  // Zeichnet das Board
+		this.jiggleAnimation.drawJiggleAnimation(g2);
 		
 		
 	}
+	
 	
 	public void drawBoardGraphics(Graphics2D g2) {
 		
@@ -133,11 +149,15 @@ public class Match {
 		
 		board.checker.rochadePiece = null;
 		board.checker.enPassantPiece = null;
+		
+		
 		board.selectedPiece = null;
 		
 		SoundManager.soundAlreadyPlayed = false;
 	    hasBeenCheckSound = false;
 		willThereBeTakeSound = false;
+		
+		
 		
 	}
 	
@@ -168,8 +188,15 @@ public class Match {
 		
 		if(this.board.checker.isKingCheck(this.progress.colorTurn == 'w' ? 'b':'w')) {
 			hasBeenCheckSound =  true;
-		
-			   play.isCheck = true;
+			
+			   Piece checkedPiece = this.board.checker.getKing(this.progress.colorTurn == 'w' ? 'b':'w');
+			
+			   this.jiggleAnimation.setJigglePiece(checkedPiece);
+		       
+			    play.isCheck = true;
+			    play.checkY = checkedPiece.drawY;
+			    play.checkX = checkedPiece.drawX;
+			    play.checkedPiece = checkedPiece; 
 			
 				SoundManager.setSound(5);
 			
@@ -180,14 +207,18 @@ public class Match {
 	}
 	
 	
-	private void removePiece(Piece piece) {
+	private boolean removePiece(Piece piece) {
 		
 		 if(board.pieces.removeIf(m -> m.y == piece.drawY && m.x == piece.drawX && m!=piece && board.checker.rochadePiece!=m)) {
 			   
 			   if(!SoundManager.soundAlreadyPlayed)
 				   willThereBeTakeSound = true;
+			   
+			   return true;
 		   
 		   }
+		 
+		 return false;
 		
 	}
 	
@@ -335,9 +366,7 @@ public class Match {
 		
 		 if(board.checker.rochadePiece!=null) {
 			   
-			   //play.button.setText("k-T");
-			 
-			 // short and long rochade
+			   
 			 
 			   play.button.setText(play.longRochade ? "0-0-0":"0-0");
 			 
@@ -353,7 +382,10 @@ public class Match {
 			   
 		   } else if(play.isPromoting){
 			   
-			   play.button.setText("B - >");
+
+			   play.button.setText("= "+ matchUI.promoteScreen.promoteChar);
+			   this.matchUI.promoteScreen.promoteChar = "-";
+			   
 			   
 		   }
 		 
@@ -421,10 +453,14 @@ public class Match {
 				
                   if(piece.drawY == mouse.mouseY/board.feldSize && piece.drawX == mouse.mouseX/board.feldSize  && progress.getTurn() == piece.color) {
 					
-                	
+                
+                  
                 	 
                 	  
 					this.board.selectedPiece = piece;
+					
+				
+					
 			
 					return;
 				
@@ -432,6 +468,9 @@ public class Match {
                   }
                   
 			}
+			
+  
+			
 			
 			
 
@@ -507,6 +546,10 @@ public class Match {
 	}
 	
 	
+	
+	
+	
+	
 	public void update(Mouse mouse) {
 		
 		
@@ -530,10 +573,20 @@ public class Match {
 				preparationPhase = false;
 			}
 		
-
-		
 			
-	
+
+			if(this.firstVisited) {
+				board.updatePossibleMoves('w');
+				this.firstVisited = false;
+				
+			}
+			
+		if(this.board.selectedPiece!=null && this.jiggleAnimation.jigglePiece!=null) {
+			this.jiggleAnimation.endAnimation();
+		}
+			
+			
+	    this.jiggleAnimation.updateAnimation();
 		
 		
 
@@ -552,7 +605,7 @@ public class Match {
 	   
 	    
 		
-		if(mouse.pressed && mouse.currentKey == 1 && (!computerTurn || !Game.getInstance().computer)) {
+		if((mouse.pressed && mouse.currentKey == 1 && (!computerTurn || !Game.getInstance().computer))) {
 		
 			this.board.reachableFeldDrawer.clearArrows();
 			this.board.reachableFeldDrawer.clearMarkedFelder();
@@ -579,11 +632,13 @@ public class Match {
 			
 			
 			
-			if(board.selectedPiece== null)
+			if(board.selectedPiece== null )
 				return;
 			
 			
-			
+	
+			//if((mouse.lastReleasedY == board.selectedPiece.y && mouse.lastReleasedX == board.selectedPiece.x))return;
+		
 			
 			
 			if(isThisMoveValid(board.selectedPiece) || board.checker.promotePiece !=null) {
@@ -603,7 +658,12 @@ public class Match {
 				   
 				 
 				   
-                    removePiece(board.selectedPiece);
+                   if(removePiece(board.selectedPiece) || board.selectedPiece instanceof Bauer) {
+                	   this.progress.zugCounter = 0;   
+                   }
+                   else {
+                	   this.progress.zugCounter++;
+                   }
 				   
                    
 				   
@@ -627,21 +687,16 @@ public class Match {
 						}
 				   
 				   
-	                board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX);
+	               board.checker.finalEnPassant(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX);
 
-				   
-				   
-				   setUpPreviousPlay(prevPlay,board.selectedPiece);
-				  
-				
-				
-				
 				 
-				   
-				   
-				  
+	                
+	                	
+	                
+	                	
+	               setUpPreviousPlay(prevPlay,board.selectedPiece);
+	                	
 
-                 
 				 
 				  
 				   onCheckEvent(prevPlay);
@@ -671,14 +726,9 @@ public class Match {
 					
 				}
 				
+		
 				
-				
-				 
-				
-				
-				
-				
-	         if(board.checker.isCheckMate(this.progress.colorTurn == 'w' ? 'b':'w')) {
+				else  if(board.checker.isCheckMate(this.progress.colorTurn == 'w' ? 'b':'w')) {
 					
 					this.previousPlayManager.currentPlay = this.previousPlayManager.plays.get(this.previousPlayManager.plays.size()-1);
 
@@ -692,6 +742,7 @@ public class Match {
 					isMatchRunning = false;
 					
 					prevPlay.lastPlay = true;
+					
 					prevPlay.button.setIcon(new ImageIcon("chess.res/playIcons/checkmatePlay.png"));
 					
 					Piece attackingPiece = board.checker.getAttackingPiece(board.checker.getKing(progress.getTurn()== 'w' ? 'b':'w'));
@@ -715,19 +766,22 @@ public class Match {
 				}
 				
 				// Check but works
-				else if(board.checker.staleMate(this.progress.colorTurn == 'w' ? 'b':'w')) {
+				else if(board.checker.staleMate(this.progress.colorTurn == 'w' ? 'b':'w') || this.progress.zugCounter >= 100) {
 					
 					this.previousPlayManager.currentPlay = this.previousPlayManager.plays.get(this.previousPlayManager.plays.size()-1);
 					SoundManager.setSound(0);
 					
 					isMatchRunning = false;
-					
 					prevPlay.lastPlay = true;
-					prevPlay.button.setIcon(new ImageIcon("chess.res/playIcons/stalematePlay.png"));
+					prevPlay.isStaleMate = true;
+					prevPlay.button.setIcon(null);
+					//prevPlay.button.setIcon(new ImageIcon("chess.res/playIcons/stalematePlay.png"));
+					prevPlay.button.setText("1/2-1/2");
 					
 					Game.getInstance().gameState = GameState.onWinningScreen;
 					
 				}
+	         
 	         
 	         
 				
@@ -752,6 +806,7 @@ public class Match {
 			}else {
 				
 				resetInvalidMove(board.selectedPiece);
+				
 				
 				
 				
@@ -828,11 +883,15 @@ public class Match {
 	public void doPieceMovementAnimation(Mouse mouse) {
 		
 		
-		if(!board.checker.isPromoting) {
+		if(!board.checker.isPromoting && board.selectedPiece !=null) {
 			
-			board.selectedPiece.drawX = (mouse.mouseX/board.feldSize);
-			board.selectedPiece.drawY = (mouse.mouseY/board.feldSize);
-	
+			
+				board.selectedPiece.drawX = (mouse.mouseX/board.feldSize);
+				board.selectedPiece.drawY = (mouse.mouseY/board.feldSize);
+				
+		
+			
+			
 		    
 		}
 		

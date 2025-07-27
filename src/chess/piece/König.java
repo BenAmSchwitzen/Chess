@@ -1,6 +1,6 @@
 package chess.piece;
 
-@PieceInfo(name = Category.KING,value = 0,blackImagePath = "/pieceImages/KönigBLACK.png",whiteImagePath = "/pieceImages/KönigWHITE.png")
+@PieceInfo(name = Category.KING,value = 0,blackImagePath = "/pieceImages/bk.png",whiteImagePath = "/pieceImages/wk.png")
 public class König extends Piece {
 
 	public König(char color, int y, int x) {

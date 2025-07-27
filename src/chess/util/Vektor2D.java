@@ -4,6 +4,8 @@ public class Vektor2D {
 
 	
 	public int startX,startY,endX,endY;
+	public int y,x;
+	public double doubleY,doubleX;
 	
 	
 	public Vektor2D(int startX,int startY,int endX,int endY) {
@@ -12,6 +14,20 @@ public class Vektor2D {
 		this.startY = startY;
 		this.endX = endX;
 		this.endY = endY;
+		
+	}
+	
+    public Vektor2D(int y,int x) {
+		
+		this.y = y;
+		this.x = x;
+		
+	}
+    
+    public Vektor2D(double doubleY,double doubleX) {
+		
+		this.doubleY = doubleY;
+		this.doubleX = doubleX;
 		
 	}
 	

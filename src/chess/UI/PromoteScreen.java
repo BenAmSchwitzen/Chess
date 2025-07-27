@@ -1,6 +1,8 @@
 package chess.UI;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+
 import javax.swing.ImageIcon;
 import chess.main.Game;
 import chess.main.GameState;
@@ -13,6 +15,7 @@ import chess.util.Button;
 public class PromoteScreen {
 	
 	private MatchUI matchUI;
+	public String promoteChar = "-";
 	
 	
 	
@@ -35,6 +38,7 @@ public class PromoteScreen {
 	
 	
 	
+	
 	public void addPromoteButtons() {
 		
 	   Button turmB = new Button("Turm",matchUI.match.board.feldSize*2,matchUI.match.board.feldSize*3,100, 200, Color.WHITE, Color.BLACK);
@@ -52,24 +56,28 @@ public class PromoteScreen {
 	   turmB.addActionListener(e -> {
 		   Turm turm = new Turm(matchUI.match.progress.colorTurn, matchUI.match.board.selectedPiece.y, matchUI.match.board.selectedPiece.x);
 		   matchUI.match.board.checker.promotePiece = turm;
+		   this.promoteChar = "R";
 		   Game.getInstance().gameState = GameState.INMATCH;
 	   });
 	   
    läuferB.addActionListener(e -> {
 		   
 		   matchUI.match.board.checker.promotePiece = new Läufer(matchUI.match.progress.colorTurn, matchUI.match.board.selectedPiece.y, matchUI.match.board.selectedPiece.x);
+		   this.promoteChar = "B";
 		   Game.getInstance().gameState = GameState.INMATCH;
 	   });
    
    springerB.addActionListener(e -> {
 	   
 	   matchUI.match.board.checker.promotePiece = new Springer(matchUI.match.progress.colorTurn, matchUI.match.board.selectedPiece.y, matchUI.match.board.selectedPiece.x);
+	   this.promoteChar = "K";
 	   Game.getInstance().gameState = GameState.INMATCH;
    });
    
    dameB.addActionListener(e -> {
 	   
 	   matchUI.match.board.checker.promotePiece = new Dame(matchUI.match.progress.colorTurn, matchUI.match.board.selectedPiece.y, matchUI.match.board.selectedPiece.x);
+	   this.promoteChar = "Q";
 	   Game.getInstance().gameState = GameState.INMATCH;
    });
 	   
@@ -85,7 +93,15 @@ public class PromoteScreen {
 	}
 	
 	
-			
+	
+	
+	   public void drawBackGround(Graphics2D g2)  {
+		   
+		   
+		   g2.setColor(Color.getHSBColor(100, 200, 200));
+			g2.fillRect(800, 0, 500, 800);
+		   
+	   }
 			
 		
 		

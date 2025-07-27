@@ -4,8 +4,11 @@ package chess.board;
 
 
 import java.util.List;
+
+
 import chess.piece.*;
 import chess.previousplay.PreviousPlay;
+
 
 
 public class Checker {
@@ -75,6 +78,10 @@ public class Checker {
 		return false;
 		
 	}
+	
+	
+
+	    
 		  
 	
 	
@@ -277,7 +284,7 @@ public class Checker {
 						  //piece = newDame;
 						 
 						  
-						  for (int i = 0; i < board.pieces.size(); i++) {
+						  for (int i = board.pieces.size()-1; i >=0; i--) {
 				                if (board.pieces.get(i).equals(piece)) {
 				                    board.pieces.set(i, new Dame(piece.color, piece.color == 'w' ? 0:7, piece.x));
 				                    board.selectedPiece =board.pieces.get(i);
@@ -303,6 +310,22 @@ public class Checker {
 					  }
 					  
 				  } }
+			  
+			  
+			  
+			  
+			  public void test() {
+				  
+				  /*
+				   * 
+				   * 
+				   * 
+				   * 
+				   * 
+				   * 
+				   */
+				  
+			  }
 			  
 			  
 			  public boolean isBauerPromoting(Piece piece) {
@@ -793,6 +816,8 @@ public class Checker {
 		 * checks if the selected piece is blocked while moving to y,x
 	     */	
 	 public boolean isBlocked(Piece piece,int y,int x) {
+		 
+		 
 		  
 		  if(piece instanceof Turm) {
 			  

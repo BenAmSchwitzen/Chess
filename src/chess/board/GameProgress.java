@@ -1,5 +1,8 @@
 package chess.board;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import chess.main.Game;
 import chess.main.GameState;
 import chess.piece.Piece;
@@ -15,6 +18,10 @@ public class GameProgress {
 	
 	public Timer timerWhite;
 	public Timer timerBlack;
+	
+	public int zugCounter = 0;  // 50-Züge-Regel
+	
+	Map<String, Integer> positionCounts = new HashMap<>();
 	
 	public GameProgress(Match match) {
 		

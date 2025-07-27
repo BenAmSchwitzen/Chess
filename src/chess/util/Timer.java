@@ -31,10 +31,7 @@ public class Timer {
 			
 			if(this.animationCounter>3) 
 				animationCounter = 0;
-				
-				
-			
-			
+
 			
 			if(sec<0) {
 				
@@ -47,8 +44,7 @@ public class Timer {
 
 		}
 		
-		
-		
+
 		if(this.sec>9) {
 		
 		this.timerString = "0"+min+":"+sec;

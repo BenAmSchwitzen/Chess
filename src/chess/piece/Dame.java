@@ -1,7 +1,7 @@
 package chess.piece;
 
 
-@PieceInfo(name = Category.DAME,value = 9,blackImagePath = "/pieceImages/DameBLACK.png",whiteImagePath = "/pieceImages/DameWHITE.png")
+@PieceInfo(name = Category.DAME,value = 9,blackImagePath = "/pieceImages/bq.png",whiteImagePath = "/pieceImages/white_dame.png")
 public class Dame extends Piece {
 
 	public Dame(char color, int y, int x) {

@@ -37,6 +37,7 @@ public class MenuScreen {
 	 
 	
 	 private BufferedImage logo;
+	 Color backColor = new Color(3,2,2,182);
 	 
 	 private ArrayList<Button> buttons;
 	
@@ -171,6 +172,13 @@ public class MenuScreen {
           
           
 	
+	public void drawBackGround(Graphics2D g2) {
+		
+		
+		 g2.setColor(backColor);
+		g2.fillRect(800, 0, 500, 800);
+		
+	}
 	
 	
 

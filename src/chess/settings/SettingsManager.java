@@ -31,6 +31,10 @@ public class SettingsManager {
 	private Dame dPiece;
 	private König kPiece;
 	private Läufer lPiece;
+	
+	private int movedSquaresY = 0;
+	private int movedSquaresX = 0;
+	
 	//--------------------
 	
 	public SettingsManager(Game game) {
@@ -179,7 +183,20 @@ public class SettingsManager {
 				};
 			
 		
-		
+		Setting s8 = new Setting("Small pieces") {
+			
+			@Override
+			public void onClick() {
+				
+				game.smallPieces = !game.smallPieces;
+				this.getButton().setBackground(game.smallPieces ? new Color(118, 150, 86) : new Color(238, 238, 210));
+				this.onToggle(game.smallPieces);
+				
+				
+
+				
+			}
+		};
 		
 		 s1.getButton().setBackground(game.boardgraphics ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 s2.getButton().setBackground(game.sound ? new Color(118, 150, 86) : new Color(238, 238, 210));
@@ -188,6 +205,7 @@ public class SettingsManager {
 		 s5.getButton().setBackground(game.animations ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 s6.getButton().setBackground(game.computer ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 s7.getButton().setBackground(game.turnBoard ? new Color(118, 150, 86) : new Color(238, 238, 210));
+		 s8.getButton().setBackground(game.smallPieces ? new Color(118, 150, 86) : new Color(238, 238, 210));
 		 
 		settings.add(s1);
 		settings.add(s2);
@@ -196,6 +214,7 @@ public class SettingsManager {
 		settings.add(s5);
 		settings.add(s6);
 		settings.add(s7);
+		settings.add(s8);
 		
 		
 	}
@@ -205,7 +224,7 @@ public class SettingsManager {
    public void addButtons() {
 	   
 	   int startX = 120;
-	   int startY = 80;
+	   int startY = 30;
 	   int abstand = 100;
 	   int count = 0;
 	   
@@ -285,7 +304,7 @@ public class SettingsManager {
 			for(int j = 0;j<8;j++) {
 				
 				g2.setColor((i+j)%2 == 0 ?  white : black );
-				
+				 
 				g2.fillRect(startX+(j*50),startY+(i*50), 50,50);
 				
 				
@@ -328,9 +347,17 @@ public class SettingsManager {
 	   if(game.arrows) {
 		   
 		   g2.setColor(Color.ORANGE);
+		   
+		   if(game.turnBoard) {
+			   
+			   g2.drawLine(startX+(1*50)+(25), startY+(7*50), startX+(2*50)+25, startY+(4*50));
+			   
+		   }else {
+		   
+		   
 		   g2.drawLine(startX+(5*50)+(25), startY+(4*50), startX+(6*50)+25, startY+(1*50));
 		   
-		   
+		   }
 		   
 	   }
 	   
@@ -344,11 +371,14 @@ public class SettingsManager {
 			int yMinus = 3;
 			int xMinus = 4;
 			
+		    this.movedSquaresY = game.turnBoard ? 3:0;
+		    this.movedSquaresX = game.turnBoard ? 1:0;
+			
 			
 			for(int i = yMinus;i>0;i--) {
 			
 		g2.setColor(Color.ORANGE);
-		g2.fillRect(startX+(xMinus*50), startY+(i*50), 50, 50);
+		g2.fillRect(startX+((xMinus+movedSquaresX)*50), startY+((i+movedSquaresY)*50), 50, 50);
 		
 			xMinus--;
 			

@@ -111,6 +111,10 @@ public class Board{
 		
 	}
 	
+	
+
+	
+	
    private void beschrifteBoard(Graphics2D g2,int i,int j) {
 		
 	   
@@ -199,9 +203,17 @@ public char getBoardLetter(int j) {
 	public void drawPieces(Graphics2D g2) {
 		
 	
-		
-		pieces.stream().filter(m-> m.drawPiece && m != selectedPiece && !m.standOut).forEach(m -> g2.drawImage(m.image, m.drawX*this.feldSize,m.drawY*feldSize+5, this.feldSize,this.feldSize-10, null));
-		
+		if(Game.getInstance().smallPieces) {
+			
+			pieces.stream().filter(m-> m.drawPiece && m != selectedPiece && !m.standOut && m!=null).forEach(m -> g2.drawImage(m.image,( m.drawX*this.feldSize)+15,m.drawY*feldSize+14, this.feldSize-30,this.feldSize-30, null));
+
+		}else {
+			
+			pieces.stream().filter(m-> m.drawPiece && m != selectedPiece && !m.standOut && m!=null).forEach(m -> g2.drawImage(m.image, m.drawX*this.feldSize,m.drawY*feldSize+5, this.feldSize,this.feldSize-10, null));
+
+			
+		}
+
 
 		
 	}
@@ -294,7 +306,7 @@ public char getBoardLetter(int j) {
 
 					}
 						
-                     // Die Rochade-Moves, falls möglich
+                     
                      updateMovesWithRochade(m);
 
 					
@@ -335,9 +347,8 @@ public char getBoardLetter(int j) {
 						
 					
 		             //Uses the new possibleMoves list in order to find out whether a square is possible to enter
-					public boolean canPieceGoToSpecificFeld(Piece piece,int y,int x) {
-						
-					    return piece.possibleMoves.stream().anyMatch(m -> y == m[0] && x == m[1]);
+ 		public boolean canPieceGoToSpecificFeld(Piece piece,int y,int x) {
+ 			return piece.possibleMoves.stream().anyMatch(m -> y == m[0] && x == m[1]);
 						
 						
 					}

@@ -2,7 +2,7 @@ package chess.piece;
 
 import chess.main.Game;
 
-@PieceInfo(name = Category.BAUER,value = 1,blackImagePath = "/pieceImages/BauerBLACK.png",whiteImagePath = "/pieceImages/BauerWHITE.png")
+@PieceInfo(name = Category.BAUER,value = 1,blackImagePath = "/pieceImages/bp.png",whiteImagePath = "/pieceImages/wpaw.png")
 public class Bauer extends Piece {
 
 	

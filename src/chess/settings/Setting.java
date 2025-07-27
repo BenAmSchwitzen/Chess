@@ -37,17 +37,25 @@ public abstract class Setting {
 	}
 
 
-public String getName() {
+
+	public String getName() {
 		
 		return name;
 		
 	}
 
 
-public void onToggle(boolean on) {
+
+	public void onToggle(boolean on) {
 	
 	this.button.setForeground(on ? Color.WHITE:Color.BLACK);
 	
 }
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
 	
 }

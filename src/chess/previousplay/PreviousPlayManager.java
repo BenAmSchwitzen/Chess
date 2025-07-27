@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import chess.board.Match;
+import chess.graphics.JiggleAnimation;
+import chess.graphics.MovementAnimation;
 import chess.main.Game;
 import chess.main.GameState;
+import chess.piece.Piece;
 import chess.sound.SoundManager;
 import chess.util.FontManager;
 
@@ -31,6 +34,12 @@ public class PreviousPlayManager implements ActionListener {
 	private int sizeTimer = 0;
 	private int size = 0;
 	private int sizeChanged = 1;
+	
+	private MovementAnimation moveAnimation;
+	
+	private JiggleAnimation jiggleAnimation = new JiggleAnimation();
+	
+	
 	
 
 
@@ -55,6 +64,8 @@ public class PreviousPlayManager implements ActionListener {
 		this.postMoveButton.setBounds(1050, 585, 50, 30);
 		this.postMoveButton.setBorder(null);
 		this.postMoveButton.setFont(FontManager.getFont("Arial Bold", Font.BOLD, 20));
+		
+		this.moveAnimation = new MovementAnimation();
 
 		changePreviousPlayPages();
 
@@ -94,6 +105,34 @@ public class PreviousPlayManager implements ActionListener {
 		
 		if(this.currentPlay==null)return;
 		
+		 if(key == 38 && currentPlay.number !=1) {
+			 
+			 Game.getInstance().gameState = GameState.INWATCH;
+				actionPerformed(new ActionEvent(plays.get(0).button, currentViewPlay,"Beginning"));
+				 Game.getInstance().keyBoard.currentKeyNumber = -1;
+				 this.currentViewPlay = 0;
+			   
+
+				
+				 
+		 } else if(key == 40 && currentPlay.number < plays.size()) {  
+			 Game.getInstance().gameState = GameState.INWATCH;
+			 actionPerformed(new ActionEvent(plays.get(plays.size()-1).button, currentViewPlay,"End"));
+			
+			 Game.getInstance().keyBoard.currentKeyNumber = -1;
+			 
+			currentViewPlay =  Math.max(0, (plays.size() - 1) / 10 * 10);
+			 
+			
+			
+			 
+			 
+		 }
+		
+		
+		
+		
+		
 		if(key != 37 && key != 39)return;
 		
 		 int forwardOrBackwardNumber = key == 37 ? -1 : 1;
@@ -114,9 +153,18 @@ public class PreviousPlayManager implements ActionListener {
 				
 				
 				 Game.getInstance().keyBoard.currentKeyNumber = -1;
+				 
+				
+				 
+			
+
+				 
+				 
 				
 			}
-			
+	
+	
+	
 		
 		
 		
@@ -125,6 +173,10 @@ public class PreviousPlayManager implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
+		if(this.currentPlay!=null && this.jiggleAnimation.jigglePiece !=null) {
+			this.jiggleAnimation.endAnimation();
+		}
          
 		for (PreviousPlay play : plays) {
 
@@ -152,15 +204,25 @@ public class PreviousPlayManager implements ActionListener {
 					} else {
 						Game.getInstance().gameState = GameState.onWinningScreen;
 					}
-
+					
+					
 					this.currentPlay = play;
+					this.jiggleAnimation.endAnimation();
+					
+					if(this.currentPlay.isCheck && this.currentPlay != plays.get(plays.size() - 1)) {
+						
+						this.jiggleAnimation.setJigglePiece(this.getPiece(this.currentPlay.checkY, this.currentPlay.checkX));
+						
+					}
+					
+						
 					
 					playWatchSound(currentPlay);
 					
 					this.currentPlay.button.setBorder(
 							BorderFactory.createBevelBorder(0, Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK));
 					this.currentPlay.button.setBackground(Color.YELLOW);
-			        
+					
 
 				}
 
@@ -177,6 +239,12 @@ public class PreviousPlayManager implements ActionListener {
 			}
            
 		}
+	}
+	
+	// Updates the movement-Animation
+	public void updateMoveAnimation(double deltaTime) {
+		this.moveAnimation.update(deltaTime);
+		
 	}
 	
 	private void playWatchSound(PreviousPlay play) {
@@ -197,20 +265,32 @@ public class PreviousPlayManager implements ActionListener {
 		}
 		
 	}
+	
+	
+	public Piece getPiece(int y, int x) {
+		
+		for(Piece piece : currentPlay.prevPieces) {
+			if(piece.drawY == y && piece.drawX == x)
+				return piece;
+		}
+		
+		return null;
+		
+	}
 
 	public void drawPlayButtons(Graphics2D g2) {
 
 		int buttonsAlreadyDrawn = 0;
+		
+		
 
-		if (plays.size() >= 15) {
-			g2.setColor(Color.BLACK);
-			g2.fillRect(880, 150, 300, 400);
+		
+		g2.setColor(Color.BLACK);
+		g2.fillRect(880, 150, 300, 400);
 
-		} else {
-			g2.setColor(Color.BLACK);
-			g2.fillRect(880, 150, 300, 400);
+		
 
-		}
+		
 		g2.setColor(Color.DARK_GRAY);
 		g2.fillRect(880, 550, 300, 100);
 
@@ -255,21 +335,44 @@ public class PreviousPlayManager implements ActionListener {
 		Game.getInstance().add(postMoveButton);
 
 	}
+	
+	public void update() {
+		this.jiggleAnimation.updateAnimation();
+	}
 
 	public void drawPreviousPlayPieces(Graphics2D g2) {
 
+		
+      
+		
 		drawInvolvedFields(g2);
 
-		
+	
 		
 		if (this.currentPlay != null) {
+                       
+			
+			
+			if(Game.getInstance().smallPieces) {
+				
+				currentPlay.prevPieces.stream().filter(m-> m.drawPiece  && !m.standOut && m!=null).forEach(m -> g2.drawImage(m.image,( m.drawX*this.match.board.feldSize)+15,m.drawY*this.match.board.feldSize+14, this.match.board.feldSize-30,this.match.board.feldSize-30, null));
 
-			currentPlay.prevPieces.stream().filter(m -> !m.standOut).forEach(m -> g2.drawImage(m.image, m.drawX * this.match.board.feldSize, m.drawY * this.match.board.feldSize+5,this.match.board.feldSize, this.match.board.feldSize-10, null));
+			}else {
+				
+				currentPlay.prevPieces.stream().filter(m-> m.drawPiece && !m.standOut && m!=null).forEach(m -> g2.drawImage(m.image, m.drawX*this.match.board.feldSize,m.drawY*this.match.board.feldSize+5, this.match.board.feldSize,this.match.board.feldSize-10, null));
+
+				
+			}
+			
+			this.jiggleAnimation.drawJiggleAnimation(g2);
+			
 
 		}
 		
 		
-           if(match.mAttacker!=null  && match.mKing!=null && match.previousPlayManager.currentPlay == plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
+		
+		
+             if(match.mAttacker!=null  && match.mKing!=null && match.previousPlayManager.currentPlay == plays.get(Game.getInstance().match.previousPlayManager.plays.size()-1)) {
 			
 
 			

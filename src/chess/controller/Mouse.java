@@ -7,11 +7,16 @@ public class Mouse extends MouseAdapter {
 
 	public boolean pressed = false;
 	public boolean clicked = false;
+	public boolean dragged = false;
 	
 	public int currentKey = -100;
 	
 	public int mouseY = 0;
 	public int mouseX = 0;
+	
+	public int lastReleasedY = 0;
+	public int lastReleasedX = 0;
+	public int times = 0;
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -21,7 +26,7 @@ public class Mouse extends MouseAdapter {
 		
 		currentKey = e.getButton();
 	    
-	
+		
 		
 	}
 	
@@ -30,17 +35,28 @@ public class Mouse extends MouseAdapter {
 		
 		this.clicked = true;
 	
-	
+
+		
 	}
 	
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		
+		
+		
 		this.pressed = false;
 		this.clicked = false;
-	
+		this.dragged = false;
 		
+		
+		
+		
+		lastReleasedY = mouseY/100;
+		lastReleasedX = mouseX/100;
+	
+	
+	 
 		currentKey = -99;
 		
 	}
@@ -60,6 +76,11 @@ public class Mouse extends MouseAdapter {
 		
 		this.mouseY = e.getY();
 		this.mouseX = e.getX();
+	
+		 if(this.pressed) {
+			 
+		  this.dragged = true;
+		 }
 	
 		
 	}

@@ -34,6 +34,12 @@ public class PreviousPlay {
 	public boolean isRochade = false;
 	public boolean isCheck = false;
 	public boolean isPromoting = false;
+	public boolean isStaleMate = false;
+	
+	public Piece checkedPiece = null;
+	
+	public int checkY = 0; // Beide für Jiggle-Animation
+	public int checkX = 0;
 	
 	
 	public int rochadeTX = 0;
@@ -62,7 +68,7 @@ public class PreviousPlay {
 			
 			this.button = new JButton(getName(movingPiece, capturedPiece));
 			
-		}else {
+        }  else {
 			
 			this.button = new JButton(getFeld(movingPiece, newY, newX));
 		}
@@ -75,6 +81,7 @@ public class PreviousPlay {
 		this.button.setFocusable(false);
 		this.button.setVisible(false);
 		
+	
 		setPlayButtonIcon();
 		
 	}
@@ -144,7 +151,7 @@ public class PreviousPlay {
 	
 	public String getFeld(Piece piece,int y,int x) {
 		
-		char pieceLetter = piece.name.toString().charAt(0);
+		//char pieceLetter = piece.name.toString().charAt(0);
 		
 		char buchstabe = 0;
 		
@@ -157,11 +164,11 @@ public class PreviousPlay {
 		     case 4 : buchstabe ='E'; break;
 		     case 5 : buchstabe ='F'; break;
 		     case 6 : buchstabe ='G'; break;
-		     case 7 : buchstabe ='G'; break;  }
+		     case 7 : buchstabe ='H'; break;  }
 			
 
 		
-		return Character.toString(pieceLetter)+Character.toString(buchstabe).toUpperCase()+Integer.toString(y);
+		return Character.toString(buchstabe).toUpperCase()+Integer.toString(8-y);
 	}
 	
 	

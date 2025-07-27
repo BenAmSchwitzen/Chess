@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.List;
 
 import chess.board.Board;
 import chess.main.Game;
@@ -31,11 +32,20 @@ public class ReachableFeldDrawer {
 	public boolean markedOneArrowFeld = false;
 	
 	public Piece checkedKing = null;
-	private int angle = 0;
-	private int radius = 35;
-	private int animationTimer = 0;
 	
-
+    private Color transparentOne = new Color(130, 110, 120, 100);
+    
+    private int possibleMovesMarkerGrowTimer = 0;
+    private int possibleMovesMarkerSize = 0;
+    
+    private List<int[]> lastSavedPossibleMoves = null;
+    private int possibleMovesMarkerShrinkTimer = 0;
+    private int possibleMovesMarkerShrinkSize = 0;
+    
+    private int startShrinkingValue = 0;
+    
+    private Color chosenColor = Color.getHSBColor(24, 24, 40);
+   
 	
 	
 	
@@ -49,30 +59,89 @@ public class ReachableFeldDrawer {
 	
 	
 	
-  public void draw(Graphics2D g2) {  // Zeichnet die möglichen Felder,die eine Figur betreten kann
-		
-		
-		g2.setColor(Color.getHSBColor(24, 24, 40));
+  public void draw(Graphics2D g2) {  
+		g2.setColor(this.chosenColor);
 		
 		if(this.board.selectedPiece!=null) {
+			this.drawMarkedGrowingSquaresAnimation(g2);
+				
+		} else {
+			this.possibleMovesMarkerGrowTimer = 0;
+			//this.possibleMovesMarkerSize = 0;
+			if(this.lastSavedPossibleMoves!=null && this.possibleMovesMarkerSize> 0) {
+				this.startShrinkingValue = this.possibleMovesMarkerSize; // Saved den Start wert des Schrumpfens
+				this.possibleMovesMarkerSize = 0;
+			}
+
 			
 			
-			this.board.selectedPiece.possibleMoves.forEach(m -> {
+			if(this.lastSavedPossibleMoves!=null) {
+				this.drawMarkedShrinkingSquaresAnimation(g2);	
 				
-				g2.fillRect((m[1]*board.feldSize)+30, (m[0]*board.feldSize)+30,40, 40);
-				
-				
-				
-			});
+			} else {
+				this.possibleMovesMarkerShrinkTimer = 0;
+				this.possibleMovesMarkerShrinkSize = 0;
+				this.startShrinkingValue = 0;
+				this.possibleMovesMarkerSize = 0;
+				this.possibleMovesMarkerGrowTimer = 0;				
+			}
 			
-			drawRochade(g2);
+			
+			
 			
 			
 		}
-		
 	
-		
+			
 	}
+  
+  	private void drawMarkedShrinkingSquaresAnimation(Graphics2D g2) {
+	  		this.possibleMovesMarkerShrinkTimer += 1;
+			
+			if(this.possibleMovesMarkerShrinkSize < 40 && this.possibleMovesMarkerShrinkTimer==1 && 15 < this.startShrinkingValue ) {
+					this.possibleMovesMarkerShrinkSize += 1;
+					this.possibleMovesMarkerShrinkTimer = 0;
+					
+				this.lastSavedPossibleMoves.forEach(m -> {
+					if(25< this.possibleMovesMarkerShrinkSize)return; 
+					g2.fillRect((m[1]*board.feldSize)+30, (m[0]*board.feldSize)+30, Math.abs(this.startShrinkingValue-this.possibleMovesMarkerShrinkSize), Math.abs(this.startShrinkingValue-this.possibleMovesMarkerShrinkSize));
+					
+				});
+				
+			} else { 
+				this.lastSavedPossibleMoves = null;
+				this.possibleMovesMarkerShrinkSize = 0;
+				this.startShrinkingValue = 0;
+			
+			}
+ 
+  	}
+  
+  
+  private void drawMarkedGrowingSquaresAnimation(Graphics2D g2) {
+	  this.lastSavedPossibleMoves = board.selectedPiece.possibleMoves;
+		this.possibleMovesMarkerGrowTimer += 1;
+		
+		if(this.possibleMovesMarkerSize < 40 && this.possibleMovesMarkerGrowTimer == 1) {
+			this.possibleMovesMarkerSize += 1;
+			this.possibleMovesMarkerGrowTimer = 0;
+		}
+		
+		
+		this.board.selectedPiece.possibleMoves.forEach(m -> {
+			if(this.possibleMovesMarkerSize< 15)return;
+			g2.fillRect((m[1]*board.feldSize)+30, (m[0]*board.feldSize)+30, this.possibleMovesMarkerSize, this.possibleMovesMarkerSize);
+			});
+		
+		drawRochade(g2);
+		return;
+		  
+  }
+		  
+		  
+	  	  
+	  
+
 	
   
   private void drawRochade(Graphics2D g2) {
@@ -82,14 +151,15 @@ public class ReachableFeldDrawer {
 		  if(board.selectedPiece.color == 'w' || (board.selectedPiece.color == 'b' && board.perspectiveValue == -1)) {
 			  
 			  if(board.checker.checkRochade(board.selectedPiece, 7, 7)) {
-				  
-				  g2.fillRect((7*board.feldSize)+30, (7*board.feldSize)+30,40, 40);
+				 
+				  g2.fillRect((7*board.feldSize)+25, (7*board.feldSize)+25,50, 50);
 				  
 				  
 			  } 
 			  
 			  if(board.checker.checkRochade(board.selectedPiece, 7, 0)) {
-				  g2.fillRect((0*board.feldSize)+30, (7*board.feldSize)+30,40, 40);
+				  
+				  g2.fillRect((0*board.feldSize)+25, (7*board.feldSize)+25,50, 50);
 			  }
 			  
 			  
@@ -99,20 +169,23 @@ public class ReachableFeldDrawer {
 		  } else if(board.selectedPiece.color == 'b') {
 			  
 	       if(board.checker.checkRochade(board.selectedPiece, 0, 7)) {
-				  
-				  g2.fillRect((7*board.feldSize)+30, (0*board.feldSize)+30,40, 40);
+	    	      
+				  g2.fillRect((7*board.feldSize)+25, (0*board.feldSize)+25,50, 50);
 				  
 				  
 			  } 
 			  
 			  if(board.checker.checkRochade(board.selectedPiece, 0, 0)) {
-				  g2.fillRect((0*board.feldSize)+30, (0*board.feldSize)+30,40, 40);
+				 
+				  g2.fillRect((0*board.feldSize)+25, (0*board.feldSize)+25,50, 50);
 			  }
 			  
 		  }
 		  
 		  
 	  }
+	  
+	  
 	  
 	  
   }
@@ -155,6 +228,7 @@ public class ReachableFeldDrawer {
 		arrows.add(new Vektor2D(startX, startY,endX,endY));
 		
 		
+		
 	}
 	
 	
@@ -162,7 +236,7 @@ public class ReachableFeldDrawer {
 		
 		for(Vektor2D v : arrows) {
 			
-			g2.setColor(Color.BLACK);
+			g2.setColor(transparentOne);
 			g2.setStroke(new BasicStroke(5));
 			if(v.startY<v.endY) {
 			g2.drawLine(v.startX*100+50, v.startY*100+100,v.endX*100+50,v.endY*100+50);
@@ -186,7 +260,12 @@ public class ReachableFeldDrawer {
 		if(Game.getInstance().gameState!= GameState.INMATCH)return;
 		
 		for(Vektor2D v : markedFelder) {
-			g2.setColor(Color.ORANGE);
+			
+			
+			
+			 //g2.setColor(Color.ORANGE);
+			 g2.setColor(transparentOne);
+			
 		     g2.fillRect(v.startX*Game.getInstance().board.feldSize, v.startY*Game.getInstance().board.feldSize, 100, 100);
 		  
 			
@@ -425,7 +504,7 @@ public class ReachableFeldDrawer {
 	}
 			
 				
-				animateDefeatedKing(g2);		
+					
 				
 		}
 		
@@ -439,39 +518,7 @@ public class ReachableFeldDrawer {
 	}
 	
 	
-	private void animateDefeatedKing(Graphics2D g2) {
-		
-		if(Game.getInstance().match.checkedKing==null)return;
-		
-		if(checkedKing==null)
-			checkedKing = Game.getInstance().match.checkedKing;
-		     
-		
-		 
-		 
-		
-		
-		
-		int y = (int) (40 + this.radius*(Math.sin(angle*Math.PI/600)));
-		int x = (int) (40+ this.radius*(Math.sin(angle*Math.PI/150)));
-	   
-		g2.setColor(Color.GREEN);
-		g2.fillRect(checkedKing.drawX*board.feldSize+x,checkedKing.drawY*board.feldSize+y,15,15);
-		
-		
-		
-		if(animationTimer>=0) {
-	   
-		angle+=3;
-		animationTimer = 0;
-		} else {
-			animationTimer++;
-		}
-		
 	
-			
-			
-		}
 	
 	
 		

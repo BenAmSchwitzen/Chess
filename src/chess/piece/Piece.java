@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-public abstract class Piece {
+public abstract class Piece implements Comparable<Piece> {
 
  //__________main(standard) attributes_____________________
 	
@@ -46,7 +46,7 @@ public abstract class Piece {
 	//___________________________________________________
 	
 	
-	//________ new ( Jedes Piece speichert nun seine möglichen Züge(Zielfelder),damit diese nicht die ganze Zeit neu berechnet werden müssen )
+	
 	
 	public List<int []> possibleMoves;
 	
@@ -96,8 +96,25 @@ public abstract class Piece {
 
 	public abstract Piece pCopy();
 		
+	@Override
+	public int compareTo(Piece o) {
+		 char cmp = (char) Character.compare(this.color, o.color);
+	        if (cmp != 0) return cmp;
+
+	        cmp = (char) this.name.compareTo(o.name);
+	        if (cmp != 0) return cmp;
+
+	        cmp = (char) Integer.compare(this.x, o.x);
+	        if (cmp != 0) return cmp;
+
+	        return Integer.compare(this.y, o.y);
+	    }
 		
+		
+		
+			
+				
+			}	
 	
 	
 	
-}

@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import chess.board.Board;
 import chess.controller.Mouse;
+import chess.graphics.JiggleAnimation;
 import chess.main.Game;
 import chess.main.GameState;
 import chess.piece.*;
@@ -26,8 +27,6 @@ public class PuzzleManager {
 
     
 	public Board board;
-	
-   
 	
 	private File turnsFile = new File("chess.res/puzzles/Turns.txt");
 	private File piecesFile = new File("chess.res/puzzles/PiecesForTurns.txt");
@@ -77,6 +76,22 @@ public class PuzzleManager {
 	private int hintStroke = 0;
 	private int hintSizeChange = 1;
 	
+	private Piece helpPiece = null;
+	
+	
+	// Better movement control
+	private int startY = 0;
+	private int startX = 0;
+
+	private int helpAnimationY = 100;
+	private int helpAnimationX = 100;
+	private int helpAnimationDirection = -1;
+	
+	private int animationTimer = 0;
+	
+	public JiggleAnimation jiggleAnimation = new JiggleAnimation();
+	private Piece checkedKing = null;	
+	private boolean hasTakenPiece = false;
 	
 	
 	
@@ -128,6 +143,8 @@ public class PuzzleManager {
 		
 		board.drawPieces(g2);
 		board.drawMovingPiece(g2);
+		
+		
 		
 	}
 	
@@ -234,16 +251,39 @@ public class PuzzleManager {
    	}
 	   
    }
+   
     
     
     private boolean doComputerTurn(int startY,int startX,int endY,int endX) {
     	
-    	if(computerTimer>=computerDelay) {
+    	
+    	
+    	
+    	if(computerTimer>=computerDelay && this.jiggleAnimation.jigglePiece==null) {
+    		
+
+    	
+    	
+    	
+    		
+    		
+    		
+    		
     		
     		Piece piece = board.getPiece(startY,startX);
     		
+    	
+    		
+    		
     		if(piece==null)return false;
     		
+    		
+    		
+    		
+    		
+    	
+             	
+         
     		piece.drawY = endY;
     		piece.drawX = endX;
     		
@@ -254,16 +294,13 @@ public class PuzzleManager {
 			
     		
     		
-    	        piece.y = piece.drawY;
-    	        piece.x = piece.drawX;
+    	        piece.y = endY;
+    	        piece.x = endX;
     	        
-    	        System.out.println("davor");
-    	        board.pieces.forEach(m -> System.out.println(m.name));
-    	        System.out.println("-------------------------------");
-    	        board.checker.swapBauerToQueen(piece);
-    	        System.out.println("danach");
-    	        board.pieces.forEach(m -> System.out.println(m.name));
-    	        System.out.println("-------------------------------");
+    	    
+    	      
+    	         piece = this.promoteComputerTurnPiece(piece);
+    	        
     	        computerTimer = 0;
     	        
     	        
@@ -281,29 +318,44 @@ public class PuzzleManager {
     				}
     				
     	        
+    	        int y = piece.y;
+    	        int x = piece.x;
+    	        Piece reference = piece;
+    	        
+    	        
+    	        
+    	    
+    	        
     	     
     	        
     	        
-    	       if(board.pieces.removeIf(m -> m.y == piece.y && m.x == piece.x && piece!=m)) {
-    	    	   
+    	       if(doesPuzzlePieceCheckTheKing(piece, piece.y,piece.x) || (board.checker.rochadePiece!=null && doesPuzzlePieceCheckTheKing(board.checker.rochadePiece, board.checker.rochadePiece.drawY,board.checker.rochadePiece.drawX))) {
+	    	   this.jiggleAnimation.setJigglePiece(this.checkedKing);
+	    	   SoundManager.setSound(5);
+	    	  
+	    	   
+    	       }
+
+	    	   if(board.pieces.removeIf(m -> m.y == y && m.x == x && reference!=m)) {
+    	    	   this.hasTakenPiece = true;
+    	    	   if(this.checkedKing==null)
     	    	   SoundManager.setSound(3);
     	    	   
-    	       }else if(doesPuzzlePieceCheckTheKing(piece, piece.y,piece.x) || (board.checker.rochadePiece!=null && doesPuzzlePieceCheckTheKing(board.checker.rochadePiece, board.checker.rochadePiece.drawY,board.checker.rochadePiece.drawX))) {
-    	    	   
-    	    	   SoundManager.setSound(5);
+    	       
     	    	   
     	       }else if(board.checker.rochadePiece!=null){
-    	    	   
+    	    	   if(this.checkedKing == null)
     	    	   SoundManager.setSound(2);
     	    	   
     	       }else {
-    	    	   
+    	    	   if(this.checkedKing == null)
     	    	   SoundManager.setSound(1);
     	       }
     	     
     	       
     	       
-    	       
+    	       this.hasTakenPiece = false;
+    	       this.checkedKing = null;
 
     	       
     	       
@@ -326,7 +378,22 @@ public class PuzzleManager {
     }
     
     
+    private Piece promoteComputerTurnPiece(Piece piece) {
+		if(piece instanceof Bauer && piece.y == 0) {
+			int index = board.pieces.indexOf(piece);
+            if (index != -1) 
+                board.pieces.set(index, new Dame(piece.color, piece.y, piece.x));
+            return board.pieces.get(index);
+    	}
+		return piece;	
+	}
+    
+    
+    
     public void update(Mouse mouse) {
+    	
+    	
+    	
     	
     	
     	updateScore();
@@ -336,8 +403,10 @@ public class PuzzleManager {
             if(Game.getInstance().keyBoard.currentKeyNumber == 27)
             	onLeave();
        
-         
-        
+  
+        //movementAnimation.doAnimation();
+            
+          this.jiggleAnimation.updateAnimation();
     	
     	
     	if(currentPuzzleTurn>= getSinglePuzzleLength(currentPuzzle) && amountOfPuzzles > currentPuzzle) {
@@ -439,6 +508,9 @@ public class PuzzleManager {
     	this.helpY = startY;
     	this.helpX = startX;
     	
+  
+    	
+    	
           
     	if(computerTurn || playerHelp) {
     		
@@ -453,10 +525,12 @@ public class PuzzleManager {
     	}
     	
     	
+    
+    	
     	if(board.selectedPiece==null && mouse.pressed && !computerTurn) {
 			
-			
-			board.selectedPiece = board.getPiece(mouse.mouseY/100, mouse.mouseX/100);
+			 betterMovement(mouse);
+			//board.selectedPiece = board.getPiece(mouse.mouseY/100, mouse.mouseX/100);
 			
 			
 		if(board.selectedPiece!=null && board.getPiece(startY, startX)!=null) {
@@ -465,11 +539,11 @@ public class PuzzleManager {
 
 		}else if(board.selectedPiece!=null && mouse.pressed) {
 			
-
-			this.doPieceMovementAnimation(mouse);
+            if(mouse.pressed) {
+			this.doPieceMovementAnimation(mouse); }
 			
 		
-		} else if(board.selectedPiece!=null && !mouse.pressed)  {
+		} else if(board.selectedPiece!=null && !mouse.pressed )  {
 			
 			if(board.selectedPiece.drawY == endY && board.selectedPiece.drawX == endX && board.selectedPiece.y == startY && board.selectedPiece.x == startX ) {
 			
@@ -484,22 +558,32 @@ public class PuzzleManager {
 				
 				board.checker.swapBauerToQueen(board.selectedPiece);
 				
-			if(board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece)) {
+			
 				
-				SoundManager.setSound(3);
-				
-			}else if(doesPuzzlePieceCheckTheKing(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX) ||(board.checker.rochadePiece!=null && doesPuzzlePieceCheckTheKing(board.checker.rochadePiece,board.checker.rochadePiece.drawY, board.checker.rochadePiece.drawX))) {
+			if(doesPuzzlePieceCheckTheKing(board.selectedPiece,board.selectedPiece.drawY, board.selectedPiece.drawX) ||(board.checker.rochadePiece!=null && doesPuzzlePieceCheckTheKing(board.checker.rochadePiece,board.checker.rochadePiece.drawY, board.checker.rochadePiece.drawX))) {
 				SoundManager.setSound(5);
+				this.jiggleAnimation.setJigglePiece(this.checkedKing); }
 				
-			} else if(board.checker.rochadePiece!=null){
+			else if(board.pieces.removeIf(m -> m.y == board.selectedPiece.drawY && m.x == board.selectedPiece.drawX && m!=board.selectedPiece)) {
+					if(this.checkedKing==null)
+					SoundManager.setSound(3);
+					
+					this.hasTakenPiece = true;
 				
+			}
+				
+		  else if(board.checker.rochadePiece!=null){
+				if(!this.hasTakenPiece)
 				SoundManager.setSound(2);
 				
 			}else {
-				
+				if(!this.hasTakenPiece)
 				SoundManager.setSound(1);
 			}
 			
+			
+			this.hasTakenPiece = false;
+			this.checkedKing = null;
 
 			
 			
@@ -542,6 +626,7 @@ public class PuzzleManager {
 				board.selectedPiece.drawY = board.selectedPiece.y;
 				board.selectedPiece.drawX = board.selectedPiece.x;
 				
+				mouse.times = 0;
 				
 				
 				
@@ -557,7 +642,7 @@ public class PuzzleManager {
     	 
 			
 			board.selectedPiece = null;
-			
+			mouse.times = 0;
 				}
     	
     	
@@ -723,6 +808,9 @@ public class PuzzleManager {
 		this.newPuzzleTimer = 0;
 		this.waitForNextPuzzle = false;
 		
+		
+		
+		
 		board.pieces.clear();
 		
 		SoundManager.setSound(0);
@@ -814,10 +902,16 @@ public class PuzzleManager {
     	g2.drawString(Integer.toString(mistakes), 955, 280);
     	
     	drawSuccess(g2);
+    	
+    	//movementAnimation.drawAnimation(g2);
     
     	board.reachableFeldDrawer.makePiecesInvisible(g2);
     	
+    	
+    	
+    	this.animateHelpPiece(g2);
     	this.drawHint(g2);
+    	
     	
     
     }
@@ -841,7 +935,11 @@ public class PuzzleManager {
     	
     	if(computerTurn) {
     		
-    		g2.drawImage(correctIconImage,successX*100+75,successY*100-16, 32, 32, null);
+            int adjustToScreenPositionY = successY == 0 ? 100 : 0;
+            int adjustToScreenPositionX = successX == 7 ? 100 : 0;
+    		
+    		g2.drawImage(correctIconImage,successX*100+75-adjustToScreenPositionX,successY*100-16+adjustToScreenPositionY, 32, 32, null);
+    		
     		
     	}
     	
@@ -880,6 +978,8 @@ public class PuzzleManager {
     		piece.y = oldY;
     		piece.x = oldX;
     		
+    		this.checkedKing = king;
+    		
     		return true;
     		
     		
@@ -888,6 +988,7 @@ public class PuzzleManager {
     	
     	piece.y = oldY;
 		piece.x = oldX;
+		this.checkedKing = null;
     	return false;
     	
 
@@ -935,6 +1036,142 @@ public class PuzzleManager {
     	
     }
     
+    private void animateHelpPiece(Graphics2D g2) {
+ 		
+		
+		
+		if(mistakesRow < 3) {
+			
+			if(this.helpPiece!=null) 
+				this.helpPiece.standOut = false;
+			
+			
+			this.helpPiece = null;
+			this.helpAnimationY = 100;
+			this.helpAnimationX = 100;
+			
+			return;
+		}
+		
+		if(this.helpPiece==null) {
+			
+			this.helpPiece = board.getPiece(helpY, helpX);
+			
+		}
+		
+		if(board.selectedPiece!=null && board.selectedPiece == this.helpPiece) {
+			this.animationTimer = 0;
+			this.helpAnimationDirection = -1;
+			this.helpAnimationY=100;
+			this.helpAnimationX=100;
+			
+			return;
+		}
+		
+		
+		this.helpPiece.standOut = true;
+		g2.drawImage(this.helpPiece.image, helpPiece.drawX*board.feldSize, helpPiece.drawY*board.feldSize, helpAnimationX, helpAnimationY, null);
+		
+		
+		
+		
+		if(animationTimer>=50) {
+			
+			animationTimer = 0;
+			this.helpAnimationDirection *= -1; 
+		} else {
+			animationTimer++;
+			if(this.animationTimer%10== 0) {
+				this.helpAnimationY+= this.helpAnimationDirection;
+				this.helpAnimationX+= this.helpAnimationDirection;
+				
+			}
+			
+		}
+		
+	
+			
+			
+		}
+    
+	public void drawBackGround(Graphics2D g2) {
+		
+		
+		g2.setColor(Color.getHSBColor(100, 200, 200));
+		g2.fillRect(800, 0, 500, 800);
+		
+	}
+	
+	public boolean betterMovementTest(Mouse mouse) {
+		
+		if(mouse.pressed && board.selectedPiece==null) {
+			
+			board.selectedPiece = board.getPiece(mouse.mouseY/100, mouse.mouseX/100);
+			mouse.times = 1;
+			
+			return false;
+			
+		}
+		
+		if(mouse.pressed && mouse.times == 1 && board.selectedPiece !=null ) {
+			
+			
+			return true;
+		}
+		
+		
+		
+		return false;
+		
+		
+		
+	}
+	
+	public boolean betterMovement(Mouse mouse) {
+		
+		if(board.selectedPiece == null) {
+			
+			if(mouse.pressed) {
+				
+				board.selectedPiece = board.getPiece(mouse.mouseY/100, mouse.mouseX/100);
+				startY = mouse.mouseY/100;
+				startX = mouse.mouseX/100;
+				
+				return false;
+				
+				
+			}
+			
+			
+		}
+		
+		
+		if(board.selectedPiece != null && !mouse.pressed) {
+			
+
+				if(mouse.mouseY/100 == startY && mouse.mouseX/100 == startX ) {
+					
+					return false;
+				
+			} else {
+				
+				return true;
+			}
+			
+			
+		}
+		
+		if(board.selectedPiece != null && !mouse.pressed) {
+			
+			return true;
+			
+		}
+		
+		return false;
+	}
+	
+	
+	
    
 }
 

@@ -1,6 +1,6 @@
 package chess.piece;
 
-@PieceInfo(name = Category.LÄUFER,value = 5,blackImagePath = "/pieceImages/LäuferBLACK.png",whiteImagePath = "/pieceImages/LäuferWHITE.png")
+@PieceInfo(name = Category.LÄUFER,value = 5,blackImagePath = "/pieceImages/bb.png",whiteImagePath = "/pieceImages/wbi.png")
 
 public class Läufer extends Piece {
 

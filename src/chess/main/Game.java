@@ -1,6 +1,6 @@
 package chess.main;
 
-import java.awt.Color;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -20,6 +20,8 @@ import chess.settings.SettingsManager;
 public class Game extends JPanel implements Runnable {
 
 	 private static final Game game = new Game();
+	 
+	
 	 
 	 public GameState gameState = GameState.INMENU;
 	 
@@ -46,6 +48,7 @@ public class Game extends JPanel implements Runnable {
 	public boolean animations = true;
 	public boolean computer = false;
 	public boolean turnBoard = false;
+	public boolean smallPieces = false;
 		
 	//_________________________________________________________
 		
@@ -53,15 +56,10 @@ public class Game extends JPanel implements Runnable {
 	
     public Mouse mouse = new Mouse();
     public Keyboard keyBoard = new Keyboard();
-    
 	public Board board = new Board();
-	
 	public MenuScreen menuScreen = new MenuScreen(this);
-	
 	public Match match = new Match(this.board);
-	
 	public PuzzleManager puzzleManager = new PuzzleManager(new Board());
-	
 	public SettingsManager settingsManager = new SettingsManager(this);
 	
 
@@ -83,11 +81,46 @@ public class Game extends JPanel implements Runnable {
 
 		  gameThread = new Thread(this);
 		  gameThread.start();
+		  
+		  
 		
 		  
 	}
 	
+
 	
+	private void update(double deltaTime) {
+		
+		
+		switch(gameState) {
+		
+		
+		case INMATCH :   match.update(mouse);  this.match.previousPlayManager.onKeyClick(keyBoard.currentKeyNumber);  break;
+		
+		
+		case INPUZZLE :  puzzleManager.update(mouse);  break;
+		
+
+		case INMENU:     menuScreen.updateMenuGame(); break;
+		
+		
+		case SETTINGS :  settingsManager.onLeave(27); break;
+		
+		
+		case INWATCH  :  this.match.previousPlayManager.onKeyClick(keyBoard.currentKeyNumber); this.match.previousPlayManager.update(); break;
+		
+		
+		case onWinningScreen :  this.match.previousPlayManager.onKeyClick(keyBoard.currentKeyNumber); this.match.previousPlayManager.update(); break;
+		
+		
+		default:  break;
+		
+		
+		}
+		
+		
+		
+	}
 	
 	
 	public static Game getInstance() {
@@ -96,80 +129,50 @@ public class Game extends JPanel implements Runnable {
 		
 		
 	}
+
 	
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		
-		 
-		
+	
 		Graphics2D g2 = (Graphics2D)g;
-		
 		super.paintComponent(g);
 		
-
-		if(this.gameState == GameState.INMATCH) {
 		
-			if(this.match.firstVisited) {
-				board.updatePossibleMoves('w');
-				
-				this.match.firstVisited = false;
-			}
-			
+		if(this.gameState == GameState.INMATCH) {
 			
 		this.match.drawBoard(g2);
 		this.match.drawBoardGraphics(g2);
-		
-	
-		
  		this.match.drawPieces(g2); 
- 	
 	    this.match.previousPlayManager.drawPlayButtons(g2);
-		
 		this.match.drawMatchRelatedUI(g2);
-		
 		this.board.reachableFeldDrawer.drawArrows(g2);
 		
+		this.match.drawAnimations(g2);
 		
-		
+
 		}
 		
 		
-		 
 		else if(this.gameState == GameState.onWinningScreen) {
 			
-			g2.setColor(Color.getHSBColor(100, 200, 200));
-			g2.fillRect(800, 0, 500, 800);
-			
+			this.match.matchUI.drawBackGround(g2);
 			this.match.drawBoard(g2);
 			this.match.drawBoardGraphics(g2);
-			
 			board.drawCheckMateFelder(g2);
-			
 			this.match.previousPlayManager.drawPreviousPlayPieces(g2);
-			
 			this.match.previousPlayManager.drawPlayButtons(g2);
-			
-			
-			
-			
 			this.match.matchUI.drawAfterMatchUIButtons(game);
 			
+			
+		
 		}else if(this.gameState == GameState.INMENU) {
 			
 			this.match.drawBoard(g2);
 			this.menuScreen.drawMenuPieces(g2);
-			
-			
-			
-			Color color = new Color(3,2,2,182);
-			 
-			 g2.setColor(color);
-			g2.fillRect(800, 0, 500, 800);
-			
-			
+			this.menuScreen.drawBackGround(g2);
 			this.menuScreen.drawLogo(g2);
-			
 			SaveGameManager.drawMatches(g2);
 			
 			
@@ -179,7 +182,6 @@ public class Game extends JPanel implements Runnable {
 			this.match.drawBoardGraphics(g2);
 			this.match.previousPlayManager.drawPreviousPlayPieces(g2);
 			this.match.previousPlayManager.drawPlayButtons(g2);
-			
 			this.match.drawMatchRelatedUI(g2);
 		
 			
@@ -191,20 +193,13 @@ public class Game extends JPanel implements Runnable {
 
 		
 		this.match.drawBoard(g2);
-		
-	
-		
-		g2.setColor(Color.getHSBColor(100, 200, 200));
-		g2.fillRect(800, 0, 500, 800);
-		
-	  
+		this.puzzleManager.drawBackGround(g2);
 		this.puzzleManager.onDrawEvent(g2);
 		this.puzzleManager.drawCurrentPuzzlePieces(g2);
-		
+		this.puzzleManager.jiggleAnimation.drawJiggleAnimation(g2);
 		this.puzzleManager.drawSuccessImage(g2);
 		
-		
-		
+
 	}else if(this.gameState == GameState.SETTINGS) {
 		
 		settingsManager.drawBackGrounnd(g2);
@@ -213,70 +208,19 @@ public class Game extends JPanel implements Runnable {
 	
 		
 	}else if(this.gameState == GameState.INPROMOTING) {
-		
-	
-		 
+
 		this.match.drawBoard(g2);
 		this.match.drawBoardGraphics(g2);
-		
 		this.match.drawMatchRelatedUI(g2);
-		g2.setColor(Color.getHSBColor(100, 200, 200));
-		g2.fillRect(800, 0, 500, 800);
- 		
+		this.match.matchUI.promoteScreen.drawBackGround(g2);
 		this.board.drawPieces(g2);
-			
  		this.match.matchUI.promoteScreen.hideSelectedPieceWhilePromotingOption();
 		
 	}
 		
-		
-		
-		
-		
-		
-	}
-	
-	private void update() {
-		
-		
-	     if(this.gameState == GameState.INMATCH) {
-	    	
-	    	 match.update(mouse);
-	    	 this.match.previousPlayManager.onKeyClick(keyBoard.currentKeyNumber);
-	    	 
-	    	 
-	     }else if(this.gameState == GameState.INPUZZLE) {
-	    	 
-	    	 puzzleManager.update(mouse);
-	    	 
-	     }else if(this.gameState == GameState.INMENU) {
-	    	 
-	    	 menuScreen.updateMenuGame();
-	    	 
-	     }else if(this.gameState == GameState.SETTINGS) {
-	    	 
-	    	 settingsManager.onLeave(27);
-	    	 
-	     }else if(this.gameState == GameState.INWATCH || this.gameState == GameState.onWinningScreen) {
-	    	 
-	    	 this.match.previousPlayManager.onKeyClick(keyBoard.currentKeyNumber);
-	    	 
-	    	 
-	     }
-		
-		
-	
-		
-	}
-
-	
 
 		
-		
-		
-	
-		
-	
+	}
 	
 
 	@Override
@@ -289,10 +233,11 @@ public class Game extends JPanel implements Runnable {
 		while(gameThread!=null) {
 			
 			currentTime = System.nanoTime();
+			double deltaTime = (currentTime - lastTime) / 1_000_000_000.0; // Sekunden
 			
 			if(currentTime-lastTime > drawInterval) {
 				
-				this.update();
+				this.update(deltaTime);
 				this.repaint();
 				
 				
@@ -311,12 +256,6 @@ public class Game extends JPanel implements Runnable {
 	}
 	
 	
-	public void updateGameState(GameState newGameState) {
-		
-		
-		this.gameState = newGameState;
-		
-	}
-	
+
 	
 }

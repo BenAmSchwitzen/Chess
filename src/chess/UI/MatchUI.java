@@ -152,6 +152,16 @@ public class MatchUI{
 	}
 	   
 	   
+	   
+	   public void drawBackGround(Graphics2D g2) {
+			
+			
+		   g2.setColor(Color.getHSBColor(100, 200, 200));
+		   g2.fillRect(800, 0, 500, 800);
+			
+		}
+		
+	   
 	   public void onLeave() {
 		   
 		   match.board.reachableFeldDrawer.checkedKing = null;

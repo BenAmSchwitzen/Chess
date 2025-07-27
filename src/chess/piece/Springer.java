@@ -1,6 +1,6 @@
 package chess.piece;
 
-@PieceInfo(name = Category.SPRINGER,value = 3,blackImagePath = "/pieceImages/SpringerBLACK.png",whiteImagePath = "/pieceImages/SpringerWHITE.png")
+@PieceInfo(name = Category.SPRINGER,value = 3,blackImagePath = "/pieceImages/bn.png",whiteImagePath = "/pieceImages/wsp.png")
 public class Springer extends Piece {
 
 	
